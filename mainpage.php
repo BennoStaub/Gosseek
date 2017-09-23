@@ -19,7 +19,7 @@ include("connect_db.php");
                  <td>
                  <?php
                  if(empty($_GET{'action'})){
-                         echo "Herzlich Willkommen auf Gosseek. Registriere dich jetzt und beginne damit, deine eigene Story niederzuschreiben oder nutze die Erfahrungen anderer um deine eigenen &auml;hnlichen Ziele zu erreichen.";
+                         echo "Herzlich Willkommen Ã¤Ã¤Ã¤Ã¤Ã¤auf Gosseek. Registriere dich jetzt und beginne damit, deine eigene Story niederzuschreiben oder nutze die Erfahrungen anderer um deine eigenen &auml;hnlichen Ziele zu erreichen.";
                  }else{
                       switch ($_GET['action']) {
 
@@ -29,7 +29,7 @@ include("connect_db.php");
                           echo "<table border=\"1\" bgcolor=\"E5E5E5\" width=\"60%\" align=\"center\">";
                           echo "<tr><td>Vorname: <input name=\"name\" size=\"30\" maxlength=\"30\"> Nachname: <input name=\"surname\" size=\"30\" maxlength=\"30\"></td></tr>";
                           echo "<tr><td>E-Mail: <input name=\"email\" size=\"89\" maxlength=\"100\"></td></tr>";
-                          echo "<tr><td>Passwort: <input name=\"password\" size=\"30\" maxlength=\"30\"></td></tr>";
+                          echo "<tr><td>Passwort: <input name=\"password\" size=\"30\" maxlength=\"30\" type=\"password\"></td></tr>";
                           echo "<tr><td><center><input type=\"submit\" value=\"Anmelden\"></center></td></tr></form></table>";
                           break;
 
@@ -49,16 +49,16 @@ include("connect_db.php");
                                            echo "<center>Die angegebene Email-Adresse befindet sich bereits in unserer Datenbank.</center>";
                                    }else{
                                            $text = "Hallo ".$name." ".$surname.",
-vielen Dank f�r deine Anmeldung bei Gosseek.
+vielen Dank fÃ¼r deine Anmeldung bei Gosseek.
 Hier sind deine Anmeldedaten:
 E-Mail: ".$email."
 Passwort: ".$password."
 Um deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://127.0.0.1/mainpage.php?action=activate_account&code=".$activation_code."
-Mit freundlichen Gr�ssen
+Mit freundlichen GrÃ¼ssen
 Das Gosseek Team.";
                                            mail($email, 'Registrierung bei Gosseek', $text,"from:benno.staub@hotmail.com");
                                            mysqli_query($connection, "INSERT INTO users (email,status, password, name, surname, birthdate, timeaction) VALUES ('$email','registered','$password_encrypted', '$name', '$surname', '1994-10-03', '100000')");
-                                           echo "<center><br><br>Du erh&auml;lst in K�rze eine E-Mail.</center>";
+                                           echo "<center><br><br>Du erh&auml;lst in KÃ¼rze eine E-Mail.</center>";
 
                                    }
                           }
