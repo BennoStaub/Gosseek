@@ -1,4 +1,4 @@
 <?php
-$connection = mysqli_connect("localhost", "root");
-mysqli_select_db($connection,"gosseekdata");
+$mysql_connection = mysqli_connect("localhost", "root");
+mysqli_select_db($mysql_connection,"gosseekdata");
 ?>
