@@ -35,7 +35,7 @@ include("connect_db.php");
                           break;
 
 
-                          case 'registering':
+						  case 'registering':
                           if(empty($_POST['name']) OR empty($_POST['surname']) OR empty($_POST['email']) OR empty($_POST['password'])){
                                    echo "<center>Bitte alle Felder ausfüllen.</center>";
                           }else{
