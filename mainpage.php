@@ -16,25 +16,23 @@ include("connect_db.php");
                  <td align="center" colspan="3">Gosseek</td>
          </tr>
          <tr height="100%">
-                 <td width="10%" valign="top"><a href="mainpage.php?action=register">Registrieren</a></td>
+                 <td width="20%">
+					<?php
+					echo "<form action=\"mainpage.php?action=registering\" method=\"post\" accept-charset=\"utf-8\">";
+                    echo "<table border=\"1\" bgcolor=\"E5E5E5\" width=\"60%\" align=\"center\">";
+                    echo "<tr><td>Vorname: <input name=\"name\" size=\"30\" maxlength=\"30\"> Nachname: <input name=\"surname\" size=\"30\" maxlength=\"30\"></td></tr>";
+					echo "<tr><td>E-Mail: <input name=\"email\" size=\"30\" maxlength=\"100\" type=\"email\"></td></tr>";
+					echo "<tr><td>Passwort: <input name=\"password\" size=\"30\" maxlength=\"30\" type=\"password\"></td></tr>";
+					echo "<tr><td><center><input type=\"submit\" value=\"Anmelden\"></center></td></tr></form></table>";
+					?>
+   			     </td>
                  <td>
-                 <?php
-                 if(empty($_GET{'action'})){
+					<?php
+					if(empty($_GET{'action'})){
                          echo "Herzlich Willkommen auf Gosseek. Registriere dich jetzt und beginne damit, deine eigene Story niederzuschreiben oder nutze die Erfahrungen anderer um deine eigenen ähnlichen Ziele zu erreichen.";
-                 }else{
-                      switch ($_GET['action']) {
-
-
-                          case 'register':
-                          echo "<form action=\"mainpage.php?action=registering\" method=\"post\" accept-charset=\"utf-8\">";
-                          echo "<table border=\"1\" bgcolor=\"E5E5E5\" width=\"60%\" align=\"center\">";
-                          echo "<tr><td>Vorname: <input name=\"name\" size=\"30\" maxlength=\"30\"> Nachname: <input name=\"surname\" size=\"30\" maxlength=\"30\"></td></tr>";
-                          echo "<tr><td>E-Mail: <input name=\"email\" size=\"89\" maxlength=\"100\" type=\"email\"></td></tr>";
-                          echo "<tr><td>Passwort: <input name=\"password\" size=\"30\" maxlength=\"30\" type=\"password\"></td></tr>";
-                          echo "<tr><td><center><input type=\"submit\" value=\"Anmelden\"></center></td></tr></form></table>";
-                          break;
-
-
+					}else{
+						switch ($_GET['action']) {
+						  
 						  case 'registering':
                           if(empty($_POST['name']) OR empty($_POST['surname']) OR empty($_POST['email']) OR empty($_POST['password'])){
                                    echo "<center>Bitte alle Felder ausfüllen.</center>";
@@ -67,8 +65,8 @@ include("connect_db.php");
 							  echo "<center>Account erfolgreich aktiviert.</center>";
 						  }
 						  break;
-                      }
-                 }
+						}
+					}
                  ?>
                  </td>
 
