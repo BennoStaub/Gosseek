@@ -8,28 +8,25 @@ include("connect_db.php");
 <title>Gosseek - Achieve your goals</title>
 <meta name="author" content="Benno">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="styles/stylesheet.css" />
 </head>
-<body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
-
-<table style="width:100%" border="3" height="100%">
-         <tr align="center">
-                 <td align="center" colspan="3">Gosseek</td>
-         </tr>
-         <tr height="100%">
-                 <td width="20%">
-					<?php
-					echo "<form action=\"mainpage.php?action=registering\" method=\"post\" accept-charset=\"utf-8\">";
-                    echo "<table border=\"1\" bgcolor=\"E5E5E5\" width=\"60%\" align=\"center\">";
-                    echo "<tr><td>Vorname: <input name=\"name\" size=\"30\" maxlength=\"30\"> Nachname: <input name=\"surname\" size=\"30\" maxlength=\"30\"></td></tr>";
-					echo "<tr><td>E-Mail: <input name=\"email\" size=\"30\" maxlength=\"100\" type=\"email\"></td></tr>";
-					echo "<tr><td>Passwort: <input name=\"password\" size=\"30\" maxlength=\"30\" type=\"password\"></td></tr>";
-					echo "<tr><td><center><input type=\"submit\" value=\"Anmelden\"></center></td></tr></form></table>";
-					?>
-   			     </td>
-                 <td>
+<body>
+<div class="boxmain">
+<div class="boxright">
+<div class="rightinnerboxtop">
+aaaaa
+</div>
+<div class="rightinnerboxbottom">
+bbbbb
+</div>
+</div>
+<div class="boxtop">
+Hallo
+</div>
+<div class="boxfeed">
 					<?php
 					if(empty($_GET{'action'})){
-                         echo "Herzlich Willkommen auf Gosseek. Registriere dich jetzt und beginne damit, deine eigene Story niederzuschreiben oder nutze die Erfahrungen anderer um deine eigenen ähnlichen Ziele zu erreichen.";
+                         echo "<p>Herzlich Willkommen auf Gosseek. Registriere dich jetzt und beginne damit, deine eigene Story niederzuschreiben oder nutze die Erfahrungen anderer um deine eigenen ähnlichen Ziele zu erreichen.</p>";
 					}else{
 						switch ($_GET['action']) {
 						  
@@ -50,7 +47,7 @@ include("connect_db.php");
                                            $text = "Hallo ".$name." ".$surname.",\r\nvielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://127.0.0.1/mainpage.php?action=activate_account&code=".$activation_code."\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
                                            $header = 'From: benno.staub@hotmail.com' . "\r\n" .
 													 'Content-type: text/plain; charset=\"utf-8\"' . "\r\n";
-										   mail($email, 'Registrierung bei Gosseek', $text,$header);
+										   mail($email, 'Registrierung bei Gosseek', $text, $header);
                                            mysqli_query($mysql_connection, "INSERT INTO users (activation_code, email,status, password, name, surname, birthdate, timeaction) VALUES ('$activation_code','$email','registered','$password_encrypted', '$name', '$surname', '1994-10-03', '100000')");
                                            echo "<center><br><br>Du erhälst in Kürze eine E-Mail.</center>";
 
@@ -68,32 +65,22 @@ include("connect_db.php");
 						}
 					}
                  ?>
-                 </td>
+</div>
+<div class="boxleft">
 
 
+					<?php
+					echo "<div class=\"leftinnerboxtop\">Registriere dich hier: <br><br><form action=\"mainpage.php?action=registering\" method=\"post\" accept-charset=\"utf-8\">";
+                    echo "Vorname: <input name=\"name\" size=\"30\" maxlength=\"30\"> Nachname: <input name=\"surname\" size=\"30\" maxlength=\"30\">";
+					echo "E-Mail: <input name=\"email\" size=\"30\" maxlength=\"100\" type=\"email\">";
+					echo "Passwort: <input name=\"password\" size=\"30\" maxlength=\"30\" type=\"password\">";
+					echo "<center><input type=\"submit\" value=\"Anmelden\"></center></form></div>";
+					?>
+</div>
 
+</div>
+				 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                 <td width="10%" valign="top">Updates</td>
-         </tr>
-
-
-
-
-</table>
 
 
 
