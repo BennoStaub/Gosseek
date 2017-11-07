@@ -115,6 +115,10 @@
 										break;
 									}								
 								break;
+								
+								case 'invalidsession':
+								echo "Ungültige Sitzung.";
+								break;
 							}
 						}
 					?>

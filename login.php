@@ -1,11 +1,4 @@
-<?php
-	function redirect($url) {
-		ob_start();
-		header('Location: '.$url);
-		ob_end_flush();
-		die();
-	}
-	
+<?php	
 	header('Content-Type: text/html; charset=UTF-8');
 	ini_set ( "session.cookie_lifetime", "18000");
 	ini_set ( "session.gc_maxlifetime", "20000");
@@ -71,7 +64,7 @@
 									break;
 								}
 							}else{
-									echo "Ungültige Sitzung";
+									echo "<script> location.href='mainpage.php?action\=invalidsession'; </script>";
 							}
 						}
 					?>
