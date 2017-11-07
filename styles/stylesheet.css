@@ -26,16 +26,27 @@ body {
 	border-radius: 5px;
 	background: #a2a2a2;
 	color:#000000;
-	margin: 15px 10px 20px 10px;
+	margin: 0 auto;
+	margin-top: 7%;
+	}
+.rightinnerboxtop input {
+	float: right;
+	margin-right: 10px;
 	}
 
+.rightinnerboxtop a {
+	float: right;
+	margin-right: 10px;
+}
+	
 .rightinnerboxbottom {
 	width: 90%;
 	height: 65%;
 	border-radius: 5px;
 	background: #a2a2a2;
 	color: #000000;
-	margin: 0px 10px 5px 10px;
+	margin: 0 auto;
+	margin-top: 7%;
 	}
 	
 .boxtop {
