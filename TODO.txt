@@ -1,3 +1,14 @@
 -Special letters like äöü are not converted correctly when sending mail: only when you input such a letter in one field it will get sent correctly, if not: you get bad signs. Also, eventhough database is utf8mdb4-unicode or something, name etc gets saved with strange signs in it, nöd as äöü (does that matter, i.e. when writing down username or check for password?)  -> should not use own mail from php, use https://github.com/PHPMailer/PHPMailer instead (license?)
 
--alles englisch mache etz scho vo afang ah
+-alles englisch mache etz scho vo afang ah, immerhin englisch und dütsch
+-zersch corefunctions implementiere!
+-goal definiere (unterziel wie keipoints?)
+-bitrag poste
+-profil vo anderne ahluege
+-nochrichte anenad schriebe
+-amene goal/person folge
+-schedule erstelle
+-gruppe gründe
+-linkfarben dem layout anpassen
+-in datebank kollation vode spaltene isch utf8mb4_unicode_ci aber de typ TEXT isch nur 2 byte, klapped da?
+
