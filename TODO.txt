@@ -1,6 +1,9 @@
 -Special letters like äöü are not converted correctly when sending mail: only when you input such a letter in one field it will get sent correctly, if not: you get bad signs. Also, eventhough database is utf8mdb4-unicode or something, name etc gets saved with strange signs in it, nöd as äöü (does that matter, i.e. when writing down username or check for password?)  -> should not use own mail from php, use https://github.com/PHPMailer/PHPMailer instead (license?)
 
--alles englisch mache etz scho vo afang ah, immerhin englisch und dütsch
+
+-mainpage.php und login.php beides nomol duregoh weg oneliner html tags
+-allgemein style und layout, submitbuttons zb ali glich gross vorallem bi dütsch und englisch glich etc.
+-mysql_query bi WHERE id = $sdf bruchts kei ' ' etc alles ahpasse
 -zersch corefunctions implementiere!
 -goal definiere (unterziel wie keipoints?)
 -bitrag poste
@@ -12,3 +15,15 @@
 -linkfarben dem layout anpassen
 -in datebank kollation vode spaltene isch utf8mb4_unicode_ci aber de typ TEXT isch nur 2 byte, klapped da?
 
+
+
+
+
+
+Styleguide:
+-For each html tag a new line, except for oneliner like <label></label>, <input></input> <p></p>
+-Incident whenever cascaded html/php tags
+-If block is flexible, i.e. feed etc: language switch only gives output to be printed
+-If block is fixed, i.e. login/register form, language switch gives all values to be used so that afterwards complete block can be written in compact way
+-mysql_query: bi normale vairable: '$var' bi variable mit '': ".$_var['']." ohni ''
+-textoutput = $output_description, links = $link_description
