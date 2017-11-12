@@ -1,10 +1,8 @@
 -Special letters like äöü are not converted correctly when sending mail: only when you input such a letter in one field it will get sent correctly, if not: you get bad signs. Also, eventhough database is utf8mdb4-unicode or something, name etc gets saved with strange signs in it, nöd as äöü (does that matter, i.e. when writing down username or check for password?)  -> should not use own mail from php, use https://github.com/PHPMailer/PHPMailer instead (license?)
 
-
--mainpage.php und login.php beides nomol duregoh weg oneliner html tags
+-layout richtig mache: ali boxe richtig definiere ufenand ahpasse, dass flexible sind vode höchi dur scrolle und dass aber fix sind vode grösse und platz egal wafür inhalt!
 -allgemein style und layout, submitbuttons zb ali glich gross vorallem bi dütsch und englisch glich etc.
--mysql_query bi WHERE id = $sdf bruchts kei ' ' etc alles ahpasse
--zersch corefunctions implementiere!
+-profilesetting: profilbild ufelade
 -goal definiere (unterziel wie keipoints?)
 -bitrag poste
 -profil vo anderne ahluege
@@ -14,6 +12,7 @@
 -gruppe gründe
 -linkfarben dem layout anpassen
 -in datebank kollation vode spaltene isch utf8mb4_unicode_ci aber de typ TEXT isch nur 2 byte, klapped da?
+-alles in <?php ?> umschriebe? het nüme viel nur html code und zum teil scho unnötig viel <?php ?> nöch nochenand
 
 
 
@@ -21,9 +20,9 @@
 
 
 Styleguide:
--For each html tag a new line, except for oneliner like <label></label>, <input></input> <p></p>
+-For each html tag a new line, except for oneliner like <label></label>, <input></input> <p></p> aber sobald au oneliner zwei verschachtlet: de üsser eigeni linie!
 -Incident whenever cascaded html/php tags
 -If block is flexible, i.e. feed etc: language switch only gives output to be printed
 -If block is fixed, i.e. login/register form, language switch gives all values to be used so that afterwards complete block can be written in compact way
--mysql_query: bi normale vairable: '$var' bi variable mit '': ".$_var['']." ohni ''
--textoutput = $output_description, links = $link_description
+-mysql_query: bi textvariable '$var' oder '".$var."' bi numerische variable $var oder ".$var." ohni ''
+-normal text: textoutput = $output_description, special html tag like link, label etc: $link_description

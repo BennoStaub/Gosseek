@@ -45,16 +45,16 @@
 									$output_login = "Login:";
 									$output_email = "E-Mail:";
 									$output_password = "Passwort:";
-									$output_submit = "Einloggen";
-									$output_forgotpassword = "Passwort vergessen";
+									$input_submit = "Einloggen";
+									$link_forgotpassword = "Passwort vergessen";
 									break;
 									
 									case 'english':
 									$output_login = "Login:";
 									$output_email = "E-mail:";
 									$output_password = "Password:";
-									$output_submit = "Log in";
-									$output_forgotpassword = "Forgot password";
+									$input_submit = "Log in";
+									$link_forgotpassword = "Forgot password";
 									break;
 								}
 								echo $output_login;
@@ -63,29 +63,21 @@
 						<br>
 						<br>
 					</center>
-					<form action="login.php?action=login" method="post" >
-						<?php
-							echo $output_email;
-						?>
-						<input name="email" size="12" maxlength="40"></input>
-						<br>
-						<br>
-						<?php
-							echo $output_password;
-						?>
-						<input type="password" name="password" size="12"></input>
-						<br>
-						<br>
-						<?php
-							echo "<input type=\"submit\" value=\"".$output_submit."\"></input>";
-						?>
-					</form>
-					<br>
 					<?php
-						echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=forgotpassword\">";
-							echo $output_forgotpassword;
-						?>
-					</a>
+						echo "<form action=\"login.php?language=".$_GET['language']."&action=login\" method=\"post\" >";
+							echo $output_email;
+							echo "<input name=\"email\" size=\"12\" maxlength=\"40\"></input>";
+							echo "<br>";
+							echo "<br>";
+							echo $output_password;
+							echo "<input type=\"password\" name=\"password\" size=\"12\"></input>";
+							echo "<br>";
+							echo "<br>";
+							echo "<input type=\"submit\" value=\"".$input_submit."\"></input>";
+						echo "</form>";
+						echo "<br>";
+						echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=forgotpassword\">".$link_forgotpassword."</a>";
+					?>
 				</div>
 				<div class="rightinnerboxbottom">
 				</div>
@@ -95,9 +87,7 @@
 					<?php
 						echo "<a href=\"mainpage.php?language=german&action=welcome\">Ger</a>";
 						echo "<a href=\"mainpage.php?language=english&action=welcome\">En</a>";
-						echo "<p>";
-							echo $output_slogan;
-						echo "</p>";
+						echo "<p>".$output_slogan."</p>";
 					?>
 				</div>
 			</div>
@@ -197,21 +187,21 @@
 							{
 								case 'german':
 								$output = "Wenn du dein Passwort vergessen hast, gib bitte deine E-Mail ein. Wir schicken dir dann eine E-Mail mit deinem neuen Passwort.";
-								$output_form = "E-Mail:";
-								$submitbutton = "E-Mail versenden";
+								$output_label = "E-Mail:";
+								$input_submit = "E-Mail versenden";
 								break;
 								
 								case 'english':
 								$output = "If you have forgotten your password, please fill in your e-mail address. We will send you an e-mail with your new password.";
-								$output_form = "E-mail:";
-								$submitbutton = "Send e-mail";
+								$output_label = "E-mail:";
+								$input_submit = "Send e-mail";
 								break;
 							}
 							echo $output;
 							echo "<form action=\"mainpage.php?language=".$_GET['language']."&action=sendnewpassword\" method=\"post\">";
-							echo $output_form;
+							echo $output_label;
 							echo "<input name=\"email\" size=\"18\"></input>";
-							echo "<input type=\"submit\" value=\"".$submitbutton."\"></input>";
+							echo "<input type=\"submit\" value=\"".$input_submit."\"></input>";
 							echo "</form>";
 							break;
 							
@@ -335,7 +325,7 @@
 								$output_surname = "Nachname: ";
 								$output_email = "E-Mail: ";
 								$output_password = "Passwort: ";
-								$output_submit = "Registrieren";
+								$input_submit = "Registrieren";
 								break;
 								
 								case 'english':
@@ -344,7 +334,7 @@
 								$output_surname = "Surname: ";
 								$output_email = "E-mail: ";
 								$output_password = "Password: ";
-								$output_submit = "Register";
+								$input_submit = "Register";
 								break;
 							}
 							echo "<form action=\"mainpage.php?language=".$_GET['language']."&action=registering\" method=\"post\" accept-charset=\"utf-8\">";
@@ -368,7 +358,7 @@
 								echo "<input name=\"password\" size=\"30\" maxlength=\"30\" type=\"password\"></input>";
 								echo "<br>";
 								echo "<center>";
-									echo "<input type=\"submit\" value=\"".$output_submit."\">";
+									echo "<input type=\"submit\" value=\"".$input_submit."\">";
 								echo "</center>";
 							echo "</form>";
 						?>
