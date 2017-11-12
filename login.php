@@ -151,10 +151,10 @@
 									while($feeddata = mysqli_fetch_array($feed_query))
 									{
 										echo "<div class=\"feedpost\">";
-											echo "<div class=\"feedtime\">";
-												echo date("d.m.Y - H:i", $feeddata['time']);
-											echo "</div>";
 											echo "<div class=\"feedtitle\">";
+												echo "<div class=\"feedtime\">";
+													echo date("d.m.Y - H:i", $feeddata['time']);
+												echo "</div>";
 												echo $feeddata['title'];
 											echo "</div>";
 											echo "<div class=\"feedcontent\">";
