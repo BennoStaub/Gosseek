@@ -150,11 +150,16 @@
 									$feed_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE ".$query_condition." ORDER BY time DESC");
 									while($feeddata = mysqli_fetch_array($feed_query))
 									{
+										$feeduser_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$feeddata['userid']." LIMIT 1");
+										$feeduserdata = mysqli_fetch_array($feeduser_query);
 										echo "<div class=\"feedpost\">";
-											echo "<div class=\"feedtitle\">";
+											echo "<div class=\"feedheader\">";
 												echo "<div class=\"feedtime\">";
 													echo date("d.m.Y - H:i", $feeddata['time']);
 												echo "</div>";
+												echo $feeduserdata['name']." ".$feeduserdata['surname'];
+											echo "</div>";
+											echo "<div class=\"feedtitle\">";
 												echo $feeddata['title'];
 											echo "</div>";
 											echo "<div class=\"feedcontent\">";

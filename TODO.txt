@@ -3,6 +3,8 @@
 -layout richtig mache: ali boxe richtig definiere ufenand ahpasse, dass flexible sind vode höchi dur scrolle und dass aber fix sind vode grösse und platz egal wafür inhalt!
 -allgemein style und layout, submitbuttons zb ali glich gross vorallem bi dütsch und englisch glich etc.
 -profilesetting: profilbild ufelade
+-feed de name vom poster als link zu sim profil
+-link zum feed (bis etz zeigts feed nur ah wenni language switche)
 -goal definiere (unterziel wie keipoints?)
 -bitrag poste
 -profil vo anderne ahluege
@@ -10,6 +12,7 @@
 -amene goal/person folge
 -schedule erstelle
 -gruppe gründe
+-im boxfeed het de inhalt en grosse abstand (2-3cm) zum obere rand, fix da
 -linkfarben dem layout anpassen
 -in datebank kollation vode spaltene isch utf8mb4_unicode_ci aber de typ TEXT isch nur 2 byte, klapped da?
 -alles in <?php ?> umschriebe? het nüme viel nur html code und zum teil scho unnötig viel <?php ?> nöch nochenand

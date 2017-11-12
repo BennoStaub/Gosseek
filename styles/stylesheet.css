@@ -34,7 +34,8 @@ p { padding: 10px; }
 .boxfeed .clear {clear: both;}
 
 .feedpost { width: 95%; border-radius: 5px; margin: auto; background: #7e7e7e; padding: 5px; }
-.feedtime { font-weight: normal; width: 18%; background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; margin-left: 0px; padding-left: 10px; padding-right: 10px; float: right }
+.feedheader { background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
+.feedtime { width: 18%; background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; margin-left: 0px; padding-left: 10px; padding-right: 10px; float: right }
 .feedtitle { font-weight: bold; background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
 .feedcontent { background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; padding-top: 5px; }
 	
