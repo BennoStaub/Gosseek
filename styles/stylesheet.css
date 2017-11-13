@@ -10,10 +10,11 @@ p { padding: 10px; }
 .rightinnerboxtop a { float: right; margin-right: 10px; }
 .rightinnerboxtoplinks { margin-left: 70px; height: 100%; }
 .rightinnerboxtoplinks a { float: left; }
-.profilepic { border-width: thin; border-style: dotted; float: left; margin: 3px; background: #333333; width: 48px; height: 64px; }
+.profilepic { float: left; margin: 3px; width: 48px; height: 64px; }
+.profilepic img { border-radius: 5px; }
 	
 .rightinnerboxbottom { width: 90%; height: 65%; border-radius: 5px; background: #a2a2a2; color: #000000; margin: 0 auto; margin-top: 5%; padding-top: 5%; }
-.rightinnerboxbottom a { margin-left: 5px; }
+.rightinnerboxbottom a { margin-left: 5px; margin-bottom: 5px; width: 80%; float: left; }
 	
 .boxtop { float: right; width: 80%; height: 5%; border-radius: 5px; margin: 5px; background: #7e7e7e; color: #000000; display: flex; align-items: center; }
 	
@@ -30,7 +31,7 @@ p { padding: 10px; }
 .boxfeed form { width: 80% ; margin: 0 auto; }	
 .boxfeed label { float: left; width: 200px;}
 .boxfeed select { margin-left: 144px; width: 60px; }
-.boxfeed p input { width: 150px; margin-left: 245px; }
+.boxfeed p input { width: 200px; margin-left: 195px; }
 .boxfeed .clear {clear: both;}
 
 .feedpost { width: 95%; border-radius: 5px; margin: auto; background: #7e7e7e; padding: 5px; }
@@ -38,4 +39,7 @@ p { padding: 10px; }
 .feedtime { width: 18%; background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; margin-left: 0px; padding-left: 10px; padding-right: 10px; float: right }
 .feedtitle { font-weight: bold; background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
 .feedcontent { background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; padding-top: 5px; }
+
+.profile { width: 95% height: 70%; border-radius: 5px; margin: auto; backround: #7e7e7e; padding: 5px; border-style: dotted; }
+.profile img { width: 180px height: 320px; float: right; }
 	

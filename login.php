@@ -87,7 +87,9 @@
 			<div class="boxright">
 				<div class="rightinnerboxtop">
 					<div class="profilepic">
-					
+					<?php
+						echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"48\" height=\"64\">";
+					?>
 					</div>
 					<div class="rightinnerboxtoplinks">
 					<?php
@@ -102,13 +104,16 @@
 							{
 								case 'german':
 								$link_createpost = "Beitrag erstellen";
+								$link_feed = "Feed";
 								break;
 								
 								case 'english':
 								$link_createpost = "Create a post";
+								$link_feed = "Feed";
 								break;
 							}
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=createpost\">".$link_createpost."</a>";
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=feed\">".$link_feed."</a>";
 					?>
 				</div>
 			</div>
@@ -150,14 +155,14 @@
 									$feed_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE ".$query_condition." ORDER BY time DESC");
 									while($feeddata = mysqli_fetch_array($feed_query))
 									{
-										$feeduser_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$feeddata['userid']." LIMIT 1");
+										$feeduser_query = mysqli_query($mysql_connection, "SELECT id, name, surname FROM users WHERE id=".$feeddata['userid']." LIMIT 1");
 										$feeduserdata = mysqli_fetch_array($feeduser_query);
 										echo "<div class=\"feedpost\">";
 											echo "<div class=\"feedheader\">";
 												echo "<div class=\"feedtime\">";
 													echo date("d.m.Y - H:i", $feeddata['time']);
 												echo "</div>";
-												echo $feeduserdata['name']." ".$feeduserdata['surname'];
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=profile&userid=".$feeduserdata['id']."\">".$feeduserdata['name']." ".$feeduserdata['surname']."</a>";
 											echo "</div>";
 											echo "<div class=\"feedtitle\">";
 												echo $feeddata['title'];
@@ -189,7 +194,9 @@
 									$label_birthyear = "Geburtsjahr";
 									$label_residence = "Wohnort";
 									$label_job = "Beruf";
-									$input_submit = "Profil ändern";
+									$label_uploadpicture = "Profilbild ändern";
+									$input_submit_change = "Profil ändern";
+									$input_submit_upload = "Neues Profilbild hochladen";
 									break;
 									
 									case 'english':
@@ -200,7 +207,9 @@
 									$label_birthyear = "Year of birth";
 									$label_residence = "Residence";
 									$label_job = "Job";
-									$input_submit = "Change profile";
+									$label_uploadpicture = "Change profile picture";
+									$input_submit_change = "Change profile";
+									$input_submit_upload = "Upload new profile picture";
 									break;
 								}
 								echo "<form action=\"login.php?action=changeprofilesettings\" method=\"post\">";
@@ -260,7 +269,15 @@
 									echo "<input name=\"job\" size=\"30\" placeholder=\"".$userdata['job']."\"></input>";
 									echo "<div class=\"clear\"></div>";
 									echo "<p>";
-										echo "<input type=\"submit\" value=\"".$input_submit."\"></input>";
+										echo "<input type=\"submit\" value=\"".$input_submit_change."\"></input>";
+									echo "</p>";
+								echo "</form>";
+								echo "<br><br>";
+								echo "<form action=\"login.php?language=".$_GET['language']."&action=uploadprofilepicture\" method=\"post\" enctype=\"multipart/form-data\">";
+									echo "<label>".$label_uploadpicture."</label>";
+									echo "<input type=\"file\" name=\"profilepicture\">";
+									echo "<p>";
+										echo "<input type=\"submit\" value=\"".$input_submit_upload."\" name=\"submit\">";
 									echo "</p>";
 								echo "</form>";
 								break;
@@ -300,6 +317,105 @@
 								SET name='".$userdata['name']."', surname='".$userdata['surname']."', birthdate='$birthdate', residence='".$userdata['residence']."', job='".$userdata['job']."'
 								WHERE id = ".$_SESSION['id']);
 								echo $output;
+								break;
+								
+								case 'uploadprofilepicture':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$output_noimage = "Die ausgewählte Datei ist kein Bild.";
+									$output_toobig = "Die ausgewählte Datei ist zu gross.";
+									$output_wrongformat = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
+									$output_success = "Die Datei ". basename( $_FILES['profilepicture']['name']) ."wurde hochgeladen.";
+									$output_nofile = "Keine Datei ausgewählt.";
+									break;
+									
+									case 'english':
+									$output_noimage = "The chosen file is not an image.";
+									$output_toobig = "The chosen file is too big";
+									$output_wrongformat = "Only JPG, JPEG and PNG files are allowed.";
+									$output_success = "The file ". basename( $_FILES['profilepicture']['name']). " has been uploaded.";
+									$output_nofile = "No file chosen.";
+									break;
+								}
+								$target_dir = "uploads/profilepictures/";
+								$target_file = $target_dir . basename($_FILES["profilepicture"]["name"]);
+								$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+								$uploadOk = 1;
+								// check if file has been chosen
+								if(empty($_FILES['profilepicture']['tmp_name']))
+								{
+										echo $output_nofile;
+										break;
+								}
+								// Check if image file is an actual image or fake image
+								$check = getimagesize($_FILES['profilepicture']['tmp_name']);
+								if($check == false) 
+								{
+									echo $output_noimage;
+									break;
+								}
+								// Check file size
+								if ($_FILES['profilepicture']['size'] > 500000)
+								{
+									echo $output_toobig;
+									break;
+								}
+								// Allow certain file formats
+								if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg")
+								{
+									echo $output_wrongformat;
+									break;
+								}
+								// Check if $uploadOk is set to 0 by an error
+								if ($uploadOk == 1) 
+								{
+									if (move_uploaded_file($_FILES['profilepicture']['tmp_name'], $target_dir.$userdata['id'].".".$imageFileType))
+									{
+										mysqli_query($mysql_connection, "UPDATE users SET profilepictureformat = '.".$imageFileType."' WHERE id = ".$userdata['id']);
+										echo $output_success;
+									}
+								}
+								break;
+								
+								case 'profile':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$output_nouser = "Dieses Profil existiert nicht.";
+									$output_name = "Name:";
+									$output_birthdate = "Geburtsdatum:";
+									$output_residence = "Wohnort:";
+									$output_job = "Beruf:";
+									break;
+									
+									case 'english':
+									$output_nouser = "Profile not found.";
+									$output_name = "Name:";
+									$output_birthdate = "Birthdate:";
+									$output_residence = "Residence:";
+									$output_job = "Job:";
+									break;
+								}
+								$userid = mysqli_real_escape_string($mysql_connection, $_GET['userid']);
+								$profile_query = mysqli_query($mysql_connection, "SELECT * FROM users WHERE id=".$userid." LIMIT 1");
+								if($profile_query)
+								{
+									$profile = mysqli_fetch_array($profile_query);
+									$birthday = mb_substr($profile['birthdate'], 5, 2);
+									$birthmonth = mb_substr($profile['birthdate'], 8, 2);
+									$birthyear = mb_substr($profile['birthdate'], 0, 4);
+									echo "<div class=\"profile\">";
+										echo "<img></img>";
+										echo $output_name." ".$profile['name']." ".$profile['surname'];
+										echo "<br>";
+										echo $output_birthdate." ".$birthday.".".$birthmonth.".".$birthyear;
+										echo "<br>";
+									
+									echo "</div>";
+								}else{
+									echo $output_nouser;
+								}
 								break;
 								
 								case 'createpost':

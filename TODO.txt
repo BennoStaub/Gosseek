@@ -1,12 +1,14 @@
 -Special letters like äöü are not converted correctly when sending mail: only when you input such a letter in one field it will get sent correctly, if not: you get bad signs. Also, eventhough database is utf8mdb4-unicode or something, name etc gets saved with strange signs in it, nöd as äöü (does that matter, i.e. when writing down username or check for password?)  -> should not use own mail from php, use https://github.com/PHPMailer/PHPMailer instead (license?)
 
 -layout richtig mache: ali boxe richtig definiere ufenand ahpasse, dass flexible sind vode höchi dur scrolle und dass aber fix sind vode grösse und platz egal wafür inhalt!
--allgemein style und layout, submitbuttons zb ali glich gross vorallem bi dütsch und englisch glich etc.
--profilesetting: profilbild ufelade
--feed de name vom poster als link zu sim profil
+-allgemein layout, submitbuttons zb ali glich gross vorallem bi dütsch und englisch glich etc.
+-profilesetting: profilbild ufelade. 
+	-check ob kei bild usgwählt zumene fehler führt oder ob no empty() abfrog ihbaue muesch
+	-find use wa d dateigrössi gnau isch und schrieb da id fehlermeldig dass maximalgrössi so und so isch.
+-change dasmer goals folgt, nöd lüt. mit link im feed zum goal mit beschriebig, wer dases postet etc.
+-ihbaue dasmer froge zu posts cha stelle und kommentiere.
 -link zum feed (bis etz zeigts feed nur ah wenni language switche)
 -goal definiere (unterziel wie keipoints?)
--bitrag poste
 -profil vo anderne ahluege
 -nochrichte anenad schriebe
 -amene goal/person folge
