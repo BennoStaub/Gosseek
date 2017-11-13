@@ -88,7 +88,9 @@
 				<div class="rightinnerboxtop">
 					<div class="profilepic">
 					<?php
-						echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"48\" height=\"64\">";
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=profile&userid=".$userdata['id']."\">";
+							echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"48\" height=\"64\">";
+						echo "</a>";
 					?>
 					</div>
 					<div class="rightinnerboxtoplinks">

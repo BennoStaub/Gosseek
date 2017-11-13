@@ -76,7 +76,9 @@
 							echo "<input type=\"submit\" value=\"".$input_submit."\"></input>";
 						echo "</form>";
 						echo "<br>";
-						echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=forgotpassword\">".$link_forgotpassword."</a>";
+						echo "<p>";
+							echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=forgotpassword\">".$link_forgotpassword."</a>";
+						echo "</p>";
 					?>
 				</div>
 				<div class="rightinnerboxbottom">
