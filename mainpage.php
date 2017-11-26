@@ -46,7 +46,7 @@
 									$output_email = "E-Mail:";
 									$output_password = "Passwort:";
 									$input_submit = "Einloggen";
-									$link_forgotpassword = "Passwort vergessen";
+									$a_forgotpassword = "Passwort vergessen";
 									break;
 									
 									case 'english':
@@ -54,7 +54,7 @@
 									$output_email = "E-mail:";
 									$output_password = "Password:";
 									$input_submit = "Log in";
-									$link_forgotpassword = "Forgot password";
+									$a_forgotpassword = "Forgot password";
 									break;
 								}
 								echo $output_login;
@@ -64,7 +64,7 @@
 						<br>
 					</center>
 					<?php
-						echo "<form action=\"login.php?language=".$_GET['language']."&action=login\" method=\"post\" >";
+						echo "<form action=\"login.php?language=".$_GET['language']."&action=login\" method=\"post\" accept-charset=\"utf-8\" >";
 							echo $output_email;
 							echo "<input name=\"email\" size=\"12\" maxlength=\"40\"></input>";
 							echo "<br>";
@@ -77,7 +77,7 @@
 						echo "</form>";
 						echo "<br>";
 						echo "<p>";
-							echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=forgotpassword\">".$link_forgotpassword."</a>";
+							echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=forgotpassword\">".$a_forgotpassword."</a>";
 						echo "</p>";
 					?>
 				</div>
@@ -200,7 +200,7 @@
 								break;
 							}
 							echo $output;
-							echo "<form action=\"mainpage.php?language=".$_GET['language']."&action=sendnewpassword\" method=\"post\">";
+							echo "<form action=\"mainpage.php?language=".$_GET['language']."&action=sendnewpassword\" method=\"post\" accept-charset=\"utf-8\">";
 							echo $output_label;
 							echo "<input name=\"email\" size=\"18\"></input>";
 							echo "<input type=\"submit\" value=\"".$input_submit."\"></input>";

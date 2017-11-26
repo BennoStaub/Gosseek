@@ -9,7 +9,7 @@ p { padding: 10px; }
 .rightinnerboxtop input { float: right; }
 .rightinnerboxtop p a { float: right; margin-right: 10px;}
 .rightinnerboxtoplinks { margin-left: 5px; margin-top: 5px; height: 92%; }
-.rightinnerboxtoplinks a { float: left; }
+.rightinnerboxtop .rightinnerboxtoplinks a { width: 60%; float: left; }
 .profilepic { float: right; margin: 3px; width: 48px; height: 64px; }
 .profilepic img { border-radius: 5px; }
 	
@@ -27,10 +27,10 @@ p { padding: 10px; }
 .leftinnerbox { width: 90%; height: 96%; border-radius: 5px; background: #a2a2a2; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left;}
 .leftinnerbox form { margin-left: 5px; }
 	
-.boxfeed { float: right; width: 59%; height: 91%; border-radius: 5px; margin: 5px; padding: 5px; background: #bebebe; color: #000000; overflow:auto; }
+.boxfeed { float: right; width: 59%; height: 87.5%; border-radius: 5px; margin: 5px; padding: 5px; padding-top: 25px; background: #bebebe; color: #000000; overflow:auto; }
 .boxfeed form { width: 80% ; margin: 0 auto; }	
-.boxfeed label { float: left; width: 200px;}
-.boxfeed select { margin-left: 144px; width: 60px; }
+.boxfeed label { float: left; width: 318px; }
+.boxfeed span select { margin-left: 144px; width: 60px; }
 .boxfeed p input { width: 200px; margin-left: 195px; }
 .boxfeed .clear {clear: both;}
 
@@ -40,6 +40,8 @@ p { padding: 10px; }
 .feedtitle { font-weight: bold; background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
 .feedcontent { background: #a2a2a2; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; padding-top: 5px; }
 
-.profile { width: 95% height: 70%; border-radius: 5px; margin: auto; backround: #7e7e7e; padding: 5px; border-style: dotted; }
-.profile img { width: 180px height: 320px; float: right; }
+.profile { width: 95% height: 70%; border-radius: 5px; margin: auto; backround: #7e7e7e; padding: 5px; }
+.profile img { float: right; margin-right: 50px; }
+.profile h { display: block; width: 90%; margin-left: 20px; }
+.profile p { display: inline-block; width: 25%; margin: 0 0; padding: 2px; }
 	
