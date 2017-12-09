@@ -1,2 +1,4 @@
 #ignore mysql username and password
 connect_db.php
+/uploads/*
+TODO.txt
