@@ -1,0 +1,2 @@
+#ignore mysql username and password
+connect_db.php
