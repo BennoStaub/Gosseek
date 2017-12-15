@@ -1,5 +1,6 @@
 <?php
 	header('Content-Type: text/html; charset=UTF-8');
+	include("version.php");
 	include("connect_db.php");
 	if(empty($_GET{'action'}))
 	{
@@ -231,7 +232,7 @@
 									{
 										case 'german':
 										$text = "Hallo ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nDu hast dein Passwort vergessen, daher schicken wir dir mit dieser E-Mail dein neues Passwort.\r\nDein neues Passwort lautet: ".$new_password."\r\nDu solltest dein Passwort nach dem ersten Login ändern, nicht dass du es wieder vergisst.\r\n\r\nMit freundlichen Grüssen,\r\nDas Gosseek-Team";
-										$subejct = "Neues Passwort bei Gosseek";
+										$subject = "Neues Passwort bei Gosseek";
 										break;
 										
 										case 'english':
@@ -239,7 +240,8 @@
 										$subject = "New password for Gosseek";
 										break;
 									}
-									$header = 'From: benno.staub@hotmail.com' . "\r\n" . 'Content-type: text/plain; charset=\"utf-8\"' . "\r\n";
+									$header = "From: benno.staub@hotmail.com" . "\r\n" .
+											 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
 									mail($email, $subject, $text, $header);
 									mysqli_query($mysql_connection, "UPDATE users SET password = '$new_password_encrypted' WHERE id = ".$userdata['id']);
 									echo $output_done;

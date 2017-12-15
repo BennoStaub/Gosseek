@@ -3,6 +3,7 @@
 	ini_set ( "session.cookie_lifetime", "18000");
 	ini_set ( "session.gc_maxlifetime", "20000");
 	session_start();
+	include("version.php");
 	include("connect_db.php");
 	if(empty($_GET{'action'}))
 	{
@@ -89,7 +90,12 @@
 					<div class="profilepic">
 					<?php
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=profile&userid=".$userdata['id']."\">";
-							echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"48\" height=\"64\"></img>";
+							if(file_exists("uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat'].""))
+							{
+								echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"48\" height=\"64\"></img>";
+							}else{
+								echo "<img src=\"uploads/profilepictures/no_picture.png\" width=\"48\" height=\"64\"></img>";	
+							}
 						echo "</a>";
 					?>
 					</div>
@@ -421,7 +427,12 @@
 									$birthmonth = mb_substr($profile['birthdate'], 8, 2);
 									$birthyear = mb_substr($profile['birthdate'], 0, 4);
 									echo "<div class=\"profile\">";
-										echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"180\" height=\"240\"></img>";
+										if(file_exists("uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat'].""))
+										{
+											echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"180\" height=\"240\"></img>";
+										}else{
+											echo "<img src=\"uploads/profilepictures/no_picture.png\" width=\"180\" height=\"240\"></img>";	
+										}
 										echo "<h><p>".$output_name."</p><p>".$profile['name']." ".$profile['surname']."</p></h>";
 										echo "<h><p>".$output_birthdate."</p><p>".$birthday.".".$birthmonth.".".$birthyear."</p></h>";
 										echo "<h><p>".$output_job."</p><p>".$profile['job']."</p></h>";
@@ -492,7 +503,6 @@
 									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
 									$goalid = mysqli_real_escape_string($mysql_connection, $_POST['goalid']);
-									echo $_POST['goalid'];
 									mysqli_query($mysql_connection, "INSERT INTO posts (userid, goalid, time, title, content) VALUES ('".$userdata['id']."', '".$goalid."', '".time()."','$title','$content')");
 									echo $output_success;
 								}
@@ -502,7 +512,7 @@
 								switch($_GET['language'])
 								{
 										case 'german':
-										$label_title = "Title";
+										$label_title = "Titel";
 										$label_section = "Rubrik";
 										$label_description = "Beschreibung";
 										$option_study = "Studium";
