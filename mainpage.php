@@ -31,6 +31,7 @@
 		<meta name="author" content="Benno Staub">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="stylesheet" type="text/css" href="styles/stylesheet.css" />
+		<meta http-equiv="cache-control" content="no-cache" />
 	</head>
 	<body>
 		<div class="boxmain">
@@ -88,8 +89,8 @@
 			<div class="boxtop">
 				<div class="boxtopinner">
 					<?php
-						echo "<a href=\"mainpage.php?language=german&action=welcome\">Ger</a>";
-						echo "<a href=\"mainpage.php?language=english&action=welcome\">En</a>";
+						echo "<a href=\"mainpage.php?language=german&action=welcome\">DE</a>";
+						echo "<a href=\"mainpage.php?language=english&action=welcome\">EN</a>";
 						echo "<p>".$output_slogan."</p>";
 					?>
 				</div>

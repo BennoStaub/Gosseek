@@ -62,12 +62,14 @@
 		$output_slogan = "Gosseek - Achieve your goals";
 		$a_logout = "Ausloggen";
 		$a_profilesettings = "Profil bearbeiten";
+		$a_settings = "Einstellungen";
 		break;
 		
 		case 'english':
 		$output_slogan = "Gosseek - Achieve your goals";
 		$a_logout = "Log out";
 		$a_profilesettings = "Change profile";
+		$a_settings = "Settings";
 		break;
 	}
 ?>
@@ -81,7 +83,8 @@
 		</title>
 		<meta name="author" content="Benno">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="stylesheet" type="text/css" href="styles/stylesheet.css" />
+		<link rel="stylesheet" type="text/css" href="styles/stylesheet.php" />
+		<meta http-equiv="cache-control" content="no-cache" />
 	</head>
 	<body>
 		<div class="boxmain">
@@ -103,6 +106,7 @@
 					<?php
 						echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=logout\">".$a_logout."</a>";
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=profilesettings\">".$a_profilesettings."</a>";
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=settings\">".$a_settings."</a>";
 					?>
 					</div>
 				</div>
@@ -131,8 +135,8 @@
 			<div class="boxtop">
 				<div class="boxtopinner">
 					<?php
-						echo "<a href=\"login.php?language=german&action=feed\">Ger</a>";
-						echo "<a href=\"login.php?language=english&action=feed\">En</a>";
+						echo "<a href=\"login.php?language=german&action=feed\">DE</a>";
+						echo "<a href=\"login.php?language=english&action=feed\">EN</a>";
 						echo "<p>".$output_slogan."</p>";
 					?>
 				</div>
@@ -305,7 +309,7 @@
 									break;
 									
 									case 'english':
-									$output = "Profile changed.";
+									$output = "Profile has been changed.";
 									break;
 								}
 								if(!(empty($_POST['name'])))
@@ -395,6 +399,91 @@
 										echo $output_success;
 									}
 								}
+								break;
+								
+								case 'settings':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$label_color_background = "Hintergrundfarbe";
+									$label_color_frame = "Randfarbe";
+									$label_color_box = "Boxfarbe";
+									$input_submit_change = "Einstellungen ändern";
+									$output_colors = "Farben:";
+									break;
+									
+									case 'english':
+									$label_color_background = "Background color";
+									$label_color_frame = "Frame color";
+									$label_color_box = "Box color";
+									$input_submit_change = "Change settings";
+									$output_colors = "Colors:";
+									break;
+								}
+								$colors = array( "#FFFFFF"=>array("english"=>"White", "german"=>"Weiss"),"#f3f3f3"=>array("english"=>"Very Light Gray", "german"=>"Sehr Helles Grau"), "#e3e3e3"=>array("english"=>"Light Light Gray", "german"=>"Helles Hellgrau"),"#C0C0C0"=>array("english"=>"Light Gray", "german"=>"Hellgrau"),"#808080"=>array("english"=>"Gray", "german"=>"Grau"), "#333333"=>array("english"=>"Dark Gray", "german"=>"Dunkelgrau"), "#000000"=>array("english"=>"Black", "german"=>"Schwarz"), "#00BFFF"=>array("english"=>"Light Blue", "german"=>"Hellblau"),"#0000FF"=>array("english"=>"Blue", "german"=>"Blau"), "#000046"=>array("english"=>"Dark Blue", "german"=>"Dunkelblau"), "#e066FF"=>array("english"=>"Light Purple", "german"=>"Hellviolett"),"#BF00BF"=>array("english"=>"Purple", "german"=>"Violett"), "#5a005a"=>array("english"=>"Dark Purple", "german"=>"Dunkelviolett"), "#FF4d33"=>array("english"=>"Light Red", "german"=>"Hellrot"),"#FF0000"=>array("english"=>"Red", "german"=>"Rot"),"#9e0000"=>array("english"=>"Dark Red", "german"=>"Dunkelrot"),"#00FF00"=>array("english"=>"Light Green", "german"=>"Hellgrün"),"#008000"=>array("english"=>"Green", "german"=>"Grün"), "#002d00"=>array("english"=>"Dark Green", "german"=>"Dunkelgrün"));
+								echo "<form action=\"login.php?action=changesettings\" method=\"post\" accept-charset=\"utf-8\">";
+									echo "<label>".$label_color_background."</label>";
+									echo "<select name=\"color_background\" size=\"1\">";
+										foreach($colors as $value=>$name)
+										{
+											if($value == $userdata['color_background'])
+											{
+												echo "<option value=\"".$value."\" selected=\"selected\">".$name[$_GET['language']]."</option>";
+											}else
+											{
+												echo "<option value=\"".$value."\">".$name[$_GET['language']]."</option>";
+											}
+										}
+									echo "</select>";
+									echo "<div class=\"clear\"></div>";
+									echo "<label>".$label_color_frame."</label>";
+									echo "<select name=\"color_frame\" size=\"1\">";
+										foreach($colors as $value=>$name)
+										{
+											if($value == $userdata['color_frame'])
+											{
+												echo "<option value=\"".$value."\" selected=\"selected\">".$name[$_GET['language']]."</option>";
+											}else
+											{
+												echo "<option value=\"".$value."\">".$name[$_GET['language']]."</option>";
+											}
+										}
+									echo "</select>";
+									echo "<div class=\"clear\"></div>";
+									echo "<label>".$label_color_box."</label>";
+									echo "<select name=\"color_box\" size=\"1\">";
+										foreach($colors as $value=>$name)
+										{
+											if($value == $userdata['color_box'])
+											{
+												echo "<option value=\"".$value."\" selected=\"selected\">".$name[$_GET['language']]."</option>";
+											}else
+											{
+												echo "<option value=\"".$value."\">".$name[$_GET['language']]."</option>";
+											}
+										}
+									echo "</select>";
+									echo "<div class=\"clear\"></div>";
+									echo "<p>";
+										echo "<input type=\"submit\" value=\"".$input_submit_change."\"></input>";
+									echo "</p>";
+								echo "</form>";
+								echo $output_colors;
+								echo "<table>";
+								foreach($colors as $value=>$name)
+								{
+									echo "<tr><td>".$name[$_GET['language']]."</td><td bgcolor=\"".$value."\" width=\"50\">    </td></tr>";
+								}
+								echo "</table>";
+								break;
+								
+								case 'changesettings':
+								$color_background = mysqli_real_escape_string($mysql_connection, $_POST['color_background']);
+								$color_frame = mysqli_real_escape_string($mysql_connection, $_POST['color_frame']);
+								$color_box = mysqli_real_escape_string($mysql_connection, $_POST['color_box']);
+								mysqli_query($mysql_connection, "UPDATE users
+								SET color_background='$color_background', color_frame='$color_frame', color_box='$color_box' WHERE id = ".$_SESSION['id']);
+								echo "<script> location.href='login.php?language=".$_GET['language']."&action\=settings'; </script>";
 								break;
 								
 								case 'profile':
