@@ -408,7 +408,9 @@
 									$label_color_background = "Hintergrundfarbe";
 									$label_color_frame = "Randfarbe";
 									$label_color_box = "Boxfarbe";
+									$label_newpassword = "Neues Passwort";
 									$input_submit_change = "Einstellungen ändern";
+									$input_submit_newpassword = "Passwort ändern";
 									$output_colors = "Farben:";
 									break;
 									
@@ -416,7 +418,9 @@
 									$label_color_background = "Background color";
 									$label_color_frame = "Frame color";
 									$label_color_box = "Box color";
+									$label_newpassword = "New password";
 									$input_submit_change = "Change settings";
+									$input_submit_newpassword = "Change password";
 									$output_colors = "Colors:";
 									break;
 								}
@@ -481,6 +485,13 @@
 									$color_iter = $color_iter + 1;
 								}
 								echo "</tr></table>";
+								echo "<br><br><br>";
+								echo "<form action=\"login.php?action=changepassword\" method=\"post\" accept-charset=\"utf-8\">";
+								echo "<label>".$label_newpassword."</label>";
+								echo "<input name=\"newpassword\" type=\"password\" size=\"30\"></input>";
+								echo "<p>";
+									echo "<input type=\"submit\" value=\"".$input_submit_newpassword."\"></input>";
+								echo "</p>";
 								break;
 								
 								case 'changesettings':
@@ -490,6 +501,23 @@
 								mysqli_query($mysql_connection, "UPDATE users
 								SET color_background='$color_background', color_frame='$color_frame', color_box='$color_box' WHERE id = ".$_SESSION['id']);
 								echo "<script> location.href='login.php?language=".$_GET['language']."&action\=settings'; </script>";
+								break;
+								
+								case 'changepassword':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$output = "Passwort wurde geändert.";
+									break;
+									
+									case 'english':
+									$output = "Password changed.";
+									break;
+								}
+								$new_password = mysqli_real_escape_string($mysql_connection, $_POST['newpassword']);
+								$new_password_encrypted = md5($new_password);
+								mysqli_query($mysql_connection, "UPDATE users SET password = '$new_password_encrypted' WHERE id = ".$userdata['id']);
+								echo $output;
 								break;
 								
 								case 'profile':
