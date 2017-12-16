@@ -30,7 +30,7 @@
 		</title>
 		<meta name="author" content="Benno Staub">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="stylesheet" type="text/css" href="styles/stylesheet.css" />
+		<link rel="stylesheet" type="text/css" href="styles/stylesheet.php" />
 		<meta http-equiv="cache-control" content="no-cache" />
 	</head>
 	<body>
@@ -149,16 +149,16 @@
 									switch($_GET['language'])
 									{
 										case 'german':
-										$text = "Hallo ".$name." ".$surname.",\r\n\r\nVielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\n\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://127.0.0.1/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
+										$text = "Hallo ".$name." ".$surname.",\r\n\r\nVielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\n\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
 										$subject = "Registrierung bei Gosseek";
 										break;
 										
 										case 'english':
-										$text = "Dear ".$name." ".$surname.",\r\n\r\nThank you for your registration on Gosseek.\r\nHere are your credentials:\r\nE-mail: ".$email."\r\nPassword: ".$password."\r\n\r\nTo activate your account, please click on the following link: http://127.0.0.1/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nBest regards\r\nThe Gosseek Team.";
+										$text = "Dear ".$name." ".$surname.",\r\n\r\nThank you for your registration on Gosseek.\r\nHere are your credentials:\r\nE-mail: ".$email."\r\nPassword: ".$password."\r\n\r\nTo activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nBest regards\r\nThe Gosseek Team.";
 										$subject = "Registration on Gosseek";
 										break;
 									}
-									$header = "From: benno.staub@hotmail.com" . "\r\n" .
+									$header = "From: no-reply@gosseek.com" . "\r\n" .
 											 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
 									mail($email, $subject, $text, $header);
 									mysqli_query($mysql_connection, "INSERT INTO users (activation_code, email, status, password, name, surname) VALUES ('$activation_code','$email','registered','$password_encrypted', '$name', '$surname')");
@@ -241,7 +241,7 @@
 										$subject = "New password for Gosseek";
 										break;
 									}
-									$header = "From: benno.staub@hotmail.com" . "\r\n" .
+									$header = "From: no-reply@gosseek.com" . "\r\n" .
 											 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
 									mail($email, $subject, $text, $header);
 									mysqli_query($mysql_connection, "UPDATE users SET password = '$new_password_encrypted' WHERE id = ".$userdata['id']);

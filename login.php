@@ -420,7 +420,7 @@
 									$output_colors = "Colors:";
 									break;
 								}
-								$colors = array( "#FFFFFF"=>array("english"=>"White", "german"=>"Weiss"),"#f3f3f3"=>array("english"=>"Very Light Gray", "german"=>"Sehr Helles Grau"), "#e3e3e3"=>array("english"=>"Light Light Gray", "german"=>"Helles Hellgrau"),"#C0C0C0"=>array("english"=>"Light Gray", "german"=>"Hellgrau"),"#808080"=>array("english"=>"Gray", "german"=>"Grau"), "#333333"=>array("english"=>"Dark Gray", "german"=>"Dunkelgrau"), "#000000"=>array("english"=>"Black", "german"=>"Schwarz"), "#00BFFF"=>array("english"=>"Light Blue", "german"=>"Hellblau"),"#0000FF"=>array("english"=>"Blue", "german"=>"Blau"), "#000046"=>array("english"=>"Dark Blue", "german"=>"Dunkelblau"), "#e066FF"=>array("english"=>"Light Purple", "german"=>"Hellviolett"),"#BF00BF"=>array("english"=>"Purple", "german"=>"Violett"), "#5a005a"=>array("english"=>"Dark Purple", "german"=>"Dunkelviolett"), "#FF4d33"=>array("english"=>"Light Red", "german"=>"Hellrot"),"#FF0000"=>array("english"=>"Red", "german"=>"Rot"),"#9e0000"=>array("english"=>"Dark Red", "german"=>"Dunkelrot"),"#00FF00"=>array("english"=>"Light Green", "german"=>"Hellgrün"),"#008000"=>array("english"=>"Green", "german"=>"Grün"), "#002d00"=>array("english"=>"Dark Green", "german"=>"Dunkelgrün"));
+								$colors = array( "#00BFFF"=>array("english"=>"Light Blue", "german"=>"Hellblau"),  "#e066FF"=>array("english"=>"Light Purple", "german"=>"Hellviolett"), "#FF4d33"=>array("english"=>"Light Red", "german"=>"Hellrot"), "#00FF00"=>array("english"=>"Light Green", "german"=>"Hellgrün"),"#0000FF"=>array("english"=>"Blue", "german"=>"Blau"), "#BF00BF"=>array("english"=>"Purple", "german"=>"Violett"), "#FF0000"=>array("english"=>"Red", "german"=>"Rot"), "#008000"=>array("english"=>"Green", "german"=>"Grün"),"#000046"=>array("english"=>"Dark Blue", "german"=>"Dunkelblau"), "#5a005a"=>array("english"=>"Dark Purple", "german"=>"Dunkelviolett"), "#9e0000"=>array("english"=>"Dark Red", "german"=>"Dunkelrot"), "#002d00"=>array("english"=>"Dark Green", "german"=>"Dunkelgrün"), "#FFFFFF"=>array("english"=>"White", "german"=>"Weiss"), "#e3e3e3"=>array("english"=>"Light Light Gray", "german"=>"Helles Hellgrau"),"#808080"=>array("english"=>"Gray", "german"=>"Grau"), "#000000"=>array("english"=>"Black", "german"=>"Schwarz"), "#f3f3f3"=>array("english"=>"Very Light Gray", "german"=>"Sehr Helles Grau"), "#C0C0C0"=>array("english"=>"Light Gray", "german"=>"Hellgrau"), "#333333"=>array("english"=>"Dark Gray", "german"=>"Dunkelgrau"));
 								echo "<form action=\"login.php?action=changesettings\" method=\"post\" accept-charset=\"utf-8\">";
 									echo "<label>".$label_color_background."</label>";
 									echo "<select name=\"color_background\" size=\"1\">";
@@ -468,13 +468,19 @@
 										echo "<input type=\"submit\" value=\"".$input_submit_change."\"></input>";
 									echo "</p>";
 								echo "</form>";
-								echo $output_colors;
-								echo "<table>";
+								echo "<table><tr><td>".$output_colors."</td><td></td><td></td><td></td></tr>";
+								$color_iter = 0;
+								echo "<tr>";
 								foreach($colors as $value=>$name)
 								{
-									echo "<tr><td>".$name[$_GET['language']]."</td><td bgcolor=\"".$value."\" width=\"50\">    </td></tr>";
+									if($color_iter%4 == 0)
+									{
+										echo "</tr><tr>";
+									}
+									echo "<td>".$name[$_GET['language']]."</td><td bgcolor=\"".$value."\" width=\"50\">    </td>";
+									$color_iter = $color_iter + 1;
 								}
-								echo "</table>";
+								echo "</tr></table>";
 								break;
 								
 								case 'changesettings':
