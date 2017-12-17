@@ -73,7 +73,7 @@ p { padding: 10px; }
 
 .feedpost { width: 95%; border-radius: 5px; margin: auto; background: <?php echo $color_frame; ?>; padding: 5px; }
 .feedheader { background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
-.feedtime { width: 18%; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-left: 0px; padding-left: 10px; padding-right: 10px; float: right }
+.feedtime { width: 20%; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-left: 0px; padding-left: 10px; padding-right: 10px; float: right }
 .feedtitle { font-weight: bold; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
 .feedcontent { background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; padding-top: 5px; }
 

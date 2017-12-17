@@ -89,8 +89,8 @@
 			<div class="boxtop">
 				<div class="boxtopinner">
 					<?php
-						echo "<a href=\"mainpage.php?language=german&action=welcome\">DE</a>";
-						echo "<a href=\"mainpage.php?language=english&action=welcome\">EN</a>";
+						echo "<a href=\"mainpage.php?language=german&action=".$_GET['action']."\">DE</a>";
+						echo "<a href=\"mainpage.php?language=english&action=".$_GET['action']."\">EN</a>";
 						echo "<p>".$output_slogan."</p>";
 					?>
 				</div>

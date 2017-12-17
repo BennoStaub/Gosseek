@@ -135,8 +135,16 @@
 			<div class="boxtop">
 				<div class="boxtopinner">
 					<?php
-						echo "<a href=\"login.php?language=german&action=feed\">DE</a>";
-						echo "<a href=\"login.php?language=english&action=feed\">EN</a>";
+						$all_get_variables = "";
+						foreach($_GET as $name => $value)
+						{
+							if($name != "language")
+							{
+								$all_get_variables = $all_get_variables."&".$name."=".$value;
+							}
+						}
+						echo "<a href=\"login.php?language=german".$all_get_variables."\">DE</a>";
+						echo "<a href=\"login.php?language=english".$all_get_variables."\">EN</a>";
 						echo "<p>".$output_slogan."</p>";
 					?>
 				</div>
@@ -151,11 +159,11 @@
 								switch($_GET['language'])
 								{
 									case 'german':
-									$output_nofollowing = "Du folgst noch niemandem.";
+									$output_nofollowing = "Du folgst noch keinem Ziel.";
 									break;
 									
 									case 'english':
-									$output_nofollowing = "You don't follow anyone.";
+									$output_nofollowing = "You don't follow any goal.";
 									break;
 								}
 								if(!(empty($userdata['following'])))
@@ -425,7 +433,7 @@
 									break;
 								}
 								$colors = array( "#00BFFF"=>array("english"=>"Light Blue", "german"=>"Hellblau"),  "#e066FF"=>array("english"=>"Light Purple", "german"=>"Hellviolett"), "#FF4d33"=>array("english"=>"Light Red", "german"=>"Hellrot"), "#00FF00"=>array("english"=>"Light Green", "german"=>"Hellgrün"),"#0000FF"=>array("english"=>"Blue", "german"=>"Blau"), "#BF00BF"=>array("english"=>"Purple", "german"=>"Violett"), "#FF0000"=>array("english"=>"Red", "german"=>"Rot"), "#008000"=>array("english"=>"Green", "german"=>"Grün"),"#000046"=>array("english"=>"Dark Blue", "german"=>"Dunkelblau"), "#5a005a"=>array("english"=>"Dark Purple", "german"=>"Dunkelviolett"), "#9e0000"=>array("english"=>"Dark Red", "german"=>"Dunkelrot"), "#002d00"=>array("english"=>"Dark Green", "german"=>"Dunkelgrün"), "#FFFFFF"=>array("english"=>"White", "german"=>"Weiss"), "#e3e3e3"=>array("english"=>"Light Light Gray", "german"=>"Helles Hellgrau"),"#808080"=>array("english"=>"Gray", "german"=>"Grau"), "#000000"=>array("english"=>"Black", "german"=>"Schwarz"), "#f3f3f3"=>array("english"=>"Very Light Gray", "german"=>"Sehr Helles Grau"), "#C0C0C0"=>array("english"=>"Light Gray", "german"=>"Hellgrau"), "#333333"=>array("english"=>"Dark Gray", "german"=>"Dunkelgrau"));
-								echo "<form action=\"login.php?action=changesettings\" method=\"post\" accept-charset=\"utf-8\">";
+								echo "<form action=\"login.php?language=".$_GET['language']."&action=changesettings\" method=\"post\" accept-charset=\"utf-8\">";
 									echo "<label>".$label_color_background."</label>";
 									echo "<select name=\"color_background\" size=\"1\">";
 										foreach($colors as $value=>$name)
@@ -486,7 +494,7 @@
 								}
 								echo "</tr></table>";
 								echo "<br><br><br>";
-								echo "<form action=\"login.php?action=changepassword\" method=\"post\" accept-charset=\"utf-8\">";
+								echo "<form action=\"login.php?language=".$_GET['language']."&action=changepassword\" method=\"post\" accept-charset=\"utf-8\">";
 								echo "<label>".$label_newpassword."</label>";
 								echo "<input name=\"newpassword\" type=\"password\" size=\"30\"></input>";
 								echo "<p>";
@@ -549,15 +557,22 @@
 									$birthday = mb_substr($profile['birthdate'], 5, 2);
 									$birthmonth = mb_substr($profile['birthdate'], 8, 2);
 									$birthyear = mb_substr($profile['birthdate'], 0, 4);
+									if($birthday == "00" || $birthmonth == "00" || $birthyear == "00000")
+									{
+										$birthdate = "";
+									}else
+									{
+										$birthdate = $birthday.".".$birthmonth.".".$birthyear;
+									}
 									echo "<div class=\"profile\">";
-										if(file_exists("uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat'].""))
+										if(file_exists("uploads/profilepictures/".$profile['id'].$profile['profilepictureformat'].""))
 										{
-											echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"180\" height=\"240\"></img>";
+											echo "<img src=\"uploads/profilepictures/".$profile['id'].$profile['profilepictureformat']."\" width=\"180\" height=\"240\"></img>";
 										}else{
 											echo "<img src=\"uploads/profilepictures/no_picture.png\" width=\"180\" height=\"240\"></img>";	
 										}
 										echo "<h><p>".$output_name."</p><p>".$profile['name']." ".$profile['surname']."</p></h>";
-										echo "<h><p>".$output_birthdate."</p><p>".$birthday.".".$birthmonth.".".$birthyear."</p></h>";
+										echo "<h><p>".$output_birthdate."</p><p>".$birthdate."</p></h>";
 										echo "<h><p>".$output_job."</p><p>".$profile['job']."</p></h>";
 										echo "<h><p>".$output_residence."</p><p>".$profile['residence']."</p></h>";
 										echo "<h><p>".$output_aboutme."</p></h><h>".$profile['aboutme']."</h>";
