@@ -1,4 +1,8 @@
 #ignore mysql username and password
 connect_db.php
+#ignore uploaded pictures
 /uploads/*
+#ignore to do list
 TODO.txt
+#ignore .htaccess
+.htaccess

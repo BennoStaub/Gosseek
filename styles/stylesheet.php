@@ -12,28 +12,28 @@ if($color_query = mysqli_query($mysql_connection, "SELECT color_frame, color_box
 //black: 000000
 if(empty($color['color_frame']))
 {
-	$color_frame = "#008000";
+	$color_frame = "#000046";
 }else
 {
 	$color_frame = $color['color_frame'];
 }
 if(empty($color['color_box']))
 {
-	$color_box = "#fdfdfd";
+	$color_box = "#e3e3e3";
 }else
 {
 	$color_box = $color['color_box'];
 }
 if(empty($color['color_background']))
 {
-	$color_background = "#fdfdfd";
+	$color_background = "#FFFFFF";
 }else
 {
 	$color_background = $color['color_background'];
 }
 ?>
 
-body { background-color: <?php echo $color_background; ?>; }
+body { width: 100%; background-color: <?php echo $color_background; ?>; }
 p { padding: 10px; }
 
 .boxmain { width: 99%; height: 100%; background: <?php echo $color_background ?>; }
@@ -51,7 +51,7 @@ p { padding: 10px; }
 .rightinnerboxbottom { width: 90%; height: 65%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; padding-top: 5%; }
 .rightinnerboxbottom a { margin-left: 5px; margin-bottom: 5px; width: 80%; float: left; }
 	
-.boxtop { float: right; width: 80%; height: 5%; border-radius: 5px; margin: 5px; background: <?php echo $color_frame; ?>; color: #000000; display: flex; align-items: center; }
+.boxtop { float: right; width: 79%; height: 5%; border-radius: 5px; margin: 5px; background: <?php echo $color_frame; ?>; color: #000000; display: flex; align-items: center; }
 	
 .boxtopinner { width: 98%; height: 80%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; }
 .boxtopinner p { display: inline-block; vertical-align: middle; line-height: 40%; height: 40%; width: 30%; float: right; text-align: right; font-size: 115%; margin: auto; }
@@ -61,11 +61,12 @@ p { padding: 10px; }
 
 .leftinnerbox { width: 90%; height: 96%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left;}
 .leftinnerbox form { margin-left: 5px; }
+.leftinnerbox input { width: 95%; }
 	
-.boxfeed { float: right; width: 59%; height: 87.5%; border-radius: 5px; margin: 5px; padding: 5px; padding-top: 25px; background: <?php echo $color_box; ?>; color: #000000; overflow:auto; }
+.boxfeed { float: right; width: 58%; height: 87.5%; border-radius: 5px; margin: 5px; padding: 5px; padding-top: 25px; background: <?php echo $color_box; ?>; color: #000000; overflow:auto; }
 .boxfeed form { width: 80% ; margin: 0 auto; }	
 .boxfeed label { float: left; width: 318px; }
-.boxfeed select { margin-left: 84px; width: 120px; }
+.boxfeed select { width: 120px; }
 .boxfeed span select { margin-left: 144px; width: 60px; }
 .boxfeed p input { width: 200px; margin-left: 195px; }
 .boxfeed .clear {clear: both;}
