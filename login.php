@@ -768,7 +768,7 @@
 								}
 								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
 								$goal_query = mysqli_query($mysql_connection, "SELECT * FROM goals WHERE id=".$goalid." LIMIT 1");
-								if($goal_query)
+								if(mysqli_num_rows($goal_query))
 								{
 									$goal = mysqli_fetch_array($goal_query);
 									if($goal['anonymous'] == 0)
