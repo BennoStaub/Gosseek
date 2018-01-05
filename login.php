@@ -92,7 +92,7 @@
 				<div class="rightinnerboxtop">
 					<div class="profilepic">
 					<?php
-						echo "<a href=\"login.php?language=".$_GET['language']."&action=profile&userid=".$userdata['id']."\">";
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$userdata['id']."\">";
 							if(file_exists("uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat'].""))
 							{
 								echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"48\" height=\"64\"></img>";
@@ -528,7 +528,7 @@
 								echo $output;
 								break;
 								
-								case 'profile':
+								case 'user':
 								switch($_GET['language'])
 								{
 									case 'german':
@@ -550,13 +550,13 @@
 									break;
 								}
 								$userid = mysqli_real_escape_string($mysql_connection, $_GET['userid']);
-								$profile_query = mysqli_query($mysql_connection, "SELECT * FROM users WHERE id=".$userid." LIMIT 1");
-								if($profile_query)
+								$user_query = mysqli_query($mysql_connection, "SELECT * FROM users WHERE id=".$userid." LIMIT 1");
+								if($user_query)
 								{
-									$profile = mysqli_fetch_array($profile_query);
-									$birthday = mb_substr($profile['birthdate'], 5, 2);
-									$birthmonth = mb_substr($profile['birthdate'], 8, 2);
-									$birthyear = mb_substr($profile['birthdate'], 0, 4);
+									$user = mysqli_fetch_array($user_query);
+									$birthday = mb_substr($user['birthdate'], 5, 2);
+									$birthmonth = mb_substr($user['birthdate'], 8, 2);
+									$birthyear = mb_substr($user['birthdate'], 0, 4);
 									if($birthday == "00" || $birthmonth == "00" || $birthyear == "00000")
 									{
 										$birthdate = "";
@@ -565,17 +565,17 @@
 										$birthdate = $birthday.".".$birthmonth.".".$birthyear;
 									}
 									echo "<div class=\"profile\">";
-										if(file_exists("uploads/profilepictures/".$profile['id'].$profile['profilepictureformat'].""))
+										if(file_exists("uploads/profilepictures/".$user['id'].$user['profilepictureformat'].""))
 										{
-											echo "<img src=\"uploads/profilepictures/".$profile['id'].$profile['profilepictureformat']."\" width=\"180\" height=\"240\"></img>";
+											echo "<img src=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\" width=\"180\" height=\"240\"></img>";
 										}else{
 											echo "<img src=\"uploads/profilepictures/no_picture.png\" width=\"180\" height=\"240\"></img>";	
 										}
-										echo "<h><p>".$output_name."</p><p>".$profile['name']." ".$profile['surname']."</p></h>";
+										echo "<h><p>".$output_name."</p><p>".$user['name']." ".$user['surname']."</p></h>";
 										echo "<h><p>".$output_birthdate."</p><p>".$birthdate."</p></h>";
-										echo "<h><p>".$output_job."</p><p>".$profile['job']."</p></h>";
-										echo "<h><p>".$output_residence."</p><p>".$profile['residence']."</p></h>";
-										echo "<h><p>".$output_aboutme."</p></h><h>".$profile['aboutme']."</h>";
+										echo "<h><p>".$output_job."</p><p>".$user['job']."</p></h>";
+										echo "<h><p>".$output_residence."</p><p>".$user['residence']."</p></h>";
+										echo "<h><p>".$output_aboutme."</p></h><h>".$user['aboutme']."</h>";
 									
 									echo "</div>";
 								}else{
@@ -650,9 +650,12 @@
 								switch($_GET['language'])
 								{
 										case 'german':
+										$label_anonymous = "Anonym posten?";
 										$label_title = "Titel";
-										$label_section = "Rubrik";
+										$label_section = "Bereich";
 										$label_description = "Beschreibung";
+										$option_yes = "Ja";
+										$option_no = "Nein";
 										$option_study = "Studium";
 										$option_finance = "Finanzen";
 										$option_career = "Karriere";
@@ -664,9 +667,12 @@
 										break;
 										
 										case 'english':
+										$label_anonymous = "Post anonymously?";
 										$label_title = "Title";
 										$label_section = "Section";
 										$label_description = "Description";
+										$option_yes = "Yes";
+										$option_no = "No";
 										$option_study = "Study";
 										$option_finance = "Finance";
 										$option_career = "Career";
@@ -678,6 +684,13 @@
 										break;
 								}
 								echo "<form action=\"login.php?language=".$_GET['language']."&action=submitgoal\" method=\"post\" accept-charset=\"utf-8\">";
+									echo "<label>".$label_anonymous."</label>";
+									echo "<div class=\"clear\"></div>";
+									echo "<select name=\"anonymous\" size=\"1\">";
+										echo "<option value=\"0\">".$option_no."</option>";
+										echo "<option value=\"1\">".$option_yes."</option>";
+									echo "</select>";
+									echo "<div class=\"clear\"></div>";
 									echo "<label>".$label_title."</label>";
 									echo "<input name=\"title\" size=\"50\"></input>";
 									echo "<label>".$label_section."</label>";
@@ -717,11 +730,99 @@
 									echo $output_fail;
 								}else
 								{
+									$anonymous = mysqli_real_escape_string($mysql_connection, $_POST['anonymous']);
 									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 									$section = mysqli_real_escape_string($mysql_connection, $_POST['section']);
 									$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
-									mysqli_query($mysql_connection, "INSERT INTO goals (userid, starttime, title, description, section) VALUES ('".$userdata['id']."', '".time()."','$title','$description', '$section')");
+									mysqli_query($mysql_connection, "INSERT INTO goals (userid, anonymous, starttime, title, description, section) VALUES ('".$userdata['id']."', '".$anonymous."', '".time()."','$title','$description', '$section')");
 									echo $output_success;
+								}
+								break;
+								
+								case 'goal':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$output_nogoal = "Dieses Ziel existiert nicht.";
+									$output_author = "Autor:";
+									$output_title = "Titel:";
+									$output_section = "Bereich:";
+									$output_starttime = "Start:";
+									$output_description = "Beschreibung:";
+									$output_anonymous = "Anonym";
+									$a_followgoal = "Diesem Ziel folgen";
+									$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "carrer" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+									break;
+									
+									case 'english':
+									$output_nogoal = "Goal not found.";
+									$output_author = "Author:";
+									$output_title = "Name:";
+									$output_section = "Section:";
+									$output_starttime = "Start:";
+									$output_description = "Description:";
+									$output_anonymous = "anonymous";
+									$a_followgoal = "Follow this goal";
+									$output_sections = array( "study" => "Study" , "finance" => "Finance" , "carrer" => "Carrer" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+									break;
+								}
+								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+								$goal_query = mysqli_query($mysql_connection, "SELECT * FROM goals WHERE id=".$goalid." LIMIT 1");
+								if($goal_query)
+								{
+									$goal = mysqli_fetch_array($goal_query);
+									if($goal['anonymous'] == 0)
+									{
+										$author_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$goal['userid']." LIMIT 1");
+										$author = mysqli_fetch_array($author_query);
+										$goal['author'] = $author['surname']." ".$author['name'];
+									}else
+									{
+										$goal['author'] = $output_anonymous;
+									}
+									echo "<div class=\"profile\">";
+										echo "<h><p>".$output_author."</p><p>".$goal['author']."</p></h>";
+										echo "<h><p>".$output_title."</p><p>".$goal['title']."</p></h>";
+										echo "<h><p>".$output_section."</p><p>".$output_sections[$goal['section']]."</p></h>";
+										echo "<h><p>".$output_starttime."</p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
+										echo "<h><p>".$output_description."</p><p>".$goal['description']."</p></h>";
+										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=followgoal&goalid=".$goal['id']."\">".$a_followgoal."</a></p></h>";
+									
+									echo "</div>";
+								}else{
+									echo $output_nogoal;
+								}
+								break;
+								
+								case 'followgoal':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$output_success = "Du folgst jetzt diesem Ziel.";
+									$output_nogoal = "Dieses Ziel existiert nicht.";
+									break;
+									
+									case 'english':
+									$output_success = "Now you are following this goal.";
+									$output_nogoal = "There is no such goal.";
+									break;
+								}
+								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+								$check_goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE id=".$goalid." LIMIT 1");
+								if(mysqli_num_rows($check_goal_query))
+								{
+									if(empty($userdata['following']))
+									{
+										$following = $goalid;
+									}else
+									{
+										$following = $userdata['following'].",".$goalid;
+									}
+									mysqli_query($mysql_connection, "UPDATE users SET following = '$following' WHERE id = ".$userdata['id']);
+									echo $output_success;
+								}else
+								{
+									echo $output_nogoal;
 								}
 								break;
 								
