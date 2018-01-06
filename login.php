@@ -166,13 +166,13 @@
 									$output_nofollowing = "You don't follow any goal.";
 									break;
 								}
-								if(!(empty($userdata['following'])))
+								$following_goals_query = mysqli_query($mysql_connection, "SELECT goalid FROM goalfollowers WHERE userid=".$userdata['id']);
+								if(mysqli_num_rows($following_goals_query) >= 1)
 								{
-									$number_following = 1+substr_count($userdata['following'], ',');
-									$query_condition = "goalid=".strtok($userdata['following'], ',');
-									for($i=2; $i <= $number_following; $i++)
+									$query_condition = "goalid = 0";
+									while($following_goals = mysqli_fetch_array($following_goals_query))
 									{
-										$query_condition = $query_condition." OR goalid=".strtok(',');
+										$query_condition = $query_condition." OR goalid = ".$following_goals['goalid'];
 									}
 									$feed_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE ".$query_condition." ORDER BY time DESC");
 									while($feeddata = mysqli_fetch_array($feed_query))
@@ -750,7 +750,8 @@
 									$output_starttime = "Start:";
 									$output_description = "Beschreibung:";
 									$output_anonymous = "Anonym";
-									$a_followgoal = "Diesem Ziel folgen";
+									$a_follow_goal = "Diesem Ziel folgen";
+									$a_unfollow_goal = "Dieses Ziel entfolgen";
 									$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "carrer" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
 									break;
 									
@@ -762,7 +763,8 @@
 									$output_starttime = "Start:";
 									$output_description = "Description:";
 									$output_anonymous = "anonymous";
-									$a_followgoal = "Follow this goal";
+									$a_follow_goal = "Follow this goal";
+									$a_unfollow_goal = "Unfollow this goal";
 									$output_sections = array( "study" => "Study" , "finance" => "Finance" , "carrer" => "Carrer" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
 									break;
 								}
@@ -771,6 +773,7 @@
 								if(mysqli_num_rows($goal_query))
 								{
 									$goal = mysqli_fetch_array($goal_query);
+									$check_following_query = mysqli_query($mysql_connection, "SELECT id FROM goalfollowers WHERE goalid=".$goal['id']." AND userid=".$userdata['id']." LIMIT 1");
 									if($goal['anonymous'] == 0)
 									{
 										$author_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$goal['userid']." LIMIT 1");
@@ -786,7 +789,13 @@
 										echo "<h><p>".$output_section."</p><p>".$output_sections[$goal['section']]."</p></h>";
 										echo "<h><p>".$output_starttime."</p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
 										echo "<h><p>".$output_description."</p><p>".$goal['description']."</p></h>";
-										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=followgoal&goalid=".$goal['id']."\">".$a_followgoal."</a></p></h>";
+										if(mysqli_num_rows($check_following_query))
+										{
+											echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=unfollowgoal&goalid=".$goal['id']."\">".$a_unfollow_goal."</a></p></h>";
+										}else
+										{
+											echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=followgoal&goalid=".$goal['id']."\">".$a_follow_goal."</a></p></h>";
+										}
 									
 									echo "</div>";
 								}else{
@@ -799,30 +808,66 @@
 								{
 									case 'german':
 									$output_success = "Du folgst jetzt diesem Ziel.";
-									$output_nogoal = "Dieses Ziel existiert nicht.";
+									$output_no_goal = "Dieses Ziel existiert nicht.";
+									$output_follows_already = "Du folgst diesem Ziel bereits.";
 									break;
 									
 									case 'english':
 									$output_success = "Now you are following this goal.";
-									$output_nogoal = "There is no such goal.";
+									$output_no_goal = "There is no such goal.";
+									$output_follows_already = "You are already following this goal.";
 									break;
 								}
 								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
-								$check_goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE id=".$goalid." LIMIT 1");
+								$check_goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE id=$goalid LIMIT 1");
 								if(mysqli_num_rows($check_goal_query))
 								{
-									if(empty($userdata['following']))
+									$check_following_query = mysqli_query($mysql_connection, "SELECT id FROM goalfollowers WHERE goalid=$goalid AND userid=".$userdata['id']." LIMIT 1");
+									if(mysqli_num_rows($check_following_query))
 									{
-										$following = $goalid;
+										echo $output_follows_already;
 									}else
 									{
-										$following = $userdata['following'].",".$goalid;
+										mysqli_query($mysql_connection, "INSERT INTO goalfollowers (userid, goalid) VALUES ('".$userdata['id']."',$goalid)");
+										echo $output_success;
 									}
-									mysqli_query($mysql_connection, "UPDATE users SET following = '$following' WHERE id = ".$userdata['id']);
-									echo $output_success;
 								}else
 								{
-									echo $output_nogoal;
+									echo $output_no_goal;
+								}
+								break;
+								
+								case 'unfollowgoal':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$output_success = "Du folgst diesem Ziel nicht mehr.";
+									$output_no_goal = "Dieses Ziel existiert nicht.";
+									$output_not_following = "Du folgst diesem Ziel nicht.";
+									break;
+									
+									case 'english':
+									$output_success = "You unfollowed this goal.";
+									$output_no_goal = "There is no such goal.";
+									$output_not_following = "You are not following this goal.";
+									break;
+								}
+								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+								$check_goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE id=$goalid LIMIT 1");
+								if(mysqli_num_rows($check_goal_query))
+								{
+									$check_following_query = mysqli_query($mysql_connection, "SELECT id FROM goalfollowers WHERE goalid=$goalid AND userid=".$userdata['id']." LIMIT 1");
+									if(mysqli_num_rows($check_following_query))
+									{
+										mysqli_query($mysql_connection, "DELETE FROM goalfollowers WHERE goalid=$goalid AND userid=".$userdata['id']."");
+										echo $output_success;
+									}else
+									{
+										echo $output_not_following;
+									}
+								}else
+								{
+									echo $output_no_goal;
 								}
 								break;
 								
