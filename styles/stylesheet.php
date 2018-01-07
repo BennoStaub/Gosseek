@@ -59,7 +59,7 @@ p { padding: 10px; }
 	
 .boxleft { float: right; width: 19%; height: 92%; border-radius: 5px; margin: 5px; background: <?php echo $color_frame; ?>; color: #000000; text-align: center; }
 
-.leftinnerbox { width: 90%; height: 96%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left;}
+.leftinnerbox { width: 90%; height: 96%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left; padding-left: 5px; }
 .leftinnerbox form { margin-left: 5px; }
 .leftinnerbox input { width: 95%; }
 	
@@ -70,6 +70,7 @@ p { padding: 10px; }
 .boxfeed span select { margin-left: 144px; width: 60px; }
 .boxfeed p input { width: 200px; margin-left: 195px; }
 .boxfeed .clear {clear: both;}
+
 
 .feedpost { width: 95%; border-radius: 5px; margin: auto; background: <?php echo $color_frame; ?>; padding: 5px; }
 .feedheader { background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
