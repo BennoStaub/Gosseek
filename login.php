@@ -115,17 +115,20 @@
 						switch($_GET['language'])
 							{
 								case 'german':
+								$a_owngoals = "Eigene Ziele";
 								$a_createpost = "Beitrag erstellen";
 								$a_feed = "Feed";
 								$a_definegoal = "Neues Ziel definieren";
 								break;
 								
 								case 'english':
+								$a_owngoals = "Own goals";
 								$a_createpost = "Create a post";
 								$a_feed = "Feed";
 								$a_definegoal = "Define new goal";
 								break;
 							}
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=owngoals\">".$a_owngoals."</a>";	
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=createpost\">".$a_createpost."</a>";
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=feed\">".$a_feed."</a>";
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=definegoal\">".$a_definegoal."</a>";
@@ -660,6 +663,7 @@
 									$label_title = "Titel";
 									$label_section = "Bereich";
 									$label_description = "Beschreibung";
+									$label_block = "Aktionsblock";
 									$option_yes = "Ja";
 									$option_no = "Nein";
 									$option_study = "Studium";
@@ -677,6 +681,7 @@
 									$label_title = "Title";
 									$label_section = "Section";
 									$label_description = "Description";
+									$label_block = "Actionblock";
 									$option_yes = "Yes";
 									$option_no = "No";
 									$option_study = "Study";
@@ -713,6 +718,12 @@
 								echo "<div class=\"clear\"></div>";
 								echo "<label>".$label_description."</label>";
 								echo "<textarea name=\"description\" cols=\"64\" rows=\"15\"/></textarea>";
+								echo "<div class=\"clear\"></div>";
+								for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
+								{
+									echo "<label>".$label_block.$blocknumber."</label>";
+									echo "<input name=\"block".$blocknumber."\" size=\"50\"></input>";
+								}
 								echo "<br>";
 								echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 							echo "</form>";
@@ -740,7 +751,12 @@
 								$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 								$section = mysqli_real_escape_string($mysql_connection, $_POST['section']);
 								$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
-								mysqli_query($mysql_connection, "INSERT INTO goals (userid, anonymous, starttime, title, description, section) VALUES ('".$userdata['id']."', '".$anonymous."', '".time()."','$title','$description', '$section')");
+								for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
+								{
+									$blockname = "block".$blocknumber;
+									$block[$blocknumber] = mysqli_real_escape_string($mysql_connection, $_POST[$blockname]);
+								}
+								mysqli_query($mysql_connection, "INSERT INTO goals (userid, anonymous, starttime, title, description, section, block1, block2, block3, block4, block5, block6, block7, block8, block9, block10) VALUES ('".$userdata['id']."', '".$anonymous."', '".time()."','$title','$description', '$section', '".$block['1']."', '".$block['2']."', '".$block['3']."', '".$block['4']."', '".$block['5']."', '".$block['6']."', '".$block['7']."', '".$block['8']."', '".$block['9']."', '".$block['10']."')");
 								echo $output_success;
 							}
 							break;
@@ -755,6 +771,7 @@
 								$output_section = "Bereich:";
 								$output_starttime = "Start:";
 								$output_description = "Beschreibung:";
+								$output_block = "Aktionsblock";
 								$output_anonymous = "Anonym";
 								$a_follow_goal = "Diesem Ziel folgen";
 								$a_unfollow_goal = "Dieses Ziel entfolgen";
@@ -769,6 +786,7 @@
 								$output_section = "Section:";
 								$output_starttime = "Start:";
 								$output_description = "Description:";
+								$output_block = "Actionblock";
 								$output_anonymous = "anonymous";
 								$a_follow_goal = "Follow this goal";
 								$a_unfollow_goal = "Unfollow this goal";
@@ -796,6 +814,13 @@
 									echo "<h><p>".$output_title."</p>".$goal['title']."</h>";
 									echo "<h><p>".$output_section."</p><p>".$output_sections[$goal['section']]."</p></h>";
 									echo "<h><p>".$output_starttime."</p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
+									for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
+									{
+										if(!(empty($goal["block".$blocknumber])))
+										{
+											echo "<h><p>".$output_block."</p><p>".$goal["block".$blocknumber]."</p></h>";
+										}
+									}
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
 									echo "<h><p>".$output_description."</p><br>".$goal['description']."</h>";
 									if($goal['userid'] == $userdata['id'])
@@ -893,9 +918,10 @@
 								$label_title = "Titel";
 								$label_section = "Bereich";
 								$label_description = "Beschreibung";
+								$label_block = "Aktionsblock";
 								$option_yes = "Ja";
 								$option_no = "Nein";
-								$input_submit = "Los gehts!";
+								$input_submit = "Änderungen speichern";
 								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 								$output_no_goal = "Dieses Ziel existiert nicht.";
 								$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
@@ -906,9 +932,10 @@
 								$label_title = "Title";
 								$label_section = "Section";
 								$label_description = "Description";
+								$label_block = "Actionblock";
 								$option_yes = "Yes";
 								$option_no = "No";
-								$input_submit = "Let's go!";
+								$input_submit = "Save changes";
 								$output_not_author = "You are not the author of this goal.";
 								$output_no_goal = "There is no such goal.";
 								$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
@@ -957,6 +984,12 @@
 										echo "<div class=\"clear\"></div>";
 										echo "<label>".$label_description."</label>";
 										echo "<textarea name=\"description\" cols=\"64\" rows=\"15\"/>".$goal['description']."</textarea>";
+										for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
+										{
+											$blockname = "block".$blocknumber;
+											echo "<label>".$label_block.$blocknumber."</label>";
+											echo "<input name=\"block".$blocknumber."\" size=\"50\" value=\"".$goal[$blockname]."\"></input>";
+										}
 										echo "<br>";
 										echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 									echo "</form>";
@@ -1003,7 +1036,12 @@
 										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 										$section = mysqli_real_escape_string($mysql_connection, $_POST['section']);
 										$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
-										mysqli_query($mysql_connection, "UPDATE goals SET anonymous = '".$anonymous."', title = '$title', description = '$description', section = '$section' WHERE id=$goalid");
+										for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
+										{
+											$blockname = "block".$blocknumber;
+											$block[$blocknumber] = mysqli_real_escape_string($mysql_connection, $_POST[$blockname]);
+										}
+										mysqli_query($mysql_connection, "UPDATE goals SET anonymous = '".$anonymous."', title = '$title', description = '$description', section = '$section', block1='".$block['1']."', block2='".$block['2']."', block3='".$block['3']."', block4='".$block['4']."', block5='".$block['5']."', block6='".$block['6']."', block7='".$block['7']."', block8='".$block['8']."', block9='".$block['9']."', block10='".$block['10']."' WHERE id=$goalid");
 										echo $output_success;
 									}
 								}else
@@ -1048,6 +1086,29 @@
 									echo "<tr><td width=\"20%\">".$author."</td><td><a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goallist['id']."\">".$goallist['title']."</a></td></tr>";
 								}
 							}
+							echo "</table>";
+							
+							break;
+							
+							case 'owngoals':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+								break;
+								
+								case 'english':
+								$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+								break;
+							}
+							echo "<table width=\"100%\" border=\"1\">";
+								$goallist_query = mysqli_query($mysql_connection, "SELECT * FROM goals WHERE userid=".$userdata['id']." ORDER BY section DESC");
+								while($goallist = mysqli_fetch_array($goallist_query))
+								{
+									$goal_section = $goallist['section'];
+									echo "<tr><td colspan=\"2\"><b>".$sections[$goal_section]."</b></td>";
+									echo "<td><a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goallist['id']."\">".$goallist['title']."</a></td></tr>";
+								}
 							echo "</table>";
 							
 							break;
