@@ -751,12 +751,18 @@
 								$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 								$section = mysqli_real_escape_string($mysql_connection, $_POST['section']);
 								$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
+								mysqli_query($mysql_connection, "INSERT INTO goals (userid, anonymous, starttime, title, description, section) VALUES ('".$userdata['id']."', '".$anonymous."', '".time()."','$title','$description', '$section')");
+								$goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE userid = ".$userdata['id']." AND title = '$title'");
+								$goal = mysqli_fetch_array($goal_query);
 								for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
 								{
 									$blockname = "block".$blocknumber;
 									$block[$blocknumber] = mysqli_real_escape_string($mysql_connection, $_POST[$blockname]);
+									if(!(empty($block[$blocknumber])))
+									{
+										mysqli_query($mysql_connection, "INSERT INTO actionblocks (goalid, name) VALUES (".$goal['id'].", '".$block[$blocknumber]."')");
+									}
 								}
-								mysqli_query($mysql_connection, "INSERT INTO goals (userid, anonymous, starttime, title, description, section, block1, block2, block3, block4, block5, block6, block7, block8, block9, block10) VALUES ('".$userdata['id']."', '".$anonymous."', '".time()."','$title','$description', '$section', '".$block['1']."', '".$block['2']."', '".$block['3']."', '".$block['4']."', '".$block['5']."', '".$block['6']."', '".$block['7']."', '".$block['8']."', '".$block['9']."', '".$block['10']."')");
 								echo $output_success;
 							}
 							break;
@@ -776,6 +782,9 @@
 								$a_follow_goal = "Diesem Ziel folgen";
 								$a_unfollow_goal = "Dieses Ziel entfolgen";
 								$a_edit_goal = "Dieses Ziel bearbeiten";
+								$a_add_block = "Aktionsblock hinzufügen";
+								$a_edit_block = "Bearbeiten";
+								$a_delete_block = "Löschen";
 								$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
 								break;
 								
@@ -791,6 +800,9 @@
 								$a_follow_goal = "Follow this goal";
 								$a_unfollow_goal = "Unfollow this goal";
 								$a_edit_goal = "Edit this goal";
+								$a_add_block = "Add actionblock";
+								$a_edit_block = "Edit";
+								$a_delete_block = "Delete";
 								$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
 								break;
 							}
@@ -814,18 +826,16 @@
 									echo "<h><p>".$output_title."</p>".$goal['title']."</h>";
 									echo "<h><p>".$output_section."</p><p>".$output_sections[$goal['section']]."</p></h>";
 									echo "<h><p>".$output_starttime."</p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
-									for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
+									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
+									while($actionblock = mysqli_fetch_array($actionblock_query))
 									{
-										if(!(empty($goal["block".$blocknumber])))
-										{
-											echo "<h><p>".$output_block."</p><p>".$goal["block".$blocknumber]."</p></h>";
-										}
+										echo "<h><p>".$output_block."</p>".$actionblock['name']." <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a></h>";
 									}
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
 									echo "<h><p>".$output_description."</p><br>".$goal['description']."</h>";
 									if($goal['userid'] == $userdata['id'])
 									{
-										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p></h>";
+										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
 									}else
 									{
 										if(mysqli_num_rows($check_following_query))
@@ -918,7 +928,6 @@
 								$label_title = "Titel";
 								$label_section = "Bereich";
 								$label_description = "Beschreibung";
-								$label_block = "Aktionsblock";
 								$option_yes = "Ja";
 								$option_no = "Nein";
 								$input_submit = "Änderungen speichern";
@@ -932,7 +941,6 @@
 								$label_title = "Title";
 								$label_section = "Section";
 								$label_description = "Description";
-								$label_block = "Actionblock";
 								$option_yes = "Yes";
 								$option_no = "No";
 								$input_submit = "Save changes";
@@ -984,12 +992,6 @@
 										echo "<div class=\"clear\"></div>";
 										echo "<label>".$label_description."</label>";
 										echo "<textarea name=\"description\" cols=\"64\" rows=\"15\"/>".$goal['description']."</textarea>";
-										for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
-										{
-											$blockname = "block".$blocknumber;
-											echo "<label>".$label_block.$blocknumber."</label>";
-											echo "<input name=\"block".$blocknumber."\" size=\"50\" value=\"".$goal[$blockname]."\"></input>";
-										}
 										echo "<br>";
 										echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 									echo "</form>";
@@ -1036,14 +1038,224 @@
 										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 										$section = mysqli_real_escape_string($mysql_connection, $_POST['section']);
 										$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
-										for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
-										{
-											$blockname = "block".$blocknumber;
-											$block[$blocknumber] = mysqli_real_escape_string($mysql_connection, $_POST[$blockname]);
-										}
-										mysqli_query($mysql_connection, "UPDATE goals SET anonymous = '".$anonymous."', title = '$title', description = '$description', section = '$section', block1='".$block['1']."', block2='".$block['2']."', block3='".$block['3']."', block4='".$block['4']."', block5='".$block['5']."', block6='".$block['6']."', block7='".$block['7']."', block8='".$block['8']."', block9='".$block['9']."', block10='".$block['10']."' WHERE id=$goalid");
+										mysqli_query($mysql_connection, "UPDATE goals SET anonymous = '".$anonymous."', title = '$title', description = '$description', section = '$section' WHERE id=$goalid");
 										echo $output_success;
 									}
+								}else
+								{
+									echo $output_not_author;
+								}
+							}else
+							{
+								echo $output_no_goal;
+							}
+							break;
+							
+							case 'editblock':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$label_blockname = "Blockname";
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
+								$output_no_block = "Dieser Aktionsblock existiert nicht.";
+								$input_submit = "Änderungen speichern";
+								break;
+								
+								case 'english':
+								$label_blockname = "Blockname";
+								$output_not_author = "You are not the author of this goal.";
+								$output_no_goal = "There is no goal with this block.";
+								$output_no_block = "There is no such actionblock.";
+								$input_submit = "Save changes";
+								break;
+							}
+							$blockid = mysqli_real_escape_string($mysql_connection, $_GET['blockid']);
+							$check_block_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE id=$blockid LIMIT 1");
+							if(mysqli_num_rows($check_block_query))
+							{
+								$block = mysqli_fetch_array($check_block_query);
+								$check_goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id=".$block['goalid']." LIMIT 1");
+								if(mysqli_num_rows($check_goal_query))
+								{
+									$check_author = mysqli_fetch_array($check_goal_query);
+									if($check_author['userid'] == $userdata['id'])
+									{
+										echo "<form action=\"login.php?language=".$_GET['language']."&action=editedblock&blockid=".$block['id']."\" method=\"post\" accept-charset=\"utf-8\">";
+											echo "<label>".$label_blockname."</label>";
+											echo "<div class=\"clear\"></div>";
+											echo "<input name=\"blockname\" size=\"50\" value=\"".$block['name']."\"></input>";
+											echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+										echo "</form>";
+										
+									}else
+									{
+										echo $output_not_author;
+									}
+								}else
+								{
+									echo $output_no_goal;
+								}
+							}else
+							{
+								echo $output_no_block;
+							}
+							break;
+							
+							case 'editedblock':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$output_success = "Block geändert.";
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
+								$output_no_block = "Dieser Aktionsblock existiert nicht.";
+								break;
+								
+								case 'english':
+								$output_success = "Block edited.";
+								$output_not_author = "You are not the author of this goal.";
+								$output_no_goal = "There is no goal with this block.";
+								$output_no_block = "There is no such actionblock.";
+								break;
+							}
+							$blockid = mysqli_real_escape_string($mysql_connection, $_GET['blockid']);
+							$blockname = mysqli_real_escape_string($mysql_connection, $_POST['blockname']);
+							$check_block_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE id=$blockid LIMIT 1");
+							if(mysqli_num_rows($check_block_query))
+							{
+								$block = mysqli_fetch_array($check_block_query);
+								$check_goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id=".$block['goalid']." LIMIT 1");
+								if(mysqli_num_rows($check_goal_query))
+								{
+									$check_author = mysqli_fetch_array($check_goal_query);
+									if($check_author['userid'] == $userdata['id'])
+									{
+										mysqli_query($mysql_connection, "UPDATE actionblocks SET name = '$blockname' WHERE id=$blockid");
+										echo $output_success;
+									}else
+									{
+										echo $output_not_author;
+									}
+								}else
+								{
+									echo $output_no_goal;
+								}
+							}else
+							{
+								echo $output_no_block;
+							}
+							break;
+							
+							case 'deleteblock':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$output_success = "Block gelöscht.";
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
+								$output_no_block = "Dieser Aktionsblock existiert nicht.";
+								break;
+								
+								case 'english':
+								$output_success = "Block deleted.";
+								$output_not_author = "You are not the author of this goal.";
+								$output_no_goal = "There is no goal with this block.";
+								$output_no_block = "There is no such actionblock.";
+								break;
+							}
+							$blockid = mysqli_real_escape_string($mysql_connection, $_GET['blockid']);
+							$check_block_query = mysqli_query($mysql_connection, "SELECT goalid FROM actionblocks WHERE id=$blockid LIMIT 1");
+							if(mysqli_num_rows($check_block_query))
+							{
+								$block = mysqli_fetch_array($check_block_query);
+								$check_goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id=".$block['goalid']." LIMIT 1");
+								if(mysqli_num_rows($check_goal_query))
+								{
+									$check_author = mysqli_fetch_array($check_goal_query);
+									if($check_author['userid'] == $userdata['id'])
+									{
+										mysqli_query($mysql_connection, "DELETE FROM actionblocks WHERE id=$blockid");
+										echo $output_success;
+									}else
+									{
+										echo $output_not_author;
+									}
+								}else
+								{
+									echo $output_no_goal;
+								}
+							}else
+							{
+								echo $output_no_block;
+							}
+							break;
+							
+							case 'addblock':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
+								$label_blockname = "Blockname";
+								$input_submit = "Block erstellen";
+								break;
+								
+								case 'english':
+								$output_not_author = "You are not the author of this goal.";
+								$output_no_goal = "There is no goal with this block.";
+								$label_blockname = "Blockname";
+								$input_submit = "Create block";
+								break;
+							}
+							$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+							$check_goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id = $goalid LIMIT 1");
+							if(mysqli_num_rows($check_goal_query))
+							{
+								$check_author = mysqli_fetch_array($check_goal_query);
+								if($check_author['userid'] == $userdata['id'])
+								{
+									echo "<form action=\"login.php?language=".$_GET['language']."&action=addedblock&goalid=".$goalid."\" method=\"post\" accept-charset=\"utf-8\">";
+										echo "<label>".$label_blockname."</label>";
+										echo "<div class=\"clear\"></div>";
+										echo "<input name=\"blockname\" size=\"50\"></input>";
+										echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+									echo "</form>";
+								}else
+								{
+									echo $output_not_author;
+								}
+							}else
+							{
+								echo $output_no_goal;
+							}
+							break;
+							
+							case 'addedblock':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$output_success = "Block hinzugefügt.";
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
+								break;
+								
+								case 'english':
+								$output_success = "Block added.";
+								$output_not_author = "You are not the author of this goal.";
+								$output_no_goal = "There is no goal with this block.";
+								break;
+							}
+							$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+							$blockname = mysqli_real_escape_string($mysql_connection, $_POST['blockname']);
+							$check_goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id = $goalid LIMIT 1");
+							if(mysqli_num_rows($check_goal_query))
+							{
+								$check_author = mysqli_fetch_array($check_goal_query);
+								if($check_author['userid'] == $userdata['id'])
+								{
+									mysqli_query($mysql_connection, "INSERT INTO actionblocks (goalid, name) VALUES ($goalid, '$blockname')");
+									echo $output_success;
 								}else
 								{
 									echo $output_not_author;
