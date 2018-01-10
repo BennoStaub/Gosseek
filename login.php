@@ -267,7 +267,7 @@
 								$label_birthyear = "Geburtsjahr";
 								$label_residence = "Wohnort";
 								$label_job = "Beruf";
-								$label_aboutme = "Über mich";
+								$label_description = "Über mich";
 								$label_uploadpicture = "Profilbild ändern";
 								$input_submit_change = "Profil ändern";
 								$input_submit_upload = "Neues Profilbild hochladen";
@@ -281,7 +281,7 @@
 								$label_birthyear = "Year of birth";
 								$label_residence = "Residence";
 								$label_job = "Job";
-								$label_aboutme = "About me";
+								$label_description = "About me";
 								$label_uploadpicture = "Change profile picture";
 								$input_submit_change = "Change profile";
 								$input_submit_upload = "Upload new profile picture";
@@ -343,8 +343,8 @@
 								echo "<label>".$label_job."</label>";
 								echo "<input name=\"job\" size=\"30\" value=\"".$userdata['job']."\"></input>";
 								echo "<div class=\"clear\"></div>";
-								echo "<label>".$label_aboutme."</label>";
-								echo "<textarea name=\"aboutme\" cols=\"64\" rows=\"15\">".$userdata['aboutme']."</textarea>";
+								echo "<label>".$label_description."</label>";
+								echo "<textarea name=\"description\" cols=\"64\" rows=\"15\">".$userdata['description']."</textarea>";
 								echo "<div class=\"clear\"></div>";
 								echo "<p>";
 									echo "<input type=\"submit\" value=\"".$input_submit_change."\"></input>";
@@ -387,16 +387,16 @@
 							{
 								$userdata['job'] = mysqli_real_escape_string($mysql_connection, $_POST['job']);
 							}
-							if(!(empty($_POST['aboutme'])))
+							if(!(empty($_POST['description'])))
 							{
-								$userdata['aboutme'] = mysqli_real_escape_string($mysql_connection, $_POST['aboutme']);
+								$userdata['description'] = mysqli_real_escape_string($mysql_connection, $_POST['description']);
 							}
 							$birthday = mysqli_real_escape_string($mysql_connection, $_POST['birthday']);
 							$birthmonth = mysqli_real_escape_string($mysql_connection, $_POST['birthmonth']);
 							$birthyear = mysqli_real_escape_string($mysql_connection, $_POST['birthyear']);
 							$birthdate = $birthyear."-".$birthday."-".$birthmonth;
 							mysqli_query($mysql_connection, "UPDATE users
-							SET name='".$userdata['name']."', surname='".$userdata['surname']."', birthdate='$birthdate', residence='".$userdata['residence']."', job='".$userdata['job']."', aboutme='".$userdata['aboutme']."'
+							SET name='".$userdata['name']."', surname='".$userdata['surname']."', birthdate='$birthdate', residence='".$userdata['residence']."', job='".$userdata['job']."', description='".$userdata['description']."'
 							WHERE id = ".$_SESSION['id']);
 							echo $output;
 							break;
@@ -588,7 +588,7 @@
 								$output_birthdate = "Geburtsdatum:";
 								$output_residence = "Wohnort:";
 								$output_job = "Beruf:";
-								$output_aboutme = "Über mich:";
+								$output_description = "Über mich:";
 								break;
 								
 								case 'english':
@@ -597,7 +597,7 @@
 								$output_birthdate = "Birthdate:";
 								$output_residence = "Residence:";
 								$output_job = "Job:";
-								$output_aboutme = "About me:";
+								$output_description = "About me:";
 								break;
 							}
 							$userid = mysqli_real_escape_string($mysql_connection, $_GET['userid']);
@@ -626,8 +626,8 @@
 									echo "<h><p>".$output_birthdate."</p><p>".$birthdate."</p></h>";
 									echo "<h><p>".$output_job."</p><p>".$user['job']."</p></h>";
 									echo "<h><p>".$output_residence."</p><p>".$user['residence']."</p></h>";
-									$user['aboutme']=str_replace("\n","<br>",$user['aboutme']);
-									echo "<h><p>".$output_aboutme."</p></h><h>".$user['aboutme']."</h>";
+									$user['description']=str_replace("\n","<br>",$user['description']);
+									echo "<h><p>".$output_description."</p></h><h>".$user['description']."</h>";
 								
 								echo "</div>";
 							}else{
@@ -710,8 +710,10 @@
 								$label_goal = "Ziel";
 								$input_submit = "Beitrag teilen";
 								$input_submit_choose_goal = "Ziel wählen";
+								$output_no_blocks = "Du hast noch keinen Aktionsblock für dieses Ziel definiert.";
 								$output_no_goal = "Dieses Ziel existiert nicht.";
 								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$a_add_block = "Aktionsblock hinzufügen";
 								break;
 								
 								case 'english':
@@ -723,8 +725,10 @@
 								$label_goal = "Goal";
 								$input_submit = "Post";
 								$input_submit_choose_goal = "Choose goal";
+								$output_no_blocks = "You have not yet defined an actionblock for this goal.";
 								$output_no_goal = "There is no such goal.";
 								$output_not_author = "You are not the author of this goal.";
+								$a_add_block = "Add actionblock";
 								break;
 							}
 							if(empty($_POST['goalid']))
@@ -750,49 +754,57 @@
 									$goal = mysqli_fetch_array($check_goal_query);
 									if($goal['userid'] == $userdata['id'])
 									{
-										echo "<form action=\"login.php?language=".$_GET['language']."&action=submitdayreview&goalid=".$goal['id']."\" method=\"post\" accept-charset=\"utf-8\">";
-											echo "<table>";
-											echo "<tr><td>".$label_actionblock."</td><td>".$label_start."</td><td>".$label_end."</td></tr>";
-											for($iter = 1; $iter <= 10; $iter++)
-											{
-												$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
-												echo "<td>";
-												echo "<select name=\"actionblock".$iter."\" size=\"1\">";
-													while($actionblock = mysqli_fetch_array($actionblock_query))
+										$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
+										if(mysqli_num_rows($actionblock_query) >= 1)
+										{
+											echo "<form action=\"login.php?language=".$_GET['language']."&action=submitdayreview&goalid=".$goal['id']."\" method=\"post\" accept-charset=\"utf-8\">";
+												echo "<table>";
+												echo "<tr><td>".$label_actionblock."</td><td>".$label_start."</td><td>".$label_end."</td></tr>";
+												for($iter = 1; $iter <= 10; $iter++)
+												{
+													$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
+													echo "<td>";
+													echo "<select name=\"actionblock".$iter."\" size=\"1\">";
+														while($actionblock = mysqli_fetch_array($actionblock_query))
+														{
+															echo "<option value=\"".$actionblock['id']."\">".$actionblock['name']."</option>";
+														}
+													echo "</select>";
+													echo "</td>";
+													echo "<td>";
+													echo "<select name=\"starttime".$iter."\" size=\"1\">";
+													$time_midnight = 82800;
+													for($timeiter = 0; $timeiter <= 95; $timeiter++)
 													{
-														echo "<option value=\"".$actionblock['id']."\">".$actionblock['name']."</option>";
+														$time = date("H:i",$time_midnight+$timeiter*900);
+														echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
 													}
-												echo "</select>";
-												echo "</td>";
-												echo "<td>";
-												echo "<select name=\"starttime".$iter."\" size=\"1\">";
-												$time_midnight = 82800;
-												for($timeiter = 0; $timeiter <= 95; $timeiter++)
-												{
-													$time = date("H:i",$time_midnight+$timeiter*900);
-													echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+													echo "</select>";
+													echo "</td>";
+													echo "<td>";
+													echo "<select name=\"finishtime".$iter."\" size=\"1\">";
+													$time_midnight = 82800;
+													for($timeiter = 0; $timeiter <= 95; $timeiter++)
+													{
+														$time = date("H:i",$time_midnight+$timeiter*900);
+														echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+													}
+													echo "</select>";
+													echo "</td></tr>";
 												}
-												echo "</select>";
-												echo "</td>";
-												echo "<td>";
-												echo "<select name=\"finishtime".$iter."\" size=\"1\">";
-												$time_midnight = 82800;
-												for($timeiter = 0; $timeiter <= 95; $timeiter++)
-												{
-													$time = date("H:i",$time_midnight+$timeiter*900);
-													echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
-												}
-												echo "</select>";
-												echo "</td></tr>";
-											}
-											echo "</table>";
-											echo "<label>".$label_title."</label>";
-											echo "<input name=\"title\" size=\"50\"></input>";
-											echo "<label>".$label_content."</label>";
-											echo "<textarea name=\"content\" cols=\"64\" rows=\"15\"/></textarea>";
-											echo "<br>";
-											echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
-										echo "</form>";
+												echo "</table>";
+												echo "<label>".$label_title."</label>";
+												echo "<input name=\"title\" size=\"50\"></input>";
+												echo "<label>".$label_content."</label>";
+												echo "<textarea name=\"content\" cols=\"64\" rows=\"15\"/></textarea>";
+												echo "<br>";
+												echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+											echo "</form>";
+										}else
+										{
+											echo $output_no_blocks;
+											echo "<br><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goalid."\">".$a_add_block."</a>";
+										}
 									}else
 									{
 										echo $output_not_author;
