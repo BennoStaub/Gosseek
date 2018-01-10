@@ -211,7 +211,7 @@
 									{
 										$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
 										$goaldata = mysqli_fetch_array($goal_query);
-										$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']);
+										$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
 										echo "<div class=\"feedpost\">";
 											echo "<div class=\"feedheader\">";
 												echo "<div class=\"feedtime\">";
@@ -536,7 +536,14 @@
 								{
 									echo "</tr><tr>";
 								}
-								echo "<td>".$name[$_GET['language']]."</td><td bgcolor=\"".$value."\" width=\"50\">    </td>";
+								if($value == "#000046" OR $value == "#000000" OR $value == "#002d00")
+								{
+									$font_color = "#FFFFFF";
+								}else
+								{
+									$font_color = "#000000";
+								}
+								echo "<td bgcolor=\"".$value."\" width=\"120\"><font color=\"".$font_color."\">".$name[$_GET['language']]."</font></td>";
 								$color_iter = $color_iter + 1;
 							}
 							echo "</tr></table>";
@@ -774,14 +781,20 @@
 											echo "<form action=\"login.php?language=".$_GET['language']."&action=submitdayreview&goalid=".$goal['id']."\" method=\"post\" accept-charset=\"utf-8\">";
 												echo "<table>";
 												echo "<tr><td>".$label_actionblock."</td><td>".$label_start."</td><td>".$label_end."</td></tr>";
+												$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
+												$iter = 1;
+												while($actionblock = mysqli_fetch_array($actionblock_query))
+												{
+													$actionblock_array[$iter] = $actionblock;
+													$iter++;
+												}
 												for($iter = 1; $iter <= 10; $iter++)
 												{
-													$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
 													echo "<td>";
 													echo "<select name=\"actionblock".$iter."\" size=\"1\">";
-														while($actionblock = mysqli_fetch_array($actionblock_query))
+														for($actionblock_iter = 1; $actionblock_iter <= sizeof($actionblock_array); $actionblock_iter++)
 														{
-															echo "<option value=\"".$actionblock['id']."\">".$actionblock['name']."</option>";
+															echo "<option value=\"".$actionblock_array[$actionblock_iter]['id']."\">".$actionblock_array[$actionblock_iter]['name']."</option>";
 														}
 													echo "</select>";
 													echo "</td>";
@@ -1027,7 +1040,7 @@
 								{
 									$author_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$goal['userid']." LIMIT 1");
 									$author = mysqli_fetch_array($author_query);
-									$goal['author'] = $author['surname']." ".$author['name'];
+									$goal['author'] = $author['name']." ".$author['surname'];
 								}else
 								{
 									$goal['author'] = $output_anonymous;
