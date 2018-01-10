@@ -165,11 +165,11 @@
 							switch($_GET['language'])
 							{
 								case 'german':
-								$output_nofollowing = "Du folgst noch keinem Ziel.";
+								$output_no_following = "Du folgst noch keinem Ziel.";
 								break;
 								
 								case 'english':
-								$output_nofollowing = "You don't follow any goal.";
+								$output_no_following = "You don't follow any goal.";
 								break;
 							}
 							$following_goals_query = mysqli_query($mysql_connection, "SELECT goalid FROM goalfollowers WHERE userid=".$userdata['id']);
@@ -248,7 +248,7 @@
 								}
 							}else
 							{
-								echo $output_nofollowing;
+								echo $output_no_following;
 							}
 							break;
 							
@@ -268,7 +268,7 @@
 								$label_residence = "Wohnort";
 								$label_job = "Beruf";
 								$label_description = "Über mich";
-								$label_uploadpicture = "Profilbild ändern";
+								$label_upload_picture = "Profilbild ändern";
 								$input_submit_change = "Profil ändern";
 								$input_submit_upload = "Neues Profilbild hochladen";
 								break;
@@ -282,7 +282,7 @@
 								$label_residence = "Residence";
 								$label_job = "Job";
 								$label_description = "About me";
-								$label_uploadpicture = "Change profile picture";
+								$label_upload_picture = "Change profile picture";
 								$input_submit_change = "Change profile";
 								$input_submit_upload = "Upload new profile picture";
 								break;
@@ -352,7 +352,7 @@
 							echo "</form>";
 							echo "<br><br>";
 							echo "<form action=\"login.php?language=".$_GET['language']."&action=uploadprofilepicture\" method=\"post\" enctype=\"multipart/form-data\">";
-								echo "<label>".$label_uploadpicture."</label>";
+								echo "<label>".$label_upload_picture."</label>";
 								echo "<input type=\"file\" name=\"profilepicture\">";
 								echo "<p>";
 									echo "<input type=\"submit\" value=\"".$input_submit_upload."\" name=\"submit\">";
@@ -405,58 +405,54 @@
 							switch($_GET['language'])
 							{
 								case 'german':
-								$output_noimage = "Die ausgewählte Datei ist kein Bild.";
-								$output_toobig = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
-								$output_wrongformat = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
+								$output_no_image = "Die ausgewählte Datei ist kein Bild.";
+								$output_too_big = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
+								$output_wrong_format = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
 								$output_success = "Die Datei ". basename( $_FILES['profilepicture']['name']) ."wurde hochgeladen.";
-								$output_nofile = "Keine Datei ausgewählt.";
+								$output_no_file = "Keine Datei ausgewählt.";
 								break;
 								
 								case 'english':
-								$output_noimage = "The chosen file is not an image.";
-								$output_toobig = "The chosen file is too big. Maximum size: 5Mb.";
-								$output_wrongformat = "Only JPG, JPEG and PNG files are allowed.";
+								$output_no_image = "The chosen file is not an image.";
+								$output_too_big = "The chosen file is too big. Maximum size: 5Mb.";
+								$output_wrong_format = "Only JPG, JPEG and PNG files are allowed.";
 								$output_success = "The file ". basename( $_FILES['profilepicture']['name']). " has been uploaded.";
-								$output_nofile = "No file chosen.";
+								$output_no_file = "No file chosen.";
 								break;
 							}
 							$target_dir = "uploads/profilepictures/";
 							$target_file = $target_dir . basename($_FILES["profilepicture"]["name"]);
-							$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
-							$uploadOk = 1;
+							$image_File_Type = pathinfo($target_file,PATHINFO_EXTENSION);
 							// check if file has been chosen
 							if(empty($_FILES['profilepicture']['tmp_name']))
 							{
-									echo $output_nofile;
+									echo $output_no_file;
 									break;
 							}
 							// Check if image file is an actual image or fake image
 							$check = getimagesize($_FILES['profilepicture']['tmp_name']);
 							if($check == false) 
 							{
-								echo $output_noimage;
+								echo $output_no_image;
 								break;
 							}
 							// Check file size
 							if ($_FILES['profilepicture']['size'] > 5000000)
 							{
-								echo $output_toobig;
+								echo $output_too_big;
 								break;
 							}
 							// Allow certain file formats
-							if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "JPG" && $imageFileType != "PNG" && $imageFileType != "JPEG")
+							if($image_File_Type != "jpg" && $image_File_Type != "png" && $image_File_Type != "jpeg" && $image_File_Type != "JPG" && $image_File_Type != "PNG" && $image_File_Type != "JPEG")
 							{
-								echo $output_wrongformat;
+								echo $output_wrong_format;
 								break;
 							}
-							// Check if $uploadOk is set to 0 by an error
-							if ($uploadOk == 1) 
+							// No error, upload file
+							if (move_uploaded_file($_FILES['profilepicture']['tmp_name'], $target_dir.$userdata['id'].".".$image_File_Type))
 							{
-								if (move_uploaded_file($_FILES['profilepicture']['tmp_name'], $target_dir.$userdata['id'].".".$imageFileType))
-								{
-									mysqli_query($mysql_connection, "UPDATE users SET profilepictureformat = '.".$imageFileType."' WHERE id = ".$userdata['id']);
-									echo $output_success;
-								}
+								mysqli_query($mysql_connection, "UPDATE users SET profilepictureformat = '.".$image_File_Type."' WHERE id = ".$userdata['id']);
+								echo $output_success;
 							}
 							break;
 							
@@ -467,9 +463,9 @@
 								$label_color_background = "Hintergrundfarbe";
 								$label_color_frame = "Randfarbe";
 								$label_color_box = "Boxfarbe";
-								$label_newpassword = "Neues Passwort";
+								$label_new_password = "Neues Passwort";
 								$input_submit_change = "Einstellungen ändern";
-								$input_submit_newpassword = "Passwort ändern";
+								$input_submit_new_password = "Passwort ändern";
 								$output_colors = "Farben:";
 								break;
 								
@@ -477,9 +473,9 @@
 								$label_color_background = "Background color";
 								$label_color_frame = "Frame color";
 								$label_color_box = "Box color";
-								$label_newpassword = "New password";
+								$label_new_password = "New password";
 								$input_submit_change = "Change settings";
-								$input_submit_newpassword = "Change password";
+								$input_submit_new_password = "Change password";
 								$output_colors = "Colors:";
 								break;
 							}
@@ -546,10 +542,10 @@
 							echo "</tr></table>";
 							echo "<br><br><br>";
 							echo "<form action=\"login.php?language=".$_GET['language']."&action=changepassword\" method=\"post\" accept-charset=\"utf-8\">";
-							echo "<label>".$label_newpassword."</label>";
+							echo "<label>".$label_new_password."</label>";
 							echo "<input name=\"newpassword\" type=\"password\" size=\"30\"></input>";
 							echo "<p>";
-								echo "<input type=\"submit\" value=\"".$input_submit_newpassword."\"></input>";
+								echo "<input type=\"submit\" value=\"".$input_submit_new_password."\"></input>";
 							echo "</p>";
 							break;
 							
@@ -583,7 +579,7 @@
 							switch($_GET['language'])
 							{
 								case 'german':
-								$output_nouser = "Dieses Profil existiert nicht.";
+								$output_no_user = "Dieses Profil existiert nicht.";
 								$output_name = "Name:";
 								$output_birthdate = "Geburtsdatum:";
 								$output_residence = "Wohnort:";
@@ -592,7 +588,7 @@
 								break;
 								
 								case 'english':
-								$output_nouser = "Profile not found.";
+								$output_no_user = "Profile not found.";
 								$output_name = "Name:";
 								$output_birthdate = "Birthdate:";
 								$output_residence = "Residence:";
@@ -622,16 +618,16 @@
 									}else{
 										echo "<img src=\"uploads/profilepictures/no_picture.png\" width=\"180\" height=\"240\"></img>";	
 									}
-									echo "<h><p>".$output_name."</p><p>".$user['name']." ".$user['surname']."</p></h>";
-									echo "<h><p>".$output_birthdate."</p><p>".$birthdate."</p></h>";
-									echo "<h><p>".$output_job."</p><p>".$user['job']."</p></h>";
-									echo "<h><p>".$output_residence."</p><p>".$user['residence']."</p></h>";
+									echo "<h><p><b>".$output_name."</b></p><p>".$user['name']." ".$user['surname']."</p></h>";
+									echo "<h><p><b>".$output_birthdate."</b></p><p>".$birthdate."</p></h>";
+									echo "<h><p><b>".$output_job."</b></p><p>".$user['job']."</p></h>";
+									echo "<h><p><b>".$output_residence."</b></p><p>".$user['residence']."</p></h>";
 									$user['description']=str_replace("\n","<br>",$user['description']);
-									echo "<h><p>".$output_description."</p></h><h>".$user['description']."</h>";
+									echo "<h><p><b>".$output_description."</b></p></h><h>".$user['description']."</h>";
 								
 								echo "</div>";
 							}else{
-								echo $output_nouser;
+								echo $output_no_user;
 							}
 							break;
 							
@@ -678,23 +674,41 @@
 								case 'german':
 								$output_success = "Beitrag gepostet.";
 								$output_fail = "Bitte alle Felder ausfüllen.";
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$output_no_goal = "Dieses Ziel existiert nicht.";
 								break;
 								
 								case 'english':
 								$output_success = "Content posted.";
 								$output_fail = "Please fill in all fields.";
+								$output_not_author = "You are not the author of this goal.";
+								$output_no_goal = "There is no such goal.";
 								break;
 							}
-							if(empty($_POST['title']) OR empty($_POST['content']))
+							$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+							$check_goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id = ".$goalid." LIMIT 1");
+							if(mysqli_num_rows($check_goal_query))
 							{
-								echo $output_fail;
+								$goal = mysqli_fetch_array($check_goal_query);
+								if($goal['userid'] == $userdata['id'])
+								{
+									if(empty($_POST['title']) OR empty($_POST['content']))
+									{
+										echo $output_fail;
+									}else
+									{
+										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+										$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+										mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".time()."','$title','$content')");
+										echo $output_success;
+									}
+								}else
+								{
+									echo $output_not_author;
+								}
 							}else
 							{
-								$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
-								$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-								$goalid = mysqli_real_escape_string($mysql_connection, $_POST['goalid']);
-								mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".time()."','$title','$content')");
-								echo $output_success;
+								echo $output_no_goal;
 							}
 							break;
 							
@@ -878,14 +892,8 @@
 									$label_block = "Aktionsblock";
 									$option_yes = "Ja";
 									$option_no = "Nein";
-									$option_study = "Studium";
-									$option_finance = "Finanzen";
-									$option_career = "Karriere";
-									$option_selfdevelopment = "Selbstentwicklung";
-									$option_social = "Soziales";
-									$option_sport = "Sport";
-									$option_health = "Gesundheit";
 									$input_submit = "Los gehts!";
+									$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
 									break;
 									
 									case 'english':
@@ -896,14 +904,8 @@
 									$label_block = "Actionblock";
 									$option_yes = "Yes";
 									$option_no = "No";
-									$option_study = "Study";
-									$option_finance = "Finance";
-									$option_career = "Career";
-									$option_selfdevelopment = "Self-development";
-									$option_social = "Social";
-									$option_sport = "Sport";
-									$option_health = "Health";
 									$input_submit = "Let's go!";
+									$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
 									break;
 							}
 							echo "<form action=\"login.php?language=".$_GET['language']."&action=submitgoal\" method=\"post\" accept-charset=\"utf-8\">";
@@ -919,13 +921,10 @@
 								echo "<label>".$label_section."</label>";
 								echo "<div class=\"clear\"></div>";
 								echo "<select name=\"section\" size=\"1\">";
-									echo "<option value=\"study\">".$option_study."</option>";
-									echo "<option value=\"finance\">".$option_finance."</option>";
-									echo "<option value=\"career\">".$option_career."</option>";
-									echo "<option value=\"selfdevelopment\">".$option_selfdevelopment."</option>";
-									echo "<option value=\"social\">".$option_social."</option>";
-									echo "<option value=\"sport\">".$option_sport."</option>";
-									echo "<option value=\"health\">".$option_health."</option>";
+									foreach($output_sections as $section=>$section_output)
+									{
+										echo "<option value=\"".$section."\">".$section_output."</option>";
+									}
 								echo "</select>";
 								echo "<div class=\"clear\"></div>";
 								echo "<label>".$label_description."</label>";
@@ -983,7 +982,7 @@
 							switch($_GET['language'])
 							{
 								case 'german':
-								$output_nogoal = "Dieses Ziel existiert nicht.";
+								$output_no_goal = "Dieses Ziel existiert nicht.";
 								$output_author = "Autor:";
 								$output_title = "Titel:";
 								$output_section = "Bereich:";
@@ -1001,7 +1000,7 @@
 								break;
 								
 								case 'english':
-								$output_nogoal = "Goal not found.";
+								$output_no_goal = "Goal not found.";
 								$output_author = "Author:";
 								$output_title = "Name:";
 								$output_section = "Section:";
@@ -1034,17 +1033,17 @@
 									$goal['author'] = $output_anonymous;
 								}
 								echo "<div class=\"profile\">";
-									echo "<h><p>".$output_author."</p><p>".$goal['author']."</p></h>";
-									echo "<h><p>".$output_title."</p>".$goal['title']."</h>";
-									echo "<h><p>".$output_section."</p><p>".$output_sections[$goal['section']]."</p></h>";
-									echo "<h><p>".$output_starttime."</p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
+									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
+									echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
+									echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
+									echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
 									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
 									while($actionblock = mysqli_fetch_array($actionblock_query))
 									{
-										echo "<h><p>".$output_block."</p>".$actionblock['name']." <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a></h>";
+										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name']." <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a></h>";
 									}
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
-									echo "<h><p>".$output_description."</p><br>".$goal['description']."</h>";
+									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
 									if($goal['userid'] == $userdata['id'])
 									{
 										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
@@ -1060,7 +1059,7 @@
 									}
 								echo "</div>";
 							}else{
-								echo $output_nogoal;
+								echo $output_no_goal;
 							}
 							break;
 							
