@@ -116,20 +116,23 @@
 							{
 								case 'german':
 								$a_owngoals = "Eigene Ziele";
-								$a_createpost = "Beitrag erstellen";
+								$a_create_post = "Beitrag erstellen";
+								$a_day_review = "Tagesrückblick";
 								$a_feed = "Feed";
 								$a_definegoal = "Neues Ziel definieren";
 								break;
 								
 								case 'english':
 								$a_owngoals = "Own goals";
-								$a_createpost = "Create a post";
+								$a_create_post = "Create a post";
+								$a_day_review = "Review of the day";
 								$a_feed = "Feed";
 								$a_definegoal = "Define new goal";
 								break;
 							}
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=owngoals\">".$a_owngoals."</a>";	
-						echo "<a href=\"login.php?language=".$_GET['language']."&action=createpost\">".$a_createpost."</a>";
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=createpost\">".$a_create_post."</a>";	
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=createdayreview\">".$a_day_review."</a>";
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=feed\">".$a_feed."</a>";
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=definegoal\">".$a_definegoal."</a>";
 					?>
@@ -182,26 +185,66 @@
 								{
 									$query_condition = $query_condition." OR goalid = ".$own_goals['id'];
 								}
-								$feed_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE ".$query_condition." ORDER BY time DESC");
-								while($feeddata = mysqli_fetch_array($feed_query))
+								$post_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE ".$query_condition." ORDER BY time DESC");
+								while($post = mysqli_fetch_array($post_query))
 								{
-									$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$feeddata['goalid']." LIMIT 1");
-									$goaldata = mysqli_fetch_array($goal_query);
-									echo "<div class=\"feedpost\">";
-										echo "<div class=\"feedheader\">";
-											echo "<div class=\"feedtime\">";
-												echo date("d.m.Y - H:i", $feeddata['time']);
+									if($post['type'] == 0)
+									{
+										$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
+										$goaldata = mysqli_fetch_array($goal_query);
+										echo "<div class=\"feedpost\">";
+											echo "<div class=\"feedheader\">";
+												echo "<div class=\"feedtime\">";
+													echo date("d.m.Y - H:i", $post['time']);
+												echo "</div>";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
 											echo "</div>";
-											echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
+											echo "<div class=\"feedtitle\">";
+												echo $post['title'];
+											echo "</div>";
+											echo "<div class=\"feedcontent\">";
+												echo $post['content'];
+											echo "</div>";
 										echo "</div>";
-										echo "<div class=\"feedtitle\">";
-											echo $feeddata['title'];
+										echo "<br>";
+									}else
+									{
+										$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
+										$goaldata = mysqli_fetch_array($goal_query);
+										$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']);
+										echo "<div class=\"feedpost\">";
+											echo "<div class=\"feedheader\">";
+												echo "<div class=\"feedtime\">";
+													echo date("d.m.Y - H:i", $post['time']);
+												echo "</div>";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
+											echo "</div>";
+											echo "<div class=\"feedtitle\">";
+												echo $post['title'];
+											echo "</div>";
+											echo "<div class=\"feedcontent\">";
+												echo "<table border=\"1\">";
+												$iter = 0;
+												while($schedule = mysqli_fetch_array($schedule_query))
+												{
+													if($iter%2 == 1)
+													{
+														$bgcolor = "#808080";
+													}else
+													{
+														$bgcolor = "#BFBFBF";
+													}
+													$actionblock_query = mysqli_query($mysql_connection, "SELECT name FROM actionblocks WHERE id = ".$schedule['actionblockid']." LIMIT 1");
+													$actionblock = mysqli_fetch_array($actionblock_query);
+													echo "<tr bgcolor=\"".$bgcolor."\"><td>".date("H:i",$schedule['starttime'])."-".date("H:i",$schedule['finishtime'])."</td><td>".$actionblock['name']."</td></tr>";
+													$iter++;
+												}
+												echo "</table><br>";
+												echo $post['content'];
+											echo "</div>";
 										echo "</div>";
-										echo "<div class=\"feedcontent\">";
-											echo $feeddata['content'];
-										echo "</div>";
-									echo "</div>";
-									echo "<br>";
+										echo "<br>";
+									}
 								}
 							}else
 							{
@@ -650,8 +693,165 @@
 								$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 								$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
 								$goalid = mysqli_real_escape_string($mysql_connection, $_POST['goalid']);
-								mysqli_query($mysql_connection, "INSERT INTO posts (userid, goalid, time, title, content) VALUES ('".$userdata['id']."', '".$goalid."', '".time()."','$title','$content')");
+								mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".time()."','$title','$content')");
 								echo $output_success;
+							}
+							break;
+							
+							case 'createdayreview':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$label_actionblock = "Aktionsblock";
+								$label_start = "Von";
+								$label_end = "Bis";
+								$label_title = "Titel";
+								$label_content = "Beitrag";
+								$label_goal = "Ziel";
+								$input_submit = "Beitrag teilen";
+								$input_submit_choose_goal = "Ziel wählen";
+								$output_no_goal = "Dieses Ziel existiert nicht.";
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								break;
+								
+								case 'english':
+								$label_actionblock = "Actionblock";
+								$label_start = "Started";
+								$label_end = "Finished";
+								$label_title = "Title";
+								$label_content = "Content";
+								$label_goal = "Goal";
+								$input_submit = "Post";
+								$input_submit_choose_goal = "Choose goal";
+								$output_no_goal = "There is no such goal.";
+								$output_not_author = "You are not the author of this goal.";
+								break;
+							}
+							if(empty($_POST['goalid']))
+							{
+								echo "<form action=\"login.php?language=".$_GET['language']."&action=createdayreview\" method=\"post\" accept-charset=\"utf-8\">";
+									echo "<label>".$label_goal."</label>";
+									echo "<div class=\"clear\"></div>";
+									echo "<select name=\"goalid\" size=\"1\">";
+										$goal_query = mysqli_query($mysql_connection, "SELECT id,title FROM goals WHERE userid = ".$userdata['id']);
+										while($goal = mysqli_fetch_array($goal_query))
+										{
+											echo "<option value=\"".$goal['id']."\">".$goal['title']."</option>";
+										}
+									echo "</select>";
+									echo "<br>";
+									echo "<input type=\"submit\" value=\"".$input_submit_choose_goal."\"></input>";
+							}else
+							{
+								$goalid = mysqli_real_escape_string($mysql_connection, $_POST['goalid']);
+								$check_goal_query = mysqli_query($mysql_connection, "SELECT id,userid FROM goals WHERE id = ".$goalid." LIMIT 1");
+								if(mysqli_num_rows($check_goal_query))
+								{
+									$goal = mysqli_fetch_array($check_goal_query);
+									if($goal['userid'] == $userdata['id'])
+									{
+										echo "<form action=\"login.php?language=".$_GET['language']."&action=submitdayreview&goalid=".$goal['id']."\" method=\"post\" accept-charset=\"utf-8\">";
+											echo "<table>";
+											echo "<tr><td>".$label_actionblock."</td><td>".$label_start."</td><td>".$label_end."</td></tr>";
+											for($iter = 1; $iter <= 10; $iter++)
+											{
+												$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
+												echo "<td>";
+												echo "<select name=\"actionblock".$iter."\" size=\"1\">";
+													while($actionblock = mysqli_fetch_array($actionblock_query))
+													{
+														echo "<option value=\"".$actionblock['id']."\">".$actionblock['name']."</option>";
+													}
+												echo "</select>";
+												echo "</td>";
+												echo "<td>";
+												echo "<select name=\"starttime".$iter."\" size=\"1\">";
+												$time_midnight = 82800;
+												for($timeiter = 0; $timeiter <= 95; $timeiter++)
+												{
+													$time = date("H:i",$time_midnight+$timeiter*900);
+													echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+												}
+												echo "</select>";
+												echo "</td>";
+												echo "<td>";
+												echo "<select name=\"finishtime".$iter."\" size=\"1\">";
+												$time_midnight = 82800;
+												for($timeiter = 0; $timeiter <= 95; $timeiter++)
+												{
+													$time = date("H:i",$time_midnight+$timeiter*900);
+													echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+												}
+												echo "</select>";
+												echo "</td></tr>";
+											}
+											echo "</table>";
+											echo "<label>".$label_title."</label>";
+											echo "<input name=\"title\" size=\"50\"></input>";
+											echo "<label>".$label_content."</label>";
+											echo "<textarea name=\"content\" cols=\"64\" rows=\"15\"/></textarea>";
+											echo "<br>";
+											echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+										echo "</form>";
+									}else
+									{
+										echo $output_not_author;
+									}
+								}else
+								{
+									echo $output_no_goal;
+								}
+							}
+							break;
+							
+							case 'submitdayreview':
+							switch($_GET['language'])
+							{
+								case 'german':
+								$output_no_goal = "Dieses Ziel existiert nicht.";
+								$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+								$output_success = "Tagesrückblick gepostet.";
+								break;
+								
+								case 'english':
+								$output_no_goal = "There is no such goal.";
+								$output_not_author = "You are not the author of this goal.";
+								$output_success = "Day review posted.";
+								break;
+							}
+							$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+							$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+							$check_goal_query = mysqli_query($mysql_connection, "SELECT id,userid FROM goals WHERE id = ".$goalid." LIMIT 1");
+							if(mysqli_num_rows($check_goal_query))
+							{
+								$goal = mysqli_fetch_array($check_goal_query);
+								if($goal['userid'] == $userdata['id'])
+								{
+									$time = time();
+									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+									mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content')");
+									$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
+									$post = mysqli_fetch_array($post_query);
+									for($actionblockiter = 1; $actionblockiter <= 10; $actionblockiter++)
+									{
+											if(!($_POST['starttime'.$actionblockiter] == $_POST['finishtime'.$actionblockiter]))
+											{
+												$actionblockid = mysqli_real_escape_string($mysql_connection, $_POST['actionblock'.$actionblockiter]);
+												$starttime = mysqli_real_escape_string($mysql_connection,$_POST['starttime'.$actionblockiter]);
+												$finishtime = $_POST['finishtime'.$actionblockiter];
+												mysqli_query($mysql_connection, "INSERT INTO scheduleblocks (postid, actionblockid, starttime, finishtime) VALUES ('".$post['id']."', '".$actionblockid."', '".$starttime."', '".$finishtime."')");
+											}
+									}
+										echo $output_success;
+									
+								}else
+								{
+									echo $output_not_author;
+								}
+							}else
+							{
+								echo $output_no_goal;
 							}
 							break;
 							
