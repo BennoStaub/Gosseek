@@ -1008,7 +1008,7 @@ echo "<html>";
 							$output_starttime = "Start:";
 							$output_description = "Description:";
 							$output_block = "Actionblock";
-							$output_anonymous = "anonymous";
+							$output_anonymous = "Anonymous";
 							$a_follow_goal = "Follow this goal";
 							$a_unfollow_goal = "Unfollow this goal";
 							$a_edit_goal = "Edit this goal";
@@ -1028,7 +1028,7 @@ echo "<html>";
 							{
 								$author_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$goal['userid']." LIMIT 1");
 								$author = mysqli_fetch_array($author_query);
-								$goal['author'] = $author['name']." ".$author['surname'];
+								$goal['author'] = "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$goal['userid']."\">".$author['name']." ".$author['surname']."</a>";
 							}else
 							{
 								$goal['author'] = $output_anonymous;
@@ -1518,20 +1518,35 @@ echo "<html>";
 						switch($_GET['language'])
 						{
 							case 'german':
+							$output_anonymous = "Anonym";
+							$output_not_anonymous = "Öffentlich";
 							$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
 							break;
 							
 							case 'english':
+							$output_anonymous = "Anonymous";
+							$output_not_anonymous = "Public";
 							$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
 							break;
 						}
 						echo "<table width=\"100%\" border=\"1\">";
+							$old_section = "";
 							$goallist_query = mysqli_query($mysql_connection, "SELECT * FROM goals WHERE userid=".$userdata['id']." ORDER BY section DESC");
 							while($goallist = mysqli_fetch_array($goallist_query))
 							{
 								$goal_section = $goallist['section'];
-								echo "<tr><td colspan=\"2\"><b>".$sections[$goal_section]."</b></td>";
-								echo "<td><a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goallist['id']."\">".$goallist['title']."</a></td></tr>";
+								if($goal_section != $old_section)
+								{
+									echo "<tr><td colspan=\"2\"><b>".$sections[$goal_section]."</b></td></tr>";
+								}
+								if($goallist['anonymous'])
+								{
+									echo "<tr><td>".$output_anonymous."</td><td><a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goallist['id']."\">".$goallist['title']."</a></td></tr>";
+								}else
+								{
+									echo "<tr><td>".$output_not_anonymous."</td><td><a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goallist['id']."\">".$goallist['title']."</a></td></tr>";
+								}
+								$old_section = $goal_section;
 							}
 						echo "</table>";
 						
