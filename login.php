@@ -1822,6 +1822,11 @@ echo "<html>";
 						$output_messages = "Messages";
 						break;
 					}
+					$new_messages_query = mysqli_query($mysql_connection, "SELECT id FROM messages WHERE receiverid = ".$userdata['id']." AND new = 1");
+					if(mysqli_num_rows($new_messages_query) >= 1)
+					{
+						$output_messages = "<b>".$output_messages." (".mysqli_num_rows($new_messages_query).")</b>";
+					}
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=inbox\">".$output_messages."</a>";
 				echo "</div>";
 				echo "<div class=\"onlineleftinnerboxbottom\">";
