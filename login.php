@@ -1606,6 +1606,7 @@ echo "<html>";
 							$output_time = "Zeit";
 							$output_receiver = "An";
 							$output_message = "Nachricht";
+							$a_inbox = "Posteingang";
 							break;
 							
 							case 'english':
@@ -1613,6 +1614,7 @@ echo "<html>";
 							$output_time = "Time";
 							$output_receiver = "To";
 							$output_message = "Message";
+							$a_inbox = "Inbox";
 							break;
 						}
 						echo "<div class=\"inbox\">";
@@ -1631,8 +1633,9 @@ echo "<html>";
 								echo "</table>";
 							}else
 							{
-								echo $output_no_messages;
+								echo $output_no_messages."<br>";
 							}
+							echo "<a href=\"login.php?language=".$_GET['language']."&action=inbox\">".$a_inbox."</a>";
 						echo "</div>";
 						break;
 						
