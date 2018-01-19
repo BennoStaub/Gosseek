@@ -1558,6 +1558,7 @@ echo "<html>";
 						{
 							case 'german':
 							$output_no_messages = "Dein Posteingang ist leer.";
+							$output_time = "Zeit";
 							$output_sender = "Von";
 							$output_message = "Nachricht";
 							$a_outbox = "Postausgang";
@@ -1565,6 +1566,7 @@ echo "<html>";
 							
 							case 'english':
 							$output_no_messages = "Your inbox is empty.";
+							$output_time = "Time";
 							$output_sender = "From";
 							$output_message = "Message";
 							$a_outbox = "Outbox";
@@ -1575,7 +1577,7 @@ echo "<html>";
 							if(mysqli_num_rows($message_query) >= 1)
 							{
 								echo "<table width=\"90%\" border=\"1\">";
-									echo "<tr><td>".$output_sender."</td><td>".$output_message."</td></tr>";
+									echo "<tr><td>".$output_time."</td><td>".$output_sender."</td><td>".$output_message."</td></tr>";
 									while($message = mysqli_fetch_array($message_query))
 									{
 										$sender_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['senderid']." LIMIT 1");
@@ -1584,7 +1586,7 @@ echo "<html>";
 										{
 											$message['text'] = "<b>".$message['text']."</b>";
 										}
-										echo "<tr><td width=\"20%\"><a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['senderid']."\">".$sender['name']." ".$sender['surname']."</a></td><td><a href=\"login.php?language=".$_GET['language']."&action=show_message&messageid=".$message['id']."\">".$message['text']."</a></td></tr>";
+										echo "<tr><td width=\"20%\">".date("d.m.Y - H:i", $message['time'])."</td><td width=\"20%\"><a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['senderid']."\">".$sender['name']." ".$sender['surname']."</a></td><td><a href=\"login.php?language=".$_GET['language']."&action=show_message&messageid=".$message['id']."\">".$message['text']."</a></td></tr>";
 										
 									}
 								echo "</table>";
@@ -1601,12 +1603,14 @@ echo "<html>";
 						{
 							case 'german':
 							$output_no_messages = "Dein Postausgang ist leer.";
+							$output_time = "Zeit";
 							$output_receiver = "An";
 							$output_message = "Nachricht";
 							break;
 							
 							case 'english':
 							$output_no_messages = "Your outbox is empty.";
+							$output_time = "Time";
 							$output_receiver = "To";
 							$output_message = "Message";
 							break;
@@ -1616,12 +1620,12 @@ echo "<html>";
 							if(mysqli_num_rows($message_query) >= 1)
 							{
 								echo "<table width=\"90%\" border=\"1\">";
-									echo "<tr><td>".$output_receiver."</td><td>".$output_message."</td></tr>";
+									echo "<tr><td>".$output_time."</td><td>".$output_receiver."</td><td>".$output_message."</td></tr>";
 									while($message = mysqli_fetch_array($message_query))
 									{
 										$receiver_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['receiverid']." LIMIT 1");
 										$receiver = mysqli_fetch_array($receiver_query);
-										echo "<tr><td width=\"20%\"><a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['receiverid']."\">".$receiver['name']." ".$receiver['surname']."</a></td><td><a href=\"login.php?language=".$_GET['language']."&action=show_message&messageid=".$message['id']."\">".$message['text']."</a></td></tr>";
+										echo "<tr><td width=\"20%\">".date("d.m.Y - H:i", $message['time'])."</td><td width=\"20%\"><a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['receiverid']."\">".$receiver['name']." ".$receiver['surname']."</a></td><td><a href=\"login.php?language=".$_GET['language']."&action=show_message&messageid=".$message['id']."\">".$message['text']."</a></td></tr>";
 										
 									}
 								echo "</table>";
@@ -1737,9 +1741,9 @@ echo "<html>";
 								$sender = mysqli_fetch_array($sender_query);
 								$receiver = mysqli_fetch_array($receiver_query);
 								echo "<table border=\"1\" width=\"90%\">";
-									echo "<tr><td width=\"20%\">".$output_from." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['senderid']."\">".$sender['name']." ".$sender['surname']."</a></td><td width=\"20%\">".$output_to." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['receiverid']."\">".$receiver['name']." ".$receiver['surname']."</a></td></tr>";
-									echo "<tr><td colspan=\"2\">".$message['text']."</td></tr>";
-									echo "<tr><td colspan=\"2\"><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$message['senderid']."\">".$a_reply."</a> <a href=\"login.php?language=".$_GET['language']."&action=delete_message&messageid=".$message['id']."\">".$a_delete."</a></td></tr>";
+									echo "<tr><td width=\"20%\">".$output_from." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['senderid']."\">".$sender['name']." ".$sender['surname']."</a></td><td width=\"20%\">".$output_to." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['receiverid']."\">".$receiver['name']." ".$receiver['surname']."</a></td><td width=\"20%\">".date("d.m.Y - H:i", $message['time'])."</tr>";
+									echo "<tr><td colspan=\"3\">".$message['text']."</td></tr>";
+									echo "<tr><td><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$message['senderid']."\">".$a_reply."</a></td><td colspan=\"2\"><a href=\"login.php?language=".$_GET['language']."&action=delete_message&messageid=".$message['id']."\">".$a_delete."</a></td></tr>";
 								echo "</table>";
 								if($message['new'])
 								{
