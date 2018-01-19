@@ -308,7 +308,7 @@ echo "<html>";
 				echo "</p>";
 			echo "</div>";
 			echo "<div class=\"boxleft\">";
-				echo "<div class=\"leftinnerbox\">";
+				echo "<div class=\"offlineleftinnerbox\">";
 					echo "<br>";
 					switch($_GET['language'])
 					{

@@ -59,9 +59,13 @@ p { padding: 10px; }
 	
 .boxleft { float: right; width: 19%; height: 92%; border-radius: 5px; margin: 5px; background: <?php echo $color_frame; ?>; color: #000000; text-align: center; }
 
-.leftinnerbox { width: 90%; height: 96%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left; padding-left: 5px; }
-.leftinnerbox form { margin-left: 5px; }
-.leftinnerbox input { width: 95%; }
+.offlineleftinnerbox { width: 90%; height: 96%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left; padding-left: 5px; }
+.offlineleftinnerbox form { margin-left: 5px; }
+.offlineleftinnerbox input { width: 95%; }
+
+.onlineleftinnerboxtop { width: 90%; height: 24%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left; padding-left: 5px; }
+.onlineleftinnerboxbottom { width: 90%; height: 70.5%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left; padding-left: 5px; }
+
 	
 .boxfeed { float: right; width: 58%; height: 87.5%; border-radius: 5px; margin: 5px; padding: 5px; padding-top: 25px; background: <?php echo $color_box; ?>; color: #000000; overflow:auto; }
 .boxfeed form { width: 80% ; margin: 0 auto; }	
@@ -82,4 +86,11 @@ p { padding: 10px; }
 .profile img { float: right; margin-right: 50px; }
 .profile h { display: block; width: 90%; margin-left: 20px; }
 .profile p { display: inline-block; width: 25%; margin: 0 0; padding: 2px; }
+
+.inbox td {
+	max-width: 300px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 	

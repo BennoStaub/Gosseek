@@ -580,6 +580,7 @@ echo "<html>";
 							$output_residence = "Wohnort:";
 							$output_job = "Beruf:";
 							$output_description = "Über mich:";
+							$a_message = "Nachricht schreiben";
 							break;
 							
 							case 'english':
@@ -589,6 +590,7 @@ echo "<html>";
 							$output_residence = "Residence:";
 							$output_job = "Job:";
 							$output_description = "About me:";
+							$a_message = "Write a message";
 							break;
 						}
 						$userid = mysqli_real_escape_string($mysql_connection, $_GET['userid']);
@@ -619,7 +621,7 @@ echo "<html>";
 								echo "<h><p><b>".$output_residence."</b></p><p>".$user['residence']."</p></h>";
 								$user['description']=str_replace("\n","<br>",$user['description']);
 								echo "<h><p><b>".$output_description."</b></p></h><h>".$user['description']."</h>";
-							
+								echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$userid."\">".$a_message."</a></p></h>";
 							echo "</div>";
 						}else{
 							echo $output_no_user;
@@ -1549,9 +1551,252 @@ echo "<html>";
 								$old_section = $goal_section;
 							}
 						echo "</table>";
-						
+						break;
+
+						case 'inbox':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_messages = "Dein Posteingang ist leer.";
+							$output_sender = "Von";
+							$output_message = "Nachricht";
+							$a_outbox = "Postausgang";
+							break;
+							
+							case 'english':
+							$output_no_messages = "Your inbox is empty.";
+							$output_sender = "From";
+							$output_message = "Message";
+							$a_outbox = "Outbox";
+							break;
+						}
+						echo "<div class=\"inbox\">";
+							$message_query = mysqli_query($mysql_connection, "SELECT * FROM messages WHERE receiverid = ".$userdata['id']." AND deleted_receiver = 0 ORDER BY time DESC");
+							if(mysqli_num_rows($message_query) >= 1)
+							{
+								echo "<table width=\"90%\" border=\"1\">";
+									echo "<tr><td>".$output_sender."</td><td>".$output_message."</td></tr>";
+									while($message = mysqli_fetch_array($message_query))
+									{
+										$sender_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['senderid']." LIMIT 1");
+										$sender = mysqli_fetch_array($sender_query);
+										if($message['new'])
+										{
+											$message['text'] = "<b>".$message['text']."</b>";
+										}
+										echo "<tr><td width=\"20%\"><a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['senderid']."\">".$sender['name']." ".$sender['surname']."</a></td><td><a href=\"login.php?language=".$_GET['language']."&action=show_message&messageid=".$message['id']."\">".$message['text']."</a></td></tr>";
+										
+									}
+								echo "</table>";
+							}else
+							{
+								echo $output_no_messages."<br>";
+							}
+							echo "<a href=\"login.php?language=".$_GET['language']."&action=outbox\">".$a_outbox."</a>";
+						echo "</div>";
 						break;
 						
+						case 'outbox':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_messages = "Dein Postausgang ist leer.";
+							$output_receiver = "An";
+							$output_message = "Nachricht";
+							break;
+							
+							case 'english':
+							$output_no_messages = "Your outbox is empty.";
+							$output_receiver = "To";
+							$output_message = "Message";
+							break;
+						}
+						echo "<div class=\"inbox\">";
+							$message_query = mysqli_query($mysql_connection, "SELECT * FROM messages WHERE senderid = ".$userdata['id']." AND deleted_sender = 0 ORDER BY time DESC");
+							if(mysqli_num_rows($message_query) >= 1)
+							{
+								echo "<table width=\"90%\" border=\"1\">";
+									echo "<tr><td>".$output_receiver."</td><td>".$output_message."</td></tr>";
+									while($message = mysqli_fetch_array($message_query))
+									{
+										$receiver_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['receiverid']." LIMIT 1");
+										$receiver = mysqli_fetch_array($receiver_query);
+										echo "<tr><td width=\"20%\"><a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['receiverid']."\">".$receiver['name']." ".$receiver['surname']."</a></td><td><a href=\"login.php?language=".$_GET['language']."&action=show_message&messageid=".$message['id']."\">".$message['text']."</a></td></tr>";
+										
+									}
+								echo "</table>";
+							}else
+							{
+								echo $output_no_messages;
+							}
+						echo "</div>";
+						break;
+						
+						case 'write_message':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_receiver = "Dieser User existiert nicht.";
+							$label_message = "Nachricht an ";
+							$input_submit = "Nachricht senden";
+							$output_receiver_yourself = "Du kannst keine Nachricht an dich selbst schicken.";
+							break;
+							
+							case 'english':
+							$output_no_receiver = "This user does not exist.";
+							$label_message = "Message to ";
+							$input_submit = "Send message";
+							$output_receiver_yourself = "You cannot write yourself a message.";
+							break;
+						}
+						$receiverid = mysqli_real_escape_string($mysql_connection, $_GET['receiverid']);
+						$receiver_query = mysqli_query($mysql_connection, "SELECT name,surname FROM users WHERE id = ".$receiverid." LIMIT 1");
+						if(mysqli_num_rows($receiver_query))
+						{
+							if($receiverid != $userdata['id'])
+							{
+								$receiver = mysqli_fetch_array($receiver_query);
+								echo "<form action=\"login.php?language=".$_GET['language']."&action=send_message&receiverid=".$receiverid."\" method=\"post\" accept-charset=\"utf-8\">";
+									echo "<label>".$label_message."<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$receiverid."\">".$receiver['name']." ".$receiver['surname']."</a></label>";
+									echo "<div class=\"clear\"></div>";
+									echo "<textarea name=\"message\" cols=\"64\" rows=\"15\"/></textarea>";
+									echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+								echo "</form>";
+							}else
+							{
+								echo $output_receiver_yourself;
+							}
+						}else
+						{
+							echo $output_no_receiver;
+						}
+						break;
+						
+						case 'send_message':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_receiver = "Dieser User existiert nicht.";
+							$output_success = "Nachricht verschickt.";
+							$output_receiver_yourself = "Du kannst keine Nachricht an dich selbst schicken.";
+							break;
+							
+							case 'english':
+							$output_no_receiver = "This user does not exist.";
+							$output_success = "Message sent.";
+							$output_receiver_yourself = "You cannot write yourself a message.";
+							break;
+						}
+						$receiverid = mysqli_real_escape_string($mysql_connection, $_GET['receiverid']);
+						$receiver_query = mysqli_query($mysql_connection, "SELECT id FROM users WHERE id = ".$receiverid." LIMIT 1");
+						if(mysqli_num_rows($receiver_query))
+						{
+							if($receiverid != $userdata['id'])
+							{
+								$message = mysqli_real_escape_string($mysql_connection, $_POST['message']);
+								mysqli_query($mysql_connection, "INSERT INTO messages (senderid, receiverid, time, text, new) VALUES ('".$userdata['id']."', '$receiverid', '".time()."', '$message', 1)");
+								echo $output_success;
+							}else
+							{
+								echo $output_receiver_yourself;
+							}
+						}else
+						{
+							echo $output_no_receiver;
+						}
+						break;
+						
+						case 'show_message':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_message = "Diese Nachricht existiert nicht.";
+							$output_from = "Von";
+							$output_to = "An";
+							$a_reply = "Antworten";
+							$a_delete = "Nachricht löschen";
+							break;
+							
+							case 'english':
+							$output_no_message = "There is no such message.";
+							$output_from = "From";
+							$output_to = "To";
+							$a_reply = "Reply";
+							$a_delete = "Delete message";
+							break;
+						}
+						$messageid = mysqli_real_escape_string($mysql_connection, $_GET['messageid']);
+						$message_query = mysqli_query($mysql_connection, "SELECT * FROM messages WHERE id = ".$messageid." LIMIT 1");
+						if(mysqli_num_rows($message_query))
+						{
+							$message = mysqli_fetch_array($message_query);
+							if(($message['senderid'] == $userdata['id'] AND !$message['deleted_sender']) OR ($message['receiverid'] == $userdata['id'] AND !$message['deleted_receiver']))
+							{
+								$sender_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['senderid']." LIMIT 1");
+								$receiver_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['receiverid']." LIMIT 1");
+								$sender = mysqli_fetch_array($sender_query);
+								$receiver = mysqli_fetch_array($receiver_query);
+								echo "<table border=\"1\" width=\"90%\">";
+									echo "<tr><td width=\"20%\">".$output_from." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['senderid']."\">".$sender['name']." ".$sender['surname']."</a></td><td width=\"20%\">".$output_to." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['receiverid']."\">".$receiver['name']." ".$receiver['surname']."</a></td></tr>";
+									echo "<tr><td colspan=\"2\">".$message['text']."</td></tr>";
+									echo "<tr><td colspan=\"2\"><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$message['senderid']."\">".$a_reply."</a> <a href=\"login.php?language=".$_GET['language']."&action=delete_message&messageid=".$message['id']."\">".$a_delete."</a></td></tr>";
+								echo "</table>";
+								if($message['new'])
+								{
+									mysqli_query($mysql_connection, "UPDATE messages SET new = 0 WHERE id = ".$messageid);
+								}
+							}else
+							{
+								echo $output_no_message;
+							}
+						}else
+						{
+							echo $output_no_message;
+						}
+						break;
+						
+						case 'delete_message':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_message = "Diese Nachricht existiert nicht.";
+							$output_deleted = "Nachricht gelöscht.";
+							break;
+							
+							case 'english':
+							$output_no_message = "There is no such message.";
+							$output_deleted = "Message deleted.";
+							break;
+						}
+						$messageid = mysqli_real_escape_string($mysql_connection, $_GET['messageid']);
+						$message_query = mysqli_query($mysql_connection, "SELECT * FROM messages WHERE id = ".$messageid." LIMIT 1");
+						if(mysqli_num_rows($message_query))
+						{
+							$message = mysqli_fetch_array($message_query);
+							if(($message['senderid'] == $userdata['id'] AND !$message['deleted_sender']) OR ($message['receiverid'] == $userdata['id'] AND !$message['deleted_receiver']))
+							{
+								$sender_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['senderid']." LIMIT 1");
+								$receiver_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$message['receiverid']." LIMIT 1");
+								$sender = mysqli_fetch_array($sender_query);
+								$receiver = mysqli_fetch_array($receiver_query);
+								if($userdata['id'] == $message['receiverid'])
+								{
+									mysqli_query($mysql_connection, "UPDATE messages SET deleted_receiver = 1 WHERE id = ".$message['id']);
+								}else
+								{
+									mysqli_query($mysql_connection, "UPDATE messages SET deleted_sender = 1 WHERE id = ".$message['id']);
+								}
+								echo $output_deleted;
+								
+							}else
+							{
+								echo $output_no_message;
+							}
+						}else
+						{
+							echo $output_no_message;
+						}
+						break;
 					}
 				}else
 				{
@@ -1559,7 +1804,20 @@ echo "<html>";
 				}
 			echo "</div>";
 			echo "<div class=\"boxleft\">";
-				echo "<div class=\"leftinnerbox\">";
+				echo "<div class=\"onlineleftinnerboxtop\">";
+					switch($_GET['language'])
+					{
+						case 'german':
+						$output_messages = "Nachrichten";
+						break;
+						
+						case 'english':
+						$output_messages = "Messages";
+						break;
+					}
+					echo "<a href=\"login.php?language=".$_GET['language']."&action=inbox\">".$output_messages."</a>";
+				echo "</div>";
+				echo "<div class=\"onlineleftinnerboxbottom\">";
 					switch($_GET['language'])
 					{
 						case 'german':
