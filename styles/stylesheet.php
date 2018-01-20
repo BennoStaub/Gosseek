@@ -80,13 +80,18 @@ p { padding: 10px; }
 .feedheader { background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
 .feedtime { width: 20%; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-left: 0px; padding-left: 10px; padding-right: 10px; float: right }
 .feedtitle { font-weight: bold; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
-.feedcontent { background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; padding-top: 5px; }
+.feedcontent { background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; padding-top: 5px; }
 .feedcontent img { max-width: 50%; }
+.feedlinks { display: flex; font-weight: bold; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; }
+.feedlinks a { padding-right: 10px; }
+
+.feedlinksleft { width: 50%; }
+.feedlinksright { text-align: right; width: 50%; }
 
 .profile { width: 95% height: 70%; border-radius: 5px; margin: auto; backround: <?php echo $color_frame; ?>; padding: 5px; }
 .profile img { float: right; margin-right: 50px; }
 .profile h { display: block; width: 90%; margin-left: 20px; }
-.profile p { display: inline-block; width: 25%; margin: 0 0; padding: 2px; }
+.profile p { display: inline-block; width: 30%; margin: 0 0; padding: 2px; }
 
 .inbox td {
 	max-width: 300px;

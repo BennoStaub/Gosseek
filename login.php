@@ -19,7 +19,7 @@
 		$userdata_query = mysqli_query($mysql_connection, "SELECT * FROM users WHERE email= '".$email."' LIMIT 1");
 		if(!mysqli_num_rows($userdata_query))
 		{
-			echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action\=failedlogin\&reason\=wrongmail'; </script>";
+			echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action=failedlogin&reason=wrongmail'; </script>";
 			exit;
 		}else
 		{
@@ -28,14 +28,14 @@
 			{
 				if(!($userdata['status'] == 'activated'))
 				{
-					echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action\=failedlogin\&reason\=notactivated'; </script>";
+					echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action=failedlogin&reason=notactivated'; </script>";
 					exit;
 				}
 				$_SESSION['id'] = $userdata['id'];
 				$_SESSION['checklogin'] = true;
 			}else
 			{
-				echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action\=failedlogin\&reason\=wrongpassword'; </script>";
+				echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action=failedlogin&reason=wrongpassword'; </script>";
 				exit;
 			}
 			//convert birthdate also at login in case you want to display that later on directly at login, but so far useless
@@ -54,7 +54,7 @@
 		$userdata['birthyear'] = mb_substr($userdata['birthdate'], 0, 4);
 	}elseif(!($_POST['action'] == 'login'))
 	{
-		echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action\=invalidsession'; </script>";
+		echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action=invalidsession'; </script>";
 	}
 	switch($_GET['language'])
 	{
@@ -154,10 +154,20 @@ echo "<html>";
 						{
 							case 'german':
 							$output_no_following = "Du folgst noch keinem Ziel.";
+							$a_comment = "Kommentieren";
+							$a_comments = "Kommentare";
+							$a_like = "Gefällt mir";
+							$a_likes = "Gefällt";
+							$a_dislike = "Gefällt mir nicht mehr";
 							break;
 							
 							case 'english':
 							$output_no_following = "You don't follow any goal.";
+							$a_comment = "Comment";
+							$a_comments = "Comments";
+							$a_like = "Like";
+							$a_likes = "Likes";
+							$a_dislike = "Dislike";
 							break;
 						}
 						$following_goals_query = mysqli_query($mysql_connection, "SELECT goalid FROM goalfollowers WHERE userid=".$userdata['id']);
@@ -176,10 +186,13 @@ echo "<html>";
 							$post_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE ".$query_condition." ORDER BY time DESC");
 							while($post = mysqli_fetch_array($post_query))
 							{
+								$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
+								$goaldata = mysqli_fetch_array($goal_query);
+								$likes_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$post['id']);
+								$liked_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$post['id']." AND userid=".$userdata['id']." LIMIT 1");
+								$comments_query = mysqli_query($mysql_connection, "SELECT id FROM comments WHERE postid = ".$post['id']);
 								if($post['type'] == 0)
 								{
-									$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
-									$goaldata = mysqli_fetch_array($goal_query);
 									$show_file = "";
 									if($post['picture'])
 									{
@@ -200,14 +213,29 @@ echo "<html>";
 										echo "</div>";
 										echo "<div class=\"feedcontent\">";
 											echo $show_file;
+											$post['content']=str_replace("\n","<br>",$post['content']);
 											echo $post['content'];
+										echo "</div>";
+										echo "<div class=\"feedlinks\">";
+											echo "<div class=\"feedlinksleft\">";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=comment_post&postid=".$post['id']."\">".$a_comment."</a>";
+												if(mysqli_num_rows($liked_query))
+												{
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
+												}else
+												{
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=like_post&postid=".$post['id']."\">".$a_like."</a>";
+												}
+											echo "</div>";
+											echo "<div class=\"feedlinksright\">";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=comments&postid=".$post['id']."\">".$a_comments."(".mysqli_num_rows($comments_query).")</a>";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
+											echo "</div>";
 										echo "</div>";
 									echo "</div>";
 									echo "<br>";
 								}else
 								{
-									$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
-									$goaldata = mysqli_fetch_array($goal_query);
 									$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
 									$show_file = "";
 									if($post['picture'])
@@ -246,7 +274,24 @@ echo "<html>";
 												$iter++;
 											}
 											echo "</table><br>";
+											$post['content']=str_replace("\n","<br>",$post['content']);
 											echo $post['content'];
+										echo "</div>";
+										echo "<div class=\"feedlinks\">";
+											echo "<div class=\"feedlinksleft\">";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=comment_post&postid=".$post['id']."\">".$a_comment."</a>";
+												if(mysqli_num_rows($liked_query))
+												{
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
+												}else
+												{
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=like_post&postid=".$post['id']."\">".$a_like."</a>";
+												}
+											echo "</div>";
+											echo "<div class=\"feedlinksright\">";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=comments&postid=".$post['id']."\">".$a_comments."(".mysqli_num_rows($comments_query).")</a>";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
+											echo "</div>";
 										echo "</div>";
 									echo "</div>";
 									echo "<br>";
@@ -259,7 +304,7 @@ echo "<html>";
 						break;
 						
 						case 'logout':
-						echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action\=logout'; </script>";
+						echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action=logout'; </script>";
 						break;
 						
 						case 'profilesettings':
@@ -553,7 +598,7 @@ echo "<html>";
 						$color_box = mysqli_real_escape_string($mysql_connection, $_POST['color_box']);
 						mysqli_query($mysql_connection, "UPDATE users
 						SET color_background='$color_background', color_frame='$color_frame', color_box='$color_box' WHERE id = ".$_SESSION['id']);
-						echo "<script> location.href='login.php?language=".$_GET['language']."&action\=settings'; </script>";
+						echo "<script> location.href='login.php?language=".$_GET['language']."&action=settings'; </script>";
 						break;
 						
 						case 'changepassword':
@@ -756,6 +801,338 @@ echo "<html>";
 						}else
 						{
 							echo $output_no_goal;
+						}
+						break;
+						
+						case 'like_post':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_post = "Dieser Post exisitert nicht.";
+							break;
+							
+							case 'english':
+							$output_no_post = "There is no such post.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($check_post_query))
+						{
+							$check_like_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$postid." AND userid = ".$userdata['id']." LIMIT 1");
+							if(!mysqli_num_rows($check_like_query))
+							{
+								mysqli_query($mysql_connection, "INSERT INTO likes (postid, userid) VALUES ('".$postid."', '".$userdata['id']."')");
+								echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
+								exit;
+							}else
+							{	
+								echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
+								exit;
+							}
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'dislike_post':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_post = "Dieser Post exisitert nicht.";
+							break;
+							
+							case 'english':
+							$output_no_post = "There is no such post.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($check_post_query))
+						{
+							$check_like_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$postid." AND userid = ".$userdata['id']." LIMIT 1");
+							if(mysqli_num_rows($check_like_query))
+							{
+								mysqli_query($mysql_connection, "DELETE FROM likes WHERE postid = ".$postid." AND userid = ".$userdata['id']);
+								echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
+								exit;
+							}else
+							{
+								echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
+								exit;
+							}
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'likes':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_post = "Dieser Post exisitert nicht.";
+							$output_name = "Name";
+							$output_no_likes = "Keine Gefällt mir.";
+							break;
+							
+							case 'english':
+							$output_no_post = "There is no such post.";
+							$output_name = "Name";
+							$output_no_likes = "No likes.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($check_post_query))
+						{
+							$like_query = mysqli_query($mysql_connection, "SELECT userid FROM likes WHERE postid = ".$postid);
+							if(mysqli_num_rows($like_query) >= 1)
+							{
+								echo "<table border=\"1\">";
+								echo "<tr><td>".$output_name."</td></tr>";
+								while($like = mysqli_fetch_array($like_query))
+								{
+									$user_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$like['userid']);
+									$user = mysqli_fetch_array($user_query);
+									echo "<tr><td><a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$like['userid']."\">".$user['name']." ".$user['surname']."</a></td></tr>";
+								}
+								echo "</table>";
+							}else
+							{
+								echo $output_no_likes;
+							}
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'comment_post':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$input_submit = "Kommentar abschicken";
+							$output_no_post = "Dieser Post existiert nicht.";
+							break;
+							
+							case 'english':
+							$input_submit = "Send comment";
+							$output_no_post = "There is no such post.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($check_post_query))
+						{
+							echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_comment_post&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
+								echo "<textarea name=\"comment\" cols=\"64\" rows=\"15\"/></textarea>";
+								echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+							echo "</form>";
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'submit_comment_post':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_post = "Dieser Post existiert nicht.";
+							$output_comment_empty = "Bitte fülle das Kommentarfeld aus.";
+							break;
+							
+							case 'english':
+							$output_no_post = "There is no such post.";
+							$output_comment_empty = "Please fill in the comment field.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($check_post_query))
+						{
+							$comment = mysqli_real_escape_string($mysql_connection, $_POST['comment']);
+							if(!empty($comment))
+							{
+								mysqli_query($mysql_connection, "INSERT INTO comments (postid, userid, time, text) VALUES ('$postid', '".$userdata['id']."', '".time()."', '$comment')");
+								echo "<script> location.href='login.php?language=".$_GET['language']."&action=comments&postid=".$postid."'; </script>";
+								exit;
+							}else
+							{
+								echo $output_comment_empty;
+							}
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'comments':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_post = "Dieser Post exisitert nicht.";
+							$a_like = "Gefällt mir";
+							$a_dislike = "Gefällt mir nicht mehr";
+							$a_likes = "Gefällt";
+							$output_comments = "Kommentare";
+							$output_write_comment = "Kommentar schrieben";
+							$input_submit = "Kommentar abschicken";
+							break;
+							
+							case 'english':
+							$output_no_post = "There is no such post.";
+							$a_like = "Like";
+							$a_dislike = "Dislike";
+							$a_likes = "Likes";
+							$output_comments = "Comments";
+							$output_write_comment = "Write a comment";
+							$input_submit = "Send comment";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$post_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($post_query))
+						{
+							$post = mysqli_fetch_array($post_query);
+							$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
+							$goaldata = mysqli_fetch_array($goal_query);
+							$likes_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$post['id']);
+							$liked_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$post['id']." AND userid=".$userdata['id']." LIMIT 1");
+							if($post['type'] == 0)
+							{
+								$show_file = "";
+								if($post['picture'])
+								{
+									if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+									{
+										$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
+									}
+								}
+								echo "<div class=\"feedpost\">";
+									echo "<div class=\"feedheader\">";
+										echo "<div class=\"feedtime\">";
+											echo date("d.m.Y - H:i", $post['time']);
+										echo "</div>";
+										echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
+									echo "</div>";
+									echo "<div class=\"feedtitle\">";
+										echo $post['title'];
+									echo "</div>";
+									echo "<div class=\"feedcontent\">";
+										echo $show_file;
+										$post['content']=str_replace("\n","<br>",$post['content']);
+										echo $post['content'];
+									echo "</div>";
+									echo "<div class=\"feedlinks\">";
+										echo "<div class=\"feedlinksleft\">";
+											if(mysqli_num_rows($liked_query))
+											{
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
+											}else
+											{
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=like_post&postid=".$post['id']."\">".$a_like."</a>";
+											}
+										echo "</div>";
+										echo "<div class=\"feedlinksright\">";
+											echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
+										echo "</div>";
+									echo "</div>";
+								echo "</div>";
+								echo "<br>";
+							}else
+							{
+								$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
+								$show_file = "";
+								if($post['picture'])
+								{
+									if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+									{
+										$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
+									}
+								}
+								echo "<div class=\"feedpost\">";
+									echo "<div class=\"feedheader\">";
+										echo "<div class=\"feedtime\">";
+											echo date("d.m.Y - H:i", $post['time']);
+										echo "</div>";
+										echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
+									echo "</div>";
+									echo "<div class=\"feedtitle\">";
+										echo $post['title'];
+									echo "</div>";
+									echo "<div class=\"feedcontent\">";
+										echo $show_file;
+										echo "<table border=\"1\">";
+										$iter = 0;
+										while($schedule = mysqli_fetch_array($schedule_query))
+										{
+											if($iter%2 == 1)
+											{
+												$bgcolor = "#808080";
+											}else
+											{
+												$bgcolor = "#BFBFBF";
+											}
+											$actionblock_query = mysqli_query($mysql_connection, "SELECT name FROM actionblocks WHERE id = ".$schedule['actionblockid']." LIMIT 1");
+											$actionblock = mysqli_fetch_array($actionblock_query);
+											echo "<tr bgcolor=\"".$bgcolor."\"><td>".date("H:i",$schedule['starttime'])."-".date("H:i",$schedule['finishtime'])."</td><td>".$actionblock['name']."</td></tr>";
+											$iter++;
+										}
+										echo "</table><br>";
+										$post['content']=str_replace("\n","<br>",$post['content']);
+										echo $post['content'];
+									echo "</div>";
+									echo "<div class=\"feedlinks\">";
+										echo "<div class=\"feedlinksleft\">";
+											if(mysqli_num_rows($liked_query))
+											{
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
+											}else
+											{
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=like_post&postid=".$post['id']."\">".$a_like."</a>";
+											}
+										echo "</div>";
+										echo "<div class=\"feedlinksright\">";
+											echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
+										echo "</div>";
+									echo "</div>";
+								echo "</div>";
+								echo "<br>";
+							}
+							$comment_query = mysqli_query($mysql_connection, "SELECT * FROM comments WHERE postid=".$postid." ORDER BY time ASC");
+							if(mysqli_num_rows($comment_query) >= 1)
+							{
+								echo "<b>".$output_comments."</b>";
+								while($comment = mysqli_fetch_array($comment_query))
+								{
+									$user_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$comment['userid']." LIMIT 1");
+									$user = mysqli_fetch_array($user_query);
+									echo "<div class=\"feedpost\">";
+										echo "<div class=\"feedheader\">";
+											echo "<div class=\"feedtime\">";
+												echo date("d.m.Y - H:i", $comment['time']);
+											echo "</div>";
+											echo "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$comment['userid']."\">".$user['name']." ".$user['surname']."</a>";
+										echo "</div>";
+										echo "<div class=\"feedcontent\">";
+											$comment['text']=str_replace("\n","<br>",$comment['text']);
+											echo $comment['text'];
+										echo "</div>";
+									echo "</div>";
+									echo "<br>";
+								}
+							}
+							echo "<b>".$output_write_comment."</b>";
+							echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_comment_post&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
+								echo "<textarea name=\"comment\" cols=\"64\" rows=\"8\"/></textarea>";
+								echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+							echo "</form>";
+						}else
+						{
+							echo $output_no_post;
 						}
 						break;
 						
@@ -1851,6 +2228,7 @@ echo "<html>";
 								$receiver = mysqli_fetch_array($receiver_query);
 								echo "<table border=\"1\" width=\"90%\">";
 									echo "<tr><td width=\"20%\">".$output_from." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['senderid']."\">".$sender['name']." ".$sender['surname']."</a></td><td width=\"20%\">".$output_to." <a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$message['receiverid']."\">".$receiver['name']." ".$receiver['surname']."</a></td><td width=\"20%\">".date("d.m.Y - H:i", $message['time'])."</tr>";
+									$message['text']=str_replace("\n","<br>",$message['text']);
 									echo "<tr><td colspan=\"3\">".$message['text']."</td></tr>";
 									echo "<tr><td><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$message['senderid']."\">".$a_reply."</a></td><td colspan=\"2\"><a href=\"login.php?language=".$_GET['language']."&action=delete_message&messageid=".$message['id']."\">".$a_delete."</a></td></tr>";
 								echo "</table>";
@@ -1913,7 +2291,7 @@ echo "<html>";
 					}
 				}else
 				{
-						echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action\=invalidsession'; </script>";
+						echo "<script> location.href='mainpage.php?language=".$_GET['language']."&action=invalidsession'; </script>";
 				}
 			echo "</div>";
 			echo "<div class=\"boxleft\">";
