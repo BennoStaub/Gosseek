@@ -185,7 +185,7 @@ echo "<html>";
 									{
 										if($picture_file = glob("uploads/posts/".$post['id'].".*"))
 										{
-											$show_file = "<img src=\"".$picture_file[0]."\"></img><br>";
+											$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
 										}
 									}
 									echo "<div class=\"feedpost\">";
@@ -209,6 +209,14 @@ echo "<html>";
 									$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
 									$goaldata = mysqli_fetch_array($goal_query);
 									$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
+									$show_file = "";
+									if($post['picture'])
+									{
+										if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+										{
+											$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
+										}
+									}
 									echo "<div class=\"feedpost\">";
 										echo "<div class=\"feedheader\">";
 											echo "<div class=\"feedtime\">";
@@ -220,6 +228,7 @@ echo "<html>";
 											echo $post['title'];
 										echo "</div>";
 										echo "<div class=\"feedcontent\">";
+											echo $show_file;
 											echo "<table border=\"1\">";
 											$iter = 0;
 											while($schedule = mysqli_fetch_array($schedule_query))
@@ -775,6 +784,7 @@ echo "<html>";
 							$label_title = "Titel";
 							$label_content = "Beitrag";
 							$label_goal = "Ziel";
+							$label_picture = "Bild hinzufügen";
 							$input_submit = "Beitrag teilen";
 							$input_submit_choose_goal = "Ziel wählen";
 							$output_no_blocks = "Du hast noch keinen Aktionsblock für dieses Ziel definiert.";
@@ -790,6 +800,7 @@ echo "<html>";
 							$label_title = "Title";
 							$label_content = "Content";
 							$label_goal = "Goal";
+							$label_picture = "Add picture";
 							$input_submit = "Post";
 							$input_submit_choose_goal = "Choose goal";
 							$output_no_blocks = "You have not yet defined an actionblock for this goal.";
@@ -824,7 +835,7 @@ echo "<html>";
 									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
 									if(mysqli_num_rows($actionblock_query) >= 1)
 									{
-										echo "<form action=\"login.php?language=".$_GET['language']."&action=submitdayreview&goalid=".$goal['id']."\" method=\"post\" accept-charset=\"utf-8\">";
+										echo "<form action=\"login.php?language=".$_GET['language']."&action=submitdayreview&goalid=".$goal['id']."\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
 											echo "<table>";
 											echo "<tr><td>".$label_actionblock."</td><td>".$label_start."</td><td>".$label_end."</td></tr>";
 											$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$goal['id']);
@@ -870,7 +881,9 @@ echo "<html>";
 											echo "<input name=\"title\" size=\"50\"></input>";
 											echo "<label>".$label_content."</label>";
 											echo "<textarea name=\"content\" cols=\"64\" rows=\"15\"/></textarea>";
-											echo "<br>";
+											echo "<br><br>";
+											echo $label_picture." ";
+											echo "<input type=\"file\" name=\"picture\"></input>";
 											echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 										echo "</form>";
 									}else
@@ -896,12 +909,18 @@ echo "<html>";
 							$output_no_goal = "Dieses Ziel existiert nicht.";
 							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 							$output_success = "Tagesrückblick gepostet.";
+							$output_no_image = "Die ausgewählte Datei ist kein Bild.";
+							$output_too_big = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
+							$output_wrong_format = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
 							break;
 							
 							case 'english':
 							$output_no_goal = "There is no such goal.";
 							$output_not_author = "You are not the author of this goal.";
 							$output_success = "Day review posted.";
+							$output_no_image = "The chosen file is not an image.";
+							$output_too_big = "The chosen file is too big. Maximum size: 5Mb.";
+							$output_wrong_format = "Only JPG, JPEG and PNG files are allowed.";
 							break;
 						}
 						$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
@@ -912,12 +931,47 @@ echo "<html>";
 							$goal = mysqli_fetch_array($check_goal_query);
 							if($goal['userid'] == $userdata['id'])
 							{
-								$time = time();
-								$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
-								$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-								mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content')");
-								$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
-								$post = mysqli_fetch_array($post_query);
+								// check if file has been chosen
+								if(empty($_FILES['picture']['tmp_name']))
+								{
+									$time = time();
+									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+									mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 0)");
+									$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
+									$post = mysqli_fetch_array($post_query);
+								}else
+								{
+									$target_dir = "uploads/posts/";
+									$target_file = $target_dir . basename($_FILES["picture"]["name"]);
+									$image_File_Type = pathinfo($target_file,PATHINFO_EXTENSION);
+									// Check if image file is an actual image or fake image
+									if(getimagesize($_FILES['picture']['tmp_name']) == false) 
+									{
+										echo $output_no_image;
+										break;
+									}
+									// Check file size
+									if ($_FILES['picture']['size'] > 5000000)
+									{
+										echo $output_too_big;
+										break;
+									}
+									// Allow certain file formats
+									if($image_File_Type != "jpg" && $image_File_Type != "png" && $image_File_Type != "jpeg" && $image_File_Type != "JPG" && $image_File_Type != "PNG" && $image_File_Type != "JPEG")
+									{
+										echo $output_wrong_format;
+										break;
+									}
+									$time = time();
+									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+									mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 1)");
+									$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
+									$post = mysqli_fetch_array($post_query);
+									// No error, upload file
+									move_uploaded_file($_FILES['picture']['tmp_name'], $target_dir.$post['id'].".".$image_File_Type);
+								}
 								for($actionblockiter = 1; $actionblockiter <= 10; $actionblockiter++)
 								{
 										if(!($_POST['starttime'.$actionblockiter] == $_POST['finishtime'.$actionblockiter]))
