@@ -1086,7 +1086,7 @@ echo "<html>";
 							$output_section = "Bereich:";
 							$output_starttime = "Start:";
 							$output_description = "Beschreibung:";
-							$output_block = "Aktionsblock";
+							$output_block = "Aktionsblock:";
 							$output_anonymous = "Anonym";
 							$a_follow_goal = "Diesem Ziel folgen";
 							$a_unfollow_goal = "Dieses Ziel entfolgen";
@@ -1104,7 +1104,7 @@ echo "<html>";
 							$output_section = "Section:";
 							$output_starttime = "Start:";
 							$output_description = "Description:";
-							$output_block = "Actionblock";
+							$output_block = "Actionblock:";
 							$output_anonymous = "Anonymous";
 							$a_follow_goal = "Follow this goal";
 							$a_unfollow_goal = "Unfollow this goal";
@@ -1131,22 +1131,33 @@ echo "<html>";
 								$goal['author'] = $output_anonymous;
 							}
 							echo "<div class=\"profile\">";
-								echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
-								echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
-								echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
-								echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
-								$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
-								while($actionblock = mysqli_fetch_array($actionblock_query))
-								{
-									echo "<h><p><b>".$output_block."</b></p>".$actionblock['name']." <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a></h>";
-								}
-								$goal['description']=str_replace("\n","<br>",$goal['description']);
-								echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
 								if($goal['userid'] == $userdata['id'])
 								{
+									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
+									echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
+									echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
+									echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
+									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
+									while($actionblock = mysqli_fetch_array($actionblock_query))
+									{
+										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name']." <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a></h>";
+									}
+									$goal['description']=str_replace("\n","<br>",$goal['description']);
+									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
 									echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
 								}else
 								{
+									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
+									echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
+									echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
+									echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
+									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
+									while($actionblock = mysqli_fetch_array($actionblock_query))
+									{
+										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name']."</h>";
+									}
+									$goal['description']=str_replace("\n","<br>",$goal['description']);
+									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
 									if(mysqli_num_rows($check_following_query))
 									{
 										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=unfollowgoal&goalid=".$goal['id']."\">".$a_unfollow_goal."</a></p></h>";
