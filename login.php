@@ -180,6 +180,14 @@ echo "<html>";
 								{
 									$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE id=".$post['goalid']." LIMIT 1");
 									$goaldata = mysqli_fetch_array($goal_query);
+									$show_file = "";
+									if($post['picture'])
+									{
+										if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+										{
+											$show_file = "<img src=\"".$picture_file[0]."\"></img><br>";
+										}
+									}
 									echo "<div class=\"feedpost\">";
 										echo "<div class=\"feedheader\">";
 											echo "<div class=\"feedtime\">";
@@ -191,6 +199,7 @@ echo "<html>";
 											echo $post['title'];
 										echo "</div>";
 										echo "<div class=\"feedcontent\">";
+											echo $show_file;
 											echo $post['content'];
 										echo "</div>";
 									echo "</div>";
@@ -635,6 +644,7 @@ echo "<html>";
 							$label_goal = "Ziel";
 							$label_title = "Titel";
 							$label_content = "Beitrag";
+							$label_picture = "Bild hinzufügen";
 							$input_submit = "Beitrag teilen";
 							break;
 							
@@ -642,10 +652,11 @@ echo "<html>";
 							$label_goal = "Goal";
 							$label_title = "Title";
 							$label_content = "Content";
+							$label_picture = "Add picture";
 							$input_submit = "Post";
 							break;
 						}
-						echo "<form action=\"login.php?language=".$_GET['language']."&action=submitpost\" method=\"post\" accept-charset=\"utf-8\">";
+						echo "<form action=\"login.php?language=".$_GET['language']."&action=submitpost\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
 							echo "<label>".$label_goal."</label>";
 							echo "<div class=\"clear\"></div>";
 							echo "<select name=\"goalid\" size=\"1\">";
@@ -660,7 +671,9 @@ echo "<html>";
 							echo "<input name=\"title\" size=\"50\"></input>";
 							echo "<label>".$label_content."</label>";
 							echo "<textarea name=\"content\" cols=\"64\" rows=\"15\"/></textarea>";
-							echo "<br>";
+							echo "<br><br>";
+							echo $label_picture." ";
+							echo "<input type=\"file\" name=\"picture\"></input>";
 							echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 						echo "</form>";
 						break;
@@ -670,16 +683,22 @@ echo "<html>";
 						{
 							case 'german':
 							$output_success = "Beitrag gepostet.";
-							$output_fail = "Bitte alle Felder ausfüllen.";
+							$output_no_title_or_content = "Bitte alle Felder ausfüllen.";
 							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 							$output_no_goal = "Dieses Ziel existiert nicht.";
+							$output_no_image = "Die ausgewählte Datei ist kein Bild.";
+							$output_too_big = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
+							$output_wrong_format = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
 							break;
 							
 							case 'english':
 							$output_success = "Content posted.";
-							$output_fail = "Please fill in all fields.";
+							$output_no_title_or_content = "Please fill in all fields.";
 							$output_not_author = "You are not the author of this goal.";
 							$output_no_goal = "There is no such goal.";
+							$output_no_image = "The chosen file is not an image.";
+							$output_too_big = "The chosen file is too big. Maximum size: 5Mb.";
+							$output_wrong_format = "Only JPG, JPEG and PNG files are allowed.";
 							break;
 						}
 						$goalid = mysqli_real_escape_string($mysql_connection, $_POST['goalid']);
@@ -691,13 +710,50 @@ echo "<html>";
 							{
 								if(empty($_POST['title']) OR empty($_POST['content']))
 								{
-									echo $output_fail;
+									echo $output_no_title_or_content;
 								}else
 								{
-									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
-									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-									mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".time()."','$title','$content')");
-									echo $output_success;
+									// check if file has been chosen
+									if(empty($_FILES['picture']['tmp_name']))
+									{
+										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+										$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+										$time = time();
+										mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$title','$content', 0)");
+										echo $output_success;
+									}else
+									{
+										$target_dir = "uploads/posts/";
+										$target_file = $target_dir . basename($_FILES["picture"]["name"]);
+										$image_File_Type = pathinfo($target_file,PATHINFO_EXTENSION);
+										// Check if image file is an actual image or fake image
+										if(getimagesize($_FILES['picture']['tmp_name']) == false) 
+										{
+											echo $output_no_image;
+											break;
+										}
+										// Check file size
+										if ($_FILES['picture']['size'] > 5000000)
+										{
+											echo $output_too_big;
+											break;
+										}
+										// Allow certain file formats
+										if($image_File_Type != "jpg" && $image_File_Type != "png" && $image_File_Type != "jpeg" && $image_File_Type != "JPG" && $image_File_Type != "PNG" && $image_File_Type != "JPEG")
+										{
+											echo $output_wrong_format;
+											break;
+										}
+										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+										$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+										$time = time();
+										mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$title','$content', 1)");
+										$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE goalid = ".$goalid." AND time = ".$time." LIMIT 1");
+										$post = mysqli_fetch_array($post_query);
+										// No error, upload file
+										move_uploaded_file($_FILES['picture']['tmp_name'], $target_dir.$post['id'].".".$image_File_Type);
+										echo $output_success;
+									}
 								}
 							}else
 							{
