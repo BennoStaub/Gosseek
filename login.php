@@ -377,26 +377,11 @@ echo "<html>";
 							$output = "Profile has been changed.";
 							break;
 						}
-						if(!(empty($_POST['name'])))
-						{
-							$userdata['name'] = mysqli_real_escape_string($mysql_connection, $_POST['name']);
-						}
-						if(!(empty($_POST['surname'])))
-						{
-							$userdata['surname'] = mysqli_real_escape_string($mysql_connection, $_POST['surname']);
-						}
-						if(!(empty($_POST['residence'])))
-						{
-							$userdata['residence'] = mysqli_real_escape_string($mysql_connection, $_POST['residence']);
-						}
-						if(!(empty($_POST['job'])))
-						{
-							$userdata['job'] = mysqli_real_escape_string($mysql_connection, $_POST['job']);
-						}
-						if(!(empty($_POST['description'])))
-						{
-							$userdata['description'] = mysqli_real_escape_string($mysql_connection, $_POST['description']);
-						}
+						$userdata['name'] = mysqli_real_escape_string($mysql_connection, $_POST['name']);
+						$userdata['surname'] = mysqli_real_escape_string($mysql_connection, $_POST['surname']);
+						$userdata['residence'] = mysqli_real_escape_string($mysql_connection, $_POST['residence']);
+						$userdata['job'] = mysqli_real_escape_string($mysql_connection, $_POST['job']);
+						$userdata['description'] = mysqli_real_escape_string($mysql_connection, $_POST['description']);
 						$birthday = mysqli_real_escape_string($mysql_connection, $_POST['birthday']);
 						$birthmonth = mysqli_real_escape_string($mysql_connection, $_POST['birthmonth']);
 						$birthyear = mysqli_real_escape_string($mysql_connection, $_POST['birthyear']);
