@@ -82,8 +82,11 @@ p { padding: 10px; }
 .feedtitle { font-weight: bold; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; }
 .feedcontent { background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; margin-bottom: 5px; padding-left: 10px; padding-right: 10px; padding-top: 5px; }
 .feedcontent img { max-width: 50%; }
-.feedlinks { display: flex; font-weight: bold; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; }
+.feedlinks_owner { display: flex; font-weight: bold; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px; margin-bottom: 5px;}
+.feedlinks_owner a { padding-right: 10px; }
+.feedlinks { display: flex; font-weight: bold; background: <?php echo $color_box; ?>; color: #000000; border-radius: 5px; margin: auto; padding-left: 10px; padding-right: 10px;}
 .feedlinks a { padding-right: 10px; }
+
 
 .feedlinksleft { width: 50%; }
 .feedlinksright { text-align: right; width: 50%; }

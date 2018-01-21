@@ -159,6 +159,8 @@ echo "<html>";
 							$a_like = "Gefällt mir";
 							$a_likes = "Gefällt";
 							$a_dislike = "Gefällt mir nicht mehr";
+							$a_edit = "Bearbeiten";
+							$a_delete = "Löschen";
 							break;
 							
 							case 'english':
@@ -168,6 +170,8 @@ echo "<html>";
 							$a_like = "Like";
 							$a_likes = "Likes";
 							$a_dislike = "Dislike";
+							$a_edit = "Edit";
+							$a_delete = "Delete";
 							break;
 						}
 						$following_goals_query = mysqli_query($mysql_connection, "SELECT goalid FROM goalfollowers WHERE userid=".$userdata['id']);
@@ -216,9 +220,16 @@ echo "<html>";
 											$post['content']=str_replace("\n","<br>",$post['content']);
 											echo $post['content'];
 										echo "</div>";
+										if($post['userid'] == $userdata['id'])
+										{
+											echo "<div class=\"feedlinks_owner\">";
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=edit_post&postid=".$post['id']."\">".$a_edit."</a>";
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=delete_post&postid=".$post['id']."\">".$a_delete."</a>";
+											echo "</div>";
+										}
 										echo "<div class=\"feedlinks\">";
 											echo "<div class=\"feedlinksleft\">";
-												echo "<a href=\"login.php?language=".$_GET['language']."&action=comment_post&postid=".$post['id']."\">".$a_comment."</a>";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=write_comment&postid=".$post['id']."\">".$a_comment."</a>";
 												if(mysqli_num_rows($liked_query))
 												{
 													echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
@@ -277,9 +288,16 @@ echo "<html>";
 											$post['content']=str_replace("\n","<br>",$post['content']);
 											echo $post['content'];
 										echo "</div>";
+										if($post['userid'] == $userdata['id'])
+										{
+											echo "<div class=\"feedlinks_owner\">";
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=edit_dayreview&postid=".$post['id']."\">".$a_edit."</a>";
+													echo "<a href=\"login.php?language=".$_GET['language']."&action=delete_post&postid=".$post['id']."\">".$a_delete."</a>";
+											echo "</div>";
+										}
 										echo "<div class=\"feedlinks\">";
 											echo "<div class=\"feedlinksleft\">";
-												echo "<a href=\"login.php?language=".$_GET['language']."&action=comment_post&postid=".$post['id']."\">".$a_comment."</a>";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=write_comment&postid=".$post['id']."\">".$a_comment."</a>";
 												if(mysqli_num_rows($liked_query))
 												{
 													echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
@@ -731,7 +749,7 @@ echo "<html>";
 							break;
 							
 							case 'english':
-							$output_success = "Content posted.";
+							$output_success = "Post submitted.";
 							$output_no_title_or_content = "Please fill in all fields.";
 							$output_not_author = "You are not the author of this goal.";
 							$output_no_goal = "There is no such goal.";
@@ -801,6 +819,152 @@ echo "<html>";
 						}else
 						{
 							echo $output_no_goal;
+						}
+						break;
+						
+						case 'edit_post':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$label_title = "Titel";
+							$label_content = "Beitrag";
+							$label_picture = "Bild hinzufügen";
+							$input_submit = "Beitrag earbeiten";
+							$output_not_author = "Du bist nicht der Autor dieses Beitrages.";
+							$output_no_post = "Dieser Beitrag existiert nicht.";
+							break;
+							
+							case 'english':
+							$label_title = "Title";
+							$label_content = "Content";
+							$label_picture = "Add picture";
+							$input_submit = "Edit post";
+							$output_not_author = "You are not the author of this post.";
+							$output_no_post = "There is no such post.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$post_query = mysqli_query($mysql_connection, "SELECT userid,title,content FROM posts where id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($post_query))
+						{
+							$post = mysqli_fetch_array($post_query);
+							if($post['userid'] == $userdata['id'])
+							{
+								echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_edit_post&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
+									echo "<label>".$label_title."</label>";
+									echo "<input name=\"title\" size=\"50\" value=\"".$post['title']."\"></input>";
+									echo "<label>".$label_content."</label>";
+									echo "<textarea name=\"content\" cols=\"64\" rows=\"15\">".$post['content']."</textarea>";
+									echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+								echo "</form>";
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'submit_edit_post':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_success = "Beitrag bearbeitet.";
+							$output_no_title_or_content = "Bitte alle Felder ausfüllen.";
+							$output_not_author = "Du bist nicht der Autor dieses Beitrages.";
+							$output_no_post = "Dieser Beitrag existiert nicht.";
+							break;
+							
+							case 'english':
+							$output_success = "Post editet.";
+							$output_no_title_or_content = "Please fill in all fields.";
+							$output_not_author = "You are not the author of this post.";
+							$output_no_post = "There is no such post.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$post_query = mysqli_query($mysql_connection, "SELECT userid FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($post_query))
+						{
+							$post = mysqli_fetch_array($post_query);
+							if($post['userid'] == $userdata['id'])
+							{
+								if(empty($_POST['title']) OR empty($_POST['content']))
+								{
+									echo $output_no_title_or_content;
+								}else
+								{
+									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+									mysqli_query($mysql_connection, "UPDATE posts SET title = '$title', content = '$content' WHERE id = ".$postid);
+									echo $output_success;
+								}
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'delete_post':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_success = "Beitrag gelöscht.";
+							$output_not_author = "Du bist nicht der Autor dieses Beitrages.";
+							$output_no_post = "Dieser Beitrag existiert nicht.";
+							$output_security_check = "Willst du diesen Beitrag wirklich löschen?";
+							$a_security_check = "Beitrag löschen";
+							break;
+							
+							case 'english':
+							$output_success = "Post deleted.";
+							$output_not_author = "You are not the author of this post.";
+							$output_no_post = "There is no such post.";
+							$output_security_check = "Are you sure you want to delete this post";
+							$a_security_check = "Delete post";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$post_query = mysqli_query($mysql_connection, "SELECT userid,type,picture FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($post_query))
+						{
+							$post = mysqli_fetch_array($post_query);
+							if($post['userid'] == $userdata['id'])
+							{
+								if(!empty($_GET['security_check']))
+								{
+									if($post['type'])
+									{
+										mysqli_query($mysql_connection, "DELETE FROM posts WHERE id = ".$postid);
+										mysqli_query($mysql_connection, "DELETE FROM likes WHERE postid = ".$postid);
+										mysqli_query($mysql_connection, "DELETE FROM comments WHERE postid = ".$postid);
+										mysqli_query($mysql_connection, "DELETE FROM scheduleblocks WHERE postid = ".$postid);
+									}else
+									{
+										mysqli_query($mysql_connection, "DELETE FROM posts WHERE id = ".$postid);
+										mysqli_query($mysql_connection, "DELETE FROM likes WHERE postid = ".$postid);
+										mysqli_query($mysql_connection, "DELETE FROM comments WHERE postid = ".$postid);
+									}
+									echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
+									exit;
+								}else
+								{
+									echo $output_security_check;
+									echo " <a href=\"login.php?language=".$_GET['language']."&action=delete_post&postid=".$postid."&security_check=true\">".$a_security_check."</a>";
+								}
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_post;
 						}
 						break;
 						
@@ -909,12 +1073,12 @@ echo "<html>";
 						}
 						break;
 						
-						case 'comment_post':
+						case 'write_comment':
 						switch($_GET['language'])
 						{
 							case 'german':
 							$input_submit = "Kommentar abschicken";
-							$output_no_post = "Dieser Post existiert nicht.";
+							$output_no_post = "Dieser Beitrag existiert nicht.";
 							break;
 							
 							case 'english':
@@ -926,7 +1090,7 @@ echo "<html>";
 						$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
 						if(mysqli_num_rows($check_post_query))
 						{
-							echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_comment_post&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
+							echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_comment&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
 								echo "<textarea name=\"comment\" cols=\"64\" rows=\"15\"/></textarea>";
 								echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 							echo "</form>";
@@ -936,7 +1100,7 @@ echo "<html>";
 						}
 						break;
 						
-						case 'submit_comment_post':
+						case 'submit_comment':
 						switch($_GET['language'])
 						{
 							case 'german':
@@ -969,6 +1133,129 @@ echo "<html>";
 						}
 						break;
 						
+						case 'edit_comment':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$input_submit = "Kommentar bearbeiten";
+							$output_not_author = "Du bist nicht der Autor dieses Kommentars.";
+							$output_no_comment = "Dieser Kommentar existiert nicht.";
+							break;
+							
+							case 'english':
+							$input_submit = "Edit comment";
+							$output_not_author = "You are not the author of this comment.";
+							$output_no_comment = "There is no such comment.";
+							break;
+						}
+						$commentid = mysqli_real_escape_string($mysql_connection, $_GET['commentid']);
+						$comment_query = mysqli_query($mysql_connection, "SELECT userid, text FROM comments WHERE id = ".$commentid." LIMIT 1");
+						if(mysqli_num_rows($comment_query))
+						{
+							$comment = mysqli_fetch_array($comment_query);
+							if($comment['userid'] == $userdata['id'])
+							{
+								echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_edit_comment&commentid=".$commentid."\" method=\"post\" accept-charset=\"utf-8\">";
+									echo "<textarea name=\"comment\" cols=\"64\" rows=\"15\"/>".$comment['text']."</textarea>";
+									echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+								echo "</form>";
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_comment;
+						}
+						break;
+						
+						case 'submit_edit_comment':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_success = "Kommentar bearbeitet.";
+							$output_not_author = "Du bist nicht der Autor dieses Kommentars.";
+							$output_no_comment = "Dieser Kommentar existiert nicht.";
+							$output_comment_empty = "Bitte fülle alle Felder aus.";
+							break;
+							
+							case 'english':
+							$output_success = "Comment edited.";
+							$output_not_author = "You are not the author of this comment.";
+							$output_no_comment = "There is no such comment.";
+							$output_comment_empty = "Please fill in all the fields.";
+							break;
+						}
+						$commentid = mysqli_real_escape_string($mysql_connection, $_GET['commentid']);
+						$comment_query = mysqli_query($mysql_connection, "SELECT userid FROM comments WHERE id = ".$commentid." LIMIT 1");
+						if(mysqli_num_rows($comment_query))
+						{
+							$comment = mysqli_fetch_array($comment_query);
+							if($comment['userid'] == $userdata['id'])
+							{
+								$comment = mysqli_real_escape_string($mysql_connection, $_POST['comment']);
+								if(!empty($comment))
+								{
+									mysqli_query($mysql_connection, "UPDATE comments SET text = '$comment' WHERE id = ".$commentid);
+									echo $output_success;
+								}else
+								{
+									echo $output_comment_empty;
+								}
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_comment;
+						}
+						break;
+						
+						case 'delete_comment':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_not_author = "Du bist nicht der Autor dieses Kommentars.";
+							$output_no_comment = "Dieser Kommentar existiert nicht.";
+							$output_security_check = "Willst du diesen Kommentar wirklich löschen?";
+							$a_security_check = "Kommentar löschen";
+							break;
+							
+							case 'english':
+							$output_not_author = "You are not the author of this comment.";
+							$output_no_comment = "There is no such comment.";
+							$output_security_check = "Are you sure you want to delete this comment?";
+							$a_security_check = "Delete comment";
+							break;
+						}
+						$commentid = mysqli_real_escape_string($mysql_connection, $_GET['commentid']);
+						$comment_query = mysqli_query($mysql_connection, "SELECT userid FROM comments WHERE id = ".$commentid." LIMIT 1");
+						if(mysqli_num_rows($comment_query))
+						{
+							$comment = mysqli_fetch_array($comment_query);
+							if($comment['userid'] == $userdata['id'])
+							{
+								if(!empty($_GET['security_check']))
+								{
+									mysqli_query($mysql_connection, "DELETE FROM comments WHERE id = ".$commentid);
+									echo "<script> location.href='login.php?language=".$_GET['language']."&action=comments&postid=".$_GET['postid']."'; </script>";
+									exit;
+								}else
+								{
+									echo $output_security_check;
+									echo " <a href=\"login.php?language=".$_GET['language']."&action=delete_comment&commentid=".$commentid."&postid=".$_GET['postid']."&security_check=true\">".$a_security_check."</a>";
+								}
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_comment;
+						}
+						break;
+						
 						case 'comments':
 						switch($_GET['language'])
 						{
@@ -978,8 +1265,10 @@ echo "<html>";
 							$a_dislike = "Gefällt mir nicht mehr";
 							$a_likes = "Gefällt";
 							$output_comments = "Kommentare";
-							$output_write_comment = "Kommentar schrieben";
+							$output_write_comment = "Kommentar schreiben";
 							$input_submit = "Kommentar abschicken";
+							$a_edit_comment = "Bearbeiten";
+							$a_delete_comment = "Löschen";
 							break;
 							
 							case 'english':
@@ -990,6 +1279,8 @@ echo "<html>";
 							$output_comments = "Comments";
 							$output_write_comment = "Write a comment";
 							$input_submit = "Send comment";
+							$a_edit_comment = "Edit";
+							$a_delete_comment = "Delete";
 							break;
 						}
 						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
@@ -1121,12 +1412,19 @@ echo "<html>";
 											$comment['text']=str_replace("\n","<br>",$comment['text']);
 											echo $comment['text'];
 										echo "</div>";
+										if($comment['userid'] == $userdata['id'])
+										{
+											echo "<div class=\"feedlinks_owner\">";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=edit_comment&commentid=".$comment['id']."\">".$a_edit_comment."</a>";
+												echo "<a href=\"login.php?language=".$_GET['language']."&action=delete_comment&commentid=".$comment['id']."&postid=".$postid."\">".$a_delete_comment."</a>";
+											echo "</div>";
+										}
 									echo "</div>";
 									echo "<br>";
 								}
 							}
 							echo "<b>".$output_write_comment."</b>";
-							echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_comment_post&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
+							echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_comment&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
 								echo "<textarea name=\"comment\" cols=\"64\" rows=\"8\"/></textarea>";
 								echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 							echo "</form>";
@@ -1229,7 +1527,6 @@ echo "<html>";
 												echo "</td>";
 												echo "<td>";
 												echo "<select name=\"finishtime".$iter."\" size=\"1\">";
-												$time_midnight = 82800;
 												for($timeiter = 0; $timeiter <= 95; $timeiter++)
 												{
 													$time = date("H:i",$time_midnight+$timeiter*900);
@@ -1274,6 +1571,7 @@ echo "<html>";
 							$output_no_image = "Die ausgewählte Datei ist kein Bild.";
 							$output_too_big = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
 							$output_wrong_format = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
+							$output_empty_title_content = "Bitte füll die Felder Titel und Beitrag aus.";
 							break;
 							
 							case 'english':
@@ -1283,9 +1581,9 @@ echo "<html>";
 							$output_no_image = "The chosen file is not an image.";
 							$output_too_big = "The chosen file is too big. Maximum size: 5Mb.";
 							$output_wrong_format = "Only JPG, JPEG and PNG files are allowed.";
+							$output_empty_title_content = "Please fill in the fields title and content.";
 							break;
 						}
-						$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
 						$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
 						$check_goal_query = mysqli_query($mysql_connection, "SELECT id,userid FROM goals WHERE id = ".$goalid." LIMIT 1");
 						if(mysqli_num_rows($check_goal_query))
@@ -1293,59 +1591,63 @@ echo "<html>";
 							$goal = mysqli_fetch_array($check_goal_query);
 							if($goal['userid'] == $userdata['id'])
 							{
-								// check if file has been chosen
-								if(empty($_FILES['picture']['tmp_name']))
+								if(!empty($_POST['title']) AND !empty($_POST['content']))
 								{
-									$time = time();
 									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-									mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 0)");
-									$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
-									$post = mysqli_fetch_array($post_query);
+									// check if file has been chosen
+									if(empty($_FILES['picture']['tmp_name']))
+									{
+										$time = time();
+										mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 0)");
+										$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
+										$post = mysqli_fetch_array($post_query);
+									}else
+									{
+										$target_dir = "uploads/posts/";
+										$target_file = $target_dir . basename($_FILES["picture"]["name"]);
+										$image_File_Type = pathinfo($target_file,PATHINFO_EXTENSION);
+										// Check if image file is an actual image or fake image
+										if(getimagesize($_FILES['picture']['tmp_name']) == false) 
+										{
+											echo $output_no_image;
+											break;
+										}
+										// Check file size
+										if ($_FILES['picture']['size'] > 5000000)
+										{
+											echo $output_too_big;
+											break;
+										}
+										// Allow certain file formats
+										if($image_File_Type != "jpg" && $image_File_Type != "png" && $image_File_Type != "jpeg" && $image_File_Type != "JPG" && $image_File_Type != "PNG" && $image_File_Type != "JPEG")
+										{
+											echo $output_wrong_format;
+											break;
+										}
+										$time = time();
+										mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 1)");
+										$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
+										$post = mysqli_fetch_array($post_query);
+										// No error, upload file
+										move_uploaded_file($_FILES['picture']['tmp_name'], $target_dir.$post['id'].".".$image_File_Type);
+									}
+									for($actionblockiter = 1; $actionblockiter <= 10; $actionblockiter++)
+									{
+											if(!($_POST['starttime'.$actionblockiter] == $_POST['finishtime'.$actionblockiter]))
+											{
+												$actionblockid = mysqli_real_escape_string($mysql_connection, $_POST['actionblock'.$actionblockiter]);
+												$starttime = mysqli_real_escape_string($mysql_connection,$_POST['starttime'.$actionblockiter]);
+												$finishtime = $_POST['finishtime'.$actionblockiter];
+												mysqli_query($mysql_connection, "INSERT INTO scheduleblocks (postid, actionblockid, starttime, finishtime) VALUES ('".$post['id']."', '".$actionblockid."', '".$starttime."', '".$finishtime."')");
+											}
+									}
+										echo $output_success;
+									
 								}else
 								{
-									$target_dir = "uploads/posts/";
-									$target_file = $target_dir . basename($_FILES["picture"]["name"]);
-									$image_File_Type = pathinfo($target_file,PATHINFO_EXTENSION);
-									// Check if image file is an actual image or fake image
-									if(getimagesize($_FILES['picture']['tmp_name']) == false) 
-									{
-										echo $output_no_image;
-										break;
-									}
-									// Check file size
-									if ($_FILES['picture']['size'] > 5000000)
-									{
-										echo $output_too_big;
-										break;
-									}
-									// Allow certain file formats
-									if($image_File_Type != "jpg" && $image_File_Type != "png" && $image_File_Type != "jpeg" && $image_File_Type != "JPG" && $image_File_Type != "PNG" && $image_File_Type != "JPEG")
-									{
-										echo $output_wrong_format;
-										break;
-									}
-									$time = time();
-									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
-									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-									mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 1)");
-									$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
-									$post = mysqli_fetch_array($post_query);
-									// No error, upload file
-									move_uploaded_file($_FILES['picture']['tmp_name'], $target_dir.$post['id'].".".$image_File_Type);
+									echo $output_empty_title_content;
 								}
-								for($actionblockiter = 1; $actionblockiter <= 10; $actionblockiter++)
-								{
-										if(!($_POST['starttime'.$actionblockiter] == $_POST['finishtime'.$actionblockiter]))
-										{
-											$actionblockid = mysqli_real_escape_string($mysql_connection, $_POST['actionblock'.$actionblockiter]);
-											$starttime = mysqli_real_escape_string($mysql_connection,$_POST['starttime'.$actionblockiter]);
-											$finishtime = $_POST['finishtime'.$actionblockiter];
-											mysqli_query($mysql_connection, "INSERT INTO scheduleblocks (postid, actionblockid, starttime, finishtime) VALUES ('".$post['id']."', '".$actionblockid."', '".$starttime."', '".$finishtime."')");
-										}
-								}
-									echo $output_success;
-								
 							}else
 							{
 								echo $output_not_author;
@@ -1353,6 +1655,221 @@ echo "<html>";
 						}else
 						{
 							echo $output_no_goal;
+						}
+						break;
+						
+						case 'edit_dayreview':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$label_actionblock = "Aktionsblock";
+							$label_start = "Von";
+							$label_end = "Bis";
+							$label_title = "Titel";
+							$label_content = "Beitrag";
+							$label_goal = "Ziel";
+							$label_picture = "Bild hinzufügen";
+							$input_submit = "Beitrag teilen";
+							
+							$output_no_blocks = "Du hast noch keinen Aktionsblock für dieses Ziel definiert.";
+							$output_no_post = "Dieser Beitrag existiert nicht.";
+							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+							$a_add_block = "Aktionsblock zum Ziel hinzufügen";
+							break;
+							
+							case 'english':
+							$label_actionblock = "Actionblock";
+							$label_start = "Started";
+							$label_end = "Finished";
+							$label_title = "Title";
+							$label_content = "Content";
+							$label_goal = "Goal";
+							$label_picture = "Add picture";
+							$input_submit = "Post";
+							
+							$output_no_blocks = "You have not yet defined an actionblock for this goal.";
+							$output_no_post = "There is no such post.";
+							$output_not_author = "You are not the author of this goal.";
+							$a_add_block = "Add actionblock to goal";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$post_query = mysqli_query($mysql_connection, "SELECT * FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($post_query))
+						{
+							$post = mysqli_fetch_array($post_query);
+							if($post['userid'] == $userdata['id'])
+							{
+								$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$post['goalid']);
+								if(mysqli_num_rows($actionblock_query) >= 1)
+								{
+									echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_edit_dayreview&postid=".$post['id']."\" method=\"post\" accept-charset=\"utf-8\">";
+										echo "<table>";
+										echo "<tr><td>".$label_actionblock."</td><td>".$label_start."</td><td>".$label_end."</td></tr>";
+										$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = ".$post['goalid']);
+										$iter = 1;
+										while($actionblock = mysqli_fetch_array($actionblock_query))
+										{
+											$actionblock_array[$iter] = $actionblock;
+											$iter++;
+										}
+										$scheduleblocks_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$postid);
+										$iter = 1;
+										while($scheduleblocks = mysqli_fetch_array($scheduleblocks_query))
+										{
+											echo "<td>";
+											echo "<select name=\"actionblock".$iter."\" size=\"1\">";
+												for($actionblock_iter = 1; $actionblock_iter <= sizeof($actionblock_array); $actionblock_iter++)
+												{
+													if($scheduleblocks['actionblockid'] == $actionblock_array[$actionblock_iter]['id'])
+													{
+														echo "<option value=\"".$actionblock_array[$actionblock_iter]['id']."\" selected>".$actionblock_array[$actionblock_iter]['name']."</option>";
+													}else
+													{
+														echo "<option value=\"".$actionblock_array[$actionblock_iter]['id']."\">".$actionblock_array[$actionblock_iter]['name']."</option>";
+													}
+												}
+											echo "</select>";
+											echo "</td>";
+											echo "<td>";
+											echo "<select name=\"starttime".$iter."\" size=\"1\">";
+											$time_midnight = 82800;
+											for($timeiter = 0; $timeiter <= 95; $timeiter++)
+											{
+												
+												$time = date("H:i",$time_midnight+$timeiter*900);
+												if($scheduleblocks['starttime'] == $time_midnight+$timeiter*900)
+												{
+													echo "<option value=\"".($time_midnight+$timeiter*900)."\" selected>".$time."</option>";
+												}else
+												{
+													echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+												}
+											}
+											echo "</select>";
+											echo "</td>";
+											echo "<td>";
+											echo "<select name=\"finishtime".$iter."\" size=\"1\">";
+											for($timeiter = 0; $timeiter <= 95; $timeiter++)
+											{
+												$time = date("H:i",$time_midnight+$timeiter*900);
+												if($scheduleblocks['finishtime'] == $time_midnight+$timeiter*900)
+												{
+													echo "<option value=\"".($time_midnight+$timeiter*900)."\" selected>".$time."</option>";
+												}else
+												{
+													echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+												}
+											}
+											echo "</select>";
+											echo "</td></tr>";
+											$iter++;
+										}
+										for($iter = $iter; $iter <= 10; $iter++)
+										{
+											echo "<td>";
+											echo "<select name=\"actionblock".$iter."\" size=\"1\">";
+												for($actionblock_iter = 1; $actionblock_iter <= sizeof($actionblock_array); $actionblock_iter++)
+												{
+													echo "<option value=\"".$actionblock_array[$actionblock_iter]['id']."\">".$actionblock_array[$actionblock_iter]['name']."</option>";
+												}
+											echo "</select>";
+											echo "</td>";
+											echo "<td>";
+											echo "<select name=\"starttime".$iter."\" size=\"1\">";
+											$time_midnight = 82800;
+											for($timeiter = 0; $timeiter <= 95; $timeiter++)
+											{
+												$time = date("H:i",$time_midnight+$timeiter*900);
+												echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+											}
+											echo "</select>";
+											echo "</td>";
+											echo "<td>";
+											echo "<select name=\"finishtime".$iter."\" size=\"1\">";
+											$time_midnight = 82800;
+											for($timeiter = 0; $timeiter <= 95; $timeiter++)
+											{
+												$time = date("H:i",$time_midnight+$timeiter*900);
+												echo "<option value=\"".($time_midnight+$timeiter*900)."\">".$time."</option>";
+											}
+											echo "</select>";
+											echo "</td></tr>";
+										}
+										echo "</table>";
+										echo "<label>".$label_title."</label>";
+										echo "<input name=\"title\" size=\"50\" value=\"".$post['title']."\"></input>";
+										echo "<label>".$label_content."</label>";
+										echo "<textarea name=\"content\" cols=\"64\" rows=\"15\"/>".$post['content']."</textarea>";
+										echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+									echo "</form>";
+								}else
+								{
+									echo $output_no_blocks;
+									echo "<br><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$post['goalid']."\">".$a_add_block."</a>";
+								}
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_post;
+						}
+						break;
+						
+						case 'submit_edit_dayreview':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_success = "Beitrag bearbeitet.";
+							$output_no_post = "Dieser Beitrag existiert nicht.";
+							$output_not_author = "Du bist nicht der Autor dieses Beitrages.";
+							$output_empty_title_content = "Bitte fülle die Felder Titel und Beitrag aus.";
+							break;
+							
+							case 'english':
+							$output_success = "Post edited.";
+							$output_no_post = "There is no such post.";
+							$output_not_author = "You are not the author of this post.";
+							$output_empty_title_content = "Please fill in the fields title and content.";
+							break;
+						}
+						$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
+						$post_query = mysqli_query($mysql_connection, "SELECT userid FROM posts WHERE id = ".$postid." LIMIT 1");
+						if(mysqli_num_rows($post_query))
+						{
+							$post = mysqli_fetch_array($post_query);
+							if($post['userid'] == $userdata['id'])
+							{
+								if(!empty($_POST['title']) AND !empty($_POST['content']))
+								{
+									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+									mysqli_query($mysql_connection, "UPDATE posts SET title = '$title', content = '$content' WHERE id = ".$postid);
+									mysqli_query($mysql_connection, "DELETE FROM scheduleblocks WHERE postid = ".$postid);
+									for($actionblockiter = 1; $actionblockiter <= 10; $actionblockiter++)
+									{
+											if(!($_POST['starttime'.$actionblockiter] == $_POST['finishtime'.$actionblockiter]))
+											{
+												$actionblockid = mysqli_real_escape_string($mysql_connection, $_POST['actionblock'.$actionblockiter]);
+												$starttime = mysqli_real_escape_string($mysql_connection,$_POST['starttime'.$actionblockiter]);
+												$finishtime = $_POST['finishtime'.$actionblockiter];
+												mysqli_query($mysql_connection, "INSERT INTO scheduleblocks (postid, actionblockid, starttime, finishtime) VALUES ('".$postid."', '".$actionblockid."', '".$starttime."', '".$finishtime."')");
+											}
+									}
+										echo $output_success;
+								}else
+								{
+									echo $output_empty_title_content;
+								}
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_post;
 						}
 						break;
 						
@@ -1465,9 +1982,10 @@ echo "<html>";
 							$output_description = "Beschreibung:";
 							$output_block = "Aktionsblock:";
 							$output_anonymous = "Anonym";
-							$a_follow_goal = "Diesem Ziel folgen";
-							$a_unfollow_goal = "Dieses Ziel entfolgen";
-							$a_edit_goal = "Dieses Ziel bearbeiten";
+							$a_follow_goal = "Folgen";
+							$a_unfollow_goal = "Entfolgen";
+							$a_edit_goal = "Bearbeiten";
+							$a_delete_goal = "Löschen";
 							$a_add_block = "Aktionsblock hinzufügen";
 							$a_edit_block = "Bearbeiten";
 							$a_delete_block = "Löschen";
@@ -1483,9 +2001,10 @@ echo "<html>";
 							$output_description = "Description:";
 							$output_block = "Actionblock:";
 							$output_anonymous = "Anonymous";
-							$a_follow_goal = "Follow this goal";
-							$a_unfollow_goal = "Unfollow this goal";
-							$a_edit_goal = "Edit this goal";
+							$a_follow_goal = "Follow";
+							$a_unfollow_goal = "Unfollow";
+							$a_edit_goal = "Edit";
+							$a_delete_goal = "Delete";
 							$a_add_block = "Add actionblock";
 							$a_edit_block = "Edit";
 							$a_delete_block = "Delete";
@@ -1521,7 +2040,7 @@ echo "<html>";
 									}
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
 									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
-									echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
+									echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=delete_goal&goalid=".$goal['id']."\">".$a_delete_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
 								}else
 								{
 									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
@@ -1737,6 +2256,71 @@ echo "<html>";
 									$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
 									mysqli_query($mysql_connection, "UPDATE goals SET anonymous = '".$anonymous."', title = '$title', description = '$description', section = '$section' WHERE id=$goalid");
 									echo $output_success;
+								}
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
+							echo $output_no_goal;
+						}
+						break;
+						
+						case 'delete_goal':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_success = "Ziel gelöscht.";
+							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+							$output_no_goal = "Dieses Ziel existiert nicht.";
+							$output_security_check = "Willst du dieses Ziel wirklich löschen?";
+							$a_security_check = "Ziel löschen";
+							break;
+							
+							case 'english':
+							$output_success = "Goal deleted.";
+							$output_not_author = "You are not the author of this goal.";
+							$output_no_goal = "There is no such goal.";
+							$output_security_check = "Are you sure you want to delete this goal?";
+							$a_security_check = "Delete goal";
+							break;
+						}
+						$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+						$goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id = ".$goalid." LIMIT 1");
+						if(mysqli_num_rows($goal_query))
+						{
+							$goal = mysqli_fetch_array($goal_query);
+							if($goal['userid'] == $userdata['id'])
+							{
+								if(!empty($_GET['security_check']))
+								{
+									mysqli_query($mysql_connection, "DELETE FROM goals WHERE id = ".$goalid);
+									mysqli_query($mysql_connection, "DELETE FROM actionblocks WHERE goalid = ".$goalid);
+									$post_query = mysqli_query($mysql_connection, "SELECT id,userid,type,picture FROM posts WHERE goalid = ".$goalid);
+									if(mysqli_num_rows($post_query) >= 1)
+									{
+										while($post = mysqli_fetch_array($post_query))
+										{
+											if($post['type'])
+											{
+												mysqli_query($mysql_connection, "DELETE FROM posts WHERE id = ".$post['id']);
+												mysqli_query($mysql_connection, "DELETE FROM likes WHERE postid = ".$post['id']);
+												mysqli_query($mysql_connection, "DELETE FROM comments WHERE postid = ".$post['id']);
+												mysqli_query($mysql_connection, "DELETE FROM scheduleblocks WHERE postid = ".$post['id']);
+											}else
+											{
+												mysqli_query($mysql_connection, "DELETE FROM posts WHERE id = ".$post['id']);
+												mysqli_query($mysql_connection, "DELETE FROM likes WHERE postid = ".$post['id']);
+												mysqli_query($mysql_connection, "DELETE FROM comments WHERE postid = ".$post['id']);
+											}
+										}
+									}
+									echo $output_success;
+								}else
+								{
+									echo $output_security_check;
+									echo " <a href=\"login.php?language=".$_GET['language']."&action=delete_goal&goalid=".$goalid."&security_check=true\">".$a_security_check."</a>";
 								}
 							}else
 							{
