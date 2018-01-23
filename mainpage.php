@@ -4,7 +4,7 @@
 	include("connect_db.php");
 	if(empty($_GET{'action'}))
 	{
-		$_GET['action'] = "welcome";
+		$_GET['action'] = "motivation";
 	}
 	if(!(isset($_GET['language'])) OR empty($_GET['language']))
 	{
@@ -45,6 +45,7 @@ echo "<html>";
 								$output_password = "Passwort:";
 								$input_submit = "Einloggen";
 								$a_forgotpassword = "Passwort vergessen";
+								$a_motivation = "Motivation";
 								break;
 								
 								case 'english':
@@ -53,6 +54,7 @@ echo "<html>";
 								$output_password = "Password:";
 								$input_submit = "Log in";
 								$a_forgotpassword = "Forgot password";
+								$a_motivation = "Motivation";
 								break;
 							}
 							echo $output_login;
@@ -77,6 +79,7 @@ echo "<html>";
 					echo "</p>";
 				echo "</div>";
 				echo "<div class=\"rightinnerboxbottom\">";
+				echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=motivation\">".$a_motivation."</a>";
 				echo "</div>";
 			echo "</div>";
 			echo "<div class=\"boxtop\">";
@@ -87,225 +90,223 @@ echo "<html>";
 				echo "</div>";
 			echo "</div>";
 			echo "<div class=\"boxfeed\">";
-				echo "<p>";
-					switch($_GET['action'])
+				switch($_GET['action'])
+				{
+					case 'motivation':
+					switch($_GET['language'])
 					{
-						case 'welcome':
-						switch($_GET['language'])
-						{
-							case 'german':
-							$output = "Herzlich Willkommen auf Gosseek. Registriere dich jetzt und beginne damit, deine eigene Erfolgsgeschichte niederzuschreiben oder nutze die Erfahrungen anderer, um deine eigenen, ähnlichen Ziele zu erreichen.";
-							break;
-							
-							case 'english':
-							$output = "Welcome on Gosseek. Register now and start writing your own success story or use the experiences from others to achieve your own similar goals.";
-							break;
-						}
-						echo $output;
+						case 'german':
+						$output = "Hallo Besucher,<br><br>Gosseek ist ein Soziales Netzwerk bei dem nicht die Person, sondern das Erreichen persönlicher Ziele im Vordergrund steht. Jeder Mensch hat dutzende persönliche Ziele in allen möglichen Bereichen. Von den meisten träumen wir, nur wenige werden aktiv verfolgt. Motivation ist selten das Problem, meistens weiss man einfach nicht wo/wie anfangen, um auf das Ziel hinzuarbeiten. Gosseek ändert das jetzt. Registrierte Nutzer haben folgende zwei Möglichkeiten:<br><br>1)  Definiere dein eigenes Ziel und fange an zu dokumentieren: Poste über deinen Tagesablauf, deine aufgebrachten Stunden, Schlüsselmomente und jede Erfahrung die du in Verbindung mit dem Erreichen deines Zieles gemacht hast. Abschluss der Dokumentation ist das Veröffentlichen deiner - mit dem dokumentierten Aufwand - erreichten Resultate. Nutzen: Durch das Dokumentieren kannst du deinen Aufwand besser reflektieren, erkennst eigene Fehler oder sehr vorteilhafte Entscheidungen. Dadurch kannst du effizienter auf dein Ziel hinarbeiten und deine Methoden laufend verbessern. Ein weiterer Punkt ist erhöhte Motivation: Durch das Dokumentieren bleibst du am Ball und dein Ziel wird konkret.<br><br>2)  Suche nach ähnlichen Zielen wie dein Eigenes, schau dir die erreichten Resultate anderer Nutzer an und folge jener Dokumentation, welche deine gewünschten Resultate erreicht hat. Damit erhälst du laufend die geposteten Beiträge des gewünschten Zieles, welche du wie eine Anleitung nutzen kannst. Ungefährer Zeit- und Stundenplan, Schlüsselmomente usw. Du hast Zugriff auf alles und kannst damit stets abschätzen, ob du auf dem richtigen Kurs bist oder gewisse Anpassungen zu deinem Alltag vornehmen musst, um die gewünschten Resultate zu erreichen. Mit dieser Anleitung kannst du konkret auf dein Ziel hinarbeiten. Doch nicht nur das. Du kannst zudem aus den Erfahrungen und Fehlern des Dokumentierers lernen, um noch effizienter zu arbeiten und bessere Resultate zu erreichen.<br><br>Zusammenfassend soll Gosseek folgendes unterstützen:<br>1.Jeder Mensch hat Ziele, welche er verfolgen will.<br>2.Jeder Mensch hat Wissen, von welchem andere profitieren können.<br>3.Jeder Mensch kann aus den Erfahrungen anderer lernen und zu seinem Vorteil nutzen.<br><br><b>Gosseek bietet die Platform dafür! Registriere dich jetzt und starte damit, deine Ziele zu Errungenschaften zu machen.</b>";
 						break;
 						
-						case 'registering':
-						switch($_GET['language'])
+						case 'english':
+						$output = "Dear visitor,<br><br>Gosseek is a social network that sets achieving personal goals in focus, not people. Everyone has dozens of personal goals in all different areas. People dream about the most of them, while only a few goals are seeked actively. While motivation is rarely a problem, most people are just missing a guideline on how to work for their goals. Gosseek will change this now. Registered users have the following two options:<br><br>1) Define your own goal and start documenting: post about your daily schedule, the amount of hours worked for your goal, key moments and any experience you made connected to achieving your goal. The end of the documentation will be a publication of your - with the documented effort - achieved results. Advantage: While documenting everything, you can better reflect your effort, notice mistakes or benefitful decisions. With this, you can work more efficiently towards your goal and improve your methods continuously. Another point is increased motivation: While documenting, you stay on track and your goal becomes concrete.<br><br>2)  Search for goals similar to yours, check the achieved results by other users and follow the documentation that achieved your desired results. By that you get all the posts from that goal continuously such that you can use them as a guideline. Daily schedules, deadlines, key moments etc. you get access to everything and thus, you can estimate whether you are on track or you need to adapt your daily schedule in order to achieve the desired results. With this guideline you can work concretely towards your goal. But you get even more. You can also learn from the mistakes and experiences from the author and therefore work more efficiently and achieve better results.<br><br>Summarized, Gossek should support the following:<br>1.Every person has goals he/she wants to achieve.<br>2.Every person has knowledge of which others can benefit.<br>3.Every person can learn from the experience of others and use it for his/her advantage.<br><br><b>Gossek provides a platform for that! Register now and start transforming your goals into achievements.</b>";
+						break;
+					}
+					echo $output;
+					break;
+					
+					case 'registering':
+					switch($_GET['language'])
+					{
+						case 'german':
+						$output_noinput = "Bitte alle Eingabefelder ausfüllen.";
+						$output_wrongmail = "Die angegebene Email-Adresse befindet sich bereits in unserer Datenbank.";
+						$output_done = "Du erhälst in Kürze eine E-Mail.";
+						break;
+						
+						case 'english':
+						$output_noinput = "Please fill in all input fields.";
+						$output_wrongmail = "There is already an entry in our database for this e-mail.";
+						$output_done = "You will receive an e-mail from us shortly.";
+						break;
+					}
+					if(empty($_POST['name']) OR empty($_POST['surname']) OR empty($_POST['email']) OR empty($_POST['password']))
+					{
+						echo $output_noinput;
+					}else
+					{
+						$name = mysqli_real_escape_string($mysql_connection, $_POST['name']);
+						$surname = mysqli_real_escape_string($mysql_connection, $_POST['surname']);
+						$email = mysqli_real_escape_string($mysql_connection, $_POST['email']);
+						$password = mysqli_real_escape_string($mysql_connection, $_POST['password']);
+						$check_email_query = mysqli_query($mysql_connection, "SELECT id FROM users WHERE email = '$email' LIMIT 1");
+						if (mysqli_num_rows($check_email_query))
 						{
-							case 'german':
-							$output_noinput = "Bitte alle Eingabefelder ausfüllen.";
-							$output_wrongmail = "Die angegebene Email-Adresse befindet sich bereits in unserer Datenbank.";
-							$output_done = "Du erhälst in Kürze eine E-Mail.";
-							break;
-							
-							case 'english':
-							$output_noinput = "Please fill in all input fields.";
-							$output_wrongmail = "There is already an entry in our database for this e-mail.";
-							$output_done = "You will receive an e-mail from us shortly.";
-							break;
-						}
-						if(empty($_POST['name']) OR empty($_POST['surname']) OR empty($_POST['email']) OR empty($_POST['password']))
-						{
-							echo $output_noinput;
+							echo $output_wrongmail;
 						}else
 						{
-							$name = mysqli_real_escape_string($mysql_connection, $_POST['name']);
-							$surname = mysqli_real_escape_string($mysql_connection, $_POST['surname']);
-							$email = mysqli_real_escape_string($mysql_connection, $_POST['email']);
-							$password = mysqli_real_escape_string($mysql_connection, $_POST['password']);
-							$check_email_query = mysqli_query($mysql_connection, "SELECT id FROM users WHERE email = '$email' LIMIT 1");
-							if (mysqli_num_rows($check_email_query))
-							{
-								echo $output_wrongmail;
-							}else
-							{
-								$activation_code = md5(mysqli_real_escape_string($mysql_connection, $_POST['email']));
-								$password_encrypted = md5($password);
-								switch($_GET['language'])
-								{
-									case 'german':
-									$text = "Hallo ".$name." ".$surname.",\r\n\r\nVielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\n\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
-									$subject = "Registrierung bei Gosseek";
-									break;
-									
-									case 'english':
-									$text = "Dear ".$name." ".$surname.",\r\n\r\nThank you for your registration on Gosseek.\r\nHere are your credentials:\r\nE-mail: ".$email."\r\nPassword: ".$password."\r\n\r\nTo activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nBest regards\r\nThe Gosseek Team.";
-									$subject = "Registration on Gosseek";
-									break;
-								}
-								$header = "From: no-reply@gosseek.com" . "\r\n" .
-										 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
-								mail($email, $subject, $text, $header);
-								mysqli_query($mysql_connection, "INSERT INTO users (activation_code, email, status, password, name, surname) VALUES ('$activation_code','$email','registered','$password_encrypted', '$name', '$surname')");
-								echo $output_done;
-							}
-						}
-						break;
-					  
-						case 'activate_account':
-						if(!(empty($_GET['code'])))
-						{
-							$activation_code = mysqli_real_escape_string($mysql_connection, $_GET['code']);
-							mysqli_query($mysql_connection, "UPDATE users SET status = 'activated' WHERE activation_code = '$activation_code'");
+							$activation_code = md5(mysqli_real_escape_string($mysql_connection, $_POST['email']));
+							$password_encrypted = md5($password);
 							switch($_GET['language'])
 							{
 								case 'german':
-								$output = "Account erfolgreich aktiviert.";
+								$text = "Hallo ".$name." ".$surname.",\r\n\r\nVielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\n\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
+								$subject = "Registrierung bei Gosseek";
 								break;
 								
 								case 'english':
-								$output = "Account successfully activated.";
+								$text = "Dear ".$name." ".$surname.",\r\n\r\nThank you for your registration on Gosseek.\r\nHere are your credentials:\r\nE-mail: ".$email."\r\nPassword: ".$password."\r\n\r\nTo activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nBest regards\r\nThe Gosseek Team.";
+								$subject = "Registration on Gosseek";
 								break;
 							}
-							echo $output;
+							$header = "From: no-reply@gosseek.com" . "\r\n" .
+									 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
+							mail($email, $subject, $text, $header);
+							mysqli_query($mysql_connection, "INSERT INTO users (activation_code, email, status, password, name, surname) VALUES ('$activation_code','$email','registered','$password_encrypted', '$name', '$surname')");
+							echo $output_done;
 						}
-						break;
-						
-						case 'forgotpassword':
+					}
+					break;
+				  
+					case 'activate_account':
+					if(!(empty($_GET['code'])))
+					{
+						$activation_code = mysqli_real_escape_string($mysql_connection, $_GET['code']);
+						mysqli_query($mysql_connection, "UPDATE users SET status = 'activated' WHERE activation_code = '$activation_code'");
 						switch($_GET['language'])
 						{
 							case 'german':
-							$output = "Wenn du dein Passwort vergessen hast, gib bitte deine E-Mail ein. Wir schicken dir dann eine E-Mail mit deinem neuen Passwort.";
-							$output_label = "E-Mail:";
-							$input_submit = "E-Mail versenden";
+							$output = "Account erfolgreich aktiviert.";
 							break;
 							
 							case 'english':
-							$output = "If you have forgotten your password, please fill in your e-mail address. We will send you an e-mail with your new password.";
-							$output_label = "E-mail:";
-							$input_submit = "Send e-mail";
+							$output = "Account successfully activated.";
 							break;
 						}
 						echo $output;
-						echo "<form action=\"mainpage.php?language=".$_GET['language']."&action=sendnewpassword\" method=\"post\" accept-charset=\"utf-8\">";
-						echo $output_label;
-						echo "<input name=\"email\" size=\"18\"></input>";
-						echo "<input type=\"submit\" value=\"".$input_submit."\"></input>";
-						echo "</form>";
+					}
+					break;
+					
+					case 'forgotpassword':
+					switch($_GET['language'])
+					{
+						case 'german':
+						$output = "Wenn du dein Passwort vergessen hast, gib bitte deine E-Mail ein. Wir schicken dir dann eine E-Mail mit deinem neuen Passwort.";
+						$output_label = "E-Mail:";
+						$input_submit = "E-Mail versenden";
 						break;
 						
-						case 'sendnewpassword':
-						switch($_GET['language'])
-						{
-							case 'german':
-							$output_done = "Du erhälst in Kürze eine E-Mail.";
-							$output_wrongmail = "Die angegebene E-Mail befindet sich nicht in unserer Datenbank.";
-							break;
-							
-							case 'english':
-							$output_done = "You will receive an e-mail from us shortly.";
-							$output_wrongmail = "There is no entry in our database for the e-mail you entered.";
-							break;
-						}
-						$email = mysqli_real_escape_string($mysql_connection, $_POST['email']);
-						$userdata_query = mysqli_query($mysql_connection, "SELECT id,name,surname FROM users WHERE email = '$email' LIMIT 1");
-						if(mysqli_num_rows($userdata_query))
-						{
-								$new_password = mt_rand(100000,999999);
-								$new_password_encrypted = md5($new_password);
-								$userdata = mysqli_fetch_array($userdata_query);
-								switch($_GET['language'])
-								{
-									case 'german':
-									$text = "Hallo ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nDu hast dein Passwort vergessen, daher schicken wir dir mit dieser E-Mail dein neues Passwort.\r\nDein neues Passwort lautet: ".$new_password."\r\nDu solltest dein Passwort nach dem ersten Login ändern, nicht dass du es wieder vergisst.\r\n\r\nMit freundlichen Grüssen,\r\nDas Gosseek-Team";
-									$subject = "Neues Passwort bei Gosseek";
-									break;
-									
-									case 'english':
-									$text = "Dear ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nYou forgot your password, hence we are sending you a new one with this e-mail.\r\nYour new password: ".$new_password."\r\nYou should change your password after the first login, such that you don't forget it again.\r\n\r\nBest regards\r\nThe Gosseek-Team";
-									$subject = "New password for Gosseek";
-									break;
-								}
-								$header = "From: no-reply@gosseek.com" . "\r\n" .
-										 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
-								mail($email, $subject, $text, $header);
-								mysqli_query($mysql_connection, "UPDATE users SET password = '$new_password_encrypted' WHERE id = ".$userdata['id']);
-								echo $output_done;
-						}else
-						{
-							echo $output_wrongmail;
-						}
-						break;
-						
-						case 'failedlogin':
-						switch($_GET['language'])
-						{
-							case 'german':
-							$output_wrongmail = "Die angegebene E-Mail befindet sich nicht in unserer Datenbank.";
-							$output_wrongpassword = "Falsches Passwort.";
-							$output_notactivated = "Dein Account wurde noch nicht aktiviert.";
-							break;
-							
-							case 'english':
-							$output_wrongmail = "There is no entry in our database for the e-mail you entered.";
-							$output_wrongpassword = "Wrong password.";
-							$output_notactivated = "Your account has not been activated yet.";
-							break;
-						}
-							switch($_GET['reason'])
-							{
-								
-								case 'wrongmail':
-								echo $output_wrongmail;
-								break;
-								
-								case 'wrongpassword':
-								echo $output_wrongpassword;
-								break;
-								
-								case 'notactivated':
-								echo $output_notactivated;
-								break;
-							}								
-						break;
-						
-						case 'invalidsession':
-						switch($_GET['language'])
-						{
-							case 'german':
-							$output = "Ungültige Sitzung.";
-							break;
-							
-							case 'english':
-							$output = "Invalid session.";
-							break;
-						}
-						echo $output;
-						break;
-						
-						case 'logout':
-						session_start();
-						$_SESSION = array();
-						session_destroy();
-						switch($_GET['language'])
-						{
-							case 'german':
-							$output = "Erfolgreich ausgeloggt.";
-							break;
-							
-							case 'english':
-							$output = "Successfully logged out.";
-							break;
-						}
-						echo $output;
+						case 'english':
+						$output = "If you have forgotten your password, please fill in your e-mail address. We will send you an e-mail with your new password.";
+						$output_label = "E-mail:";
+						$input_submit = "Send e-mail";
 						break;
 					}
-				echo "</p>";
+					echo $output;
+					echo "<form action=\"mainpage.php?language=".$_GET['language']."&action=sendnewpassword\" method=\"post\" accept-charset=\"utf-8\">";
+					echo $output_label;
+					echo "<input name=\"email\" size=\"18\"></input>";
+					echo "<input type=\"submit\" value=\"".$input_submit."\"></input>";
+					echo "</form>";
+					break;
+					
+					case 'sendnewpassword':
+					switch($_GET['language'])
+					{
+						case 'german':
+						$output_done = "Du erhälst in Kürze eine E-Mail.";
+						$output_wrongmail = "Die angegebene E-Mail befindet sich nicht in unserer Datenbank.";
+						break;
+						
+						case 'english':
+						$output_done = "You will receive an e-mail from us shortly.";
+						$output_wrongmail = "There is no entry in our database for the e-mail you entered.";
+						break;
+					}
+					$email = mysqli_real_escape_string($mysql_connection, $_POST['email']);
+					$userdata_query = mysqli_query($mysql_connection, "SELECT id,name,surname FROM users WHERE email = '$email' LIMIT 1");
+					if(mysqli_num_rows($userdata_query))
+					{
+							$new_password = mt_rand(100000,999999);
+							$new_password_encrypted = md5($new_password);
+							$userdata = mysqli_fetch_array($userdata_query);
+							switch($_GET['language'])
+							{
+								case 'german':
+								$text = "Hallo ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nDu hast dein Passwort vergessen, daher schicken wir dir mit dieser E-Mail dein neues Passwort.\r\nDein neues Passwort lautet: ".$new_password."\r\nDu solltest dein Passwort nach dem ersten Login ändern, nicht dass du es wieder vergisst.\r\n\r\nMit freundlichen Grüssen,\r\nDas Gosseek-Team";
+								$subject = "Neues Passwort bei Gosseek";
+								break;
+								
+								case 'english':
+								$text = "Dear ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nYou forgot your password, hence we are sending you a new one with this e-mail.\r\nYour new password: ".$new_password."\r\nYou should change your password after the first login, such that you don't forget it again.\r\n\r\nBest regards\r\nThe Gosseek-Team";
+								$subject = "New password for Gosseek";
+								break;
+							}
+							$header = "From: no-reply@gosseek.com" . "\r\n" .
+									 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
+							mail($email, $subject, $text, $header);
+							mysqli_query($mysql_connection, "UPDATE users SET password = '$new_password_encrypted' WHERE id = ".$userdata['id']);
+							echo $output_done;
+					}else
+					{
+						echo $output_wrongmail;
+					}
+					break;
+					
+					case 'failedlogin':
+					switch($_GET['language'])
+					{
+						case 'german':
+						$output_wrongmail = "Die angegebene E-Mail befindet sich nicht in unserer Datenbank.";
+						$output_wrongpassword = "Falsches Passwort.";
+						$output_notactivated = "Dein Account wurde noch nicht aktiviert.";
+						break;
+						
+						case 'english':
+						$output_wrongmail = "There is no entry in our database for the e-mail you entered.";
+						$output_wrongpassword = "Wrong password.";
+						$output_notactivated = "Your account has not been activated yet.";
+						break;
+					}
+						switch($_GET['reason'])
+						{
+							
+							case 'wrongmail':
+							echo $output_wrongmail;
+							break;
+							
+							case 'wrongpassword':
+							echo $output_wrongpassword;
+							break;
+							
+							case 'notactivated':
+							echo $output_notactivated;
+							break;
+						}								
+					break;
+					
+					case 'invalidsession':
+					switch($_GET['language'])
+					{
+						case 'german':
+						$output = "Ungültige Sitzung.";
+						break;
+						
+						case 'english':
+						$output = "Invalid session.";
+						break;
+					}
+					echo $output;
+					break;
+					
+					case 'logout':
+					session_start();
+					$_SESSION = array();
+					session_destroy();
+					switch($_GET['language'])
+					{
+						case 'german':
+						$output = "Erfolgreich ausgeloggt.";
+						break;
+						
+						case 'english':
+						$output = "Successfully logged out.";
+						break;
+					}
+					echo $output;
+					break;
+				}
 			echo "</div>";
 			echo "<div class=\"boxleft\">";
 				echo "<div class=\"offlineleftinnerbox\">";
