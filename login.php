@@ -62,6 +62,7 @@
 		$a_logout = "Ausloggen";
 		$a_profilesettings = "Profil bearbeiten";
 		$a_settings = "Einstellungen";
+		$a_feedback = "Feedback geben";
 		break;
 		
 		case 'english':
@@ -69,6 +70,7 @@
 		$a_logout = "Log out";
 		$a_profilesettings = "Change profile";
 		$a_settings = "Settings";
+		$a_feedback = "Give feedback";
 		break;
 	}
 
@@ -100,6 +102,7 @@ echo "<html>";
 						echo "<a href=\"mainpage.php?language=".$_GET['language']."&action=logout\">".$a_logout."</a>";
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=profilesettings\">".$a_profilesettings."</a>";
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=settings\">".$a_settings."</a>";
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=feedback\">".$a_feedback."</a>";
 					echo "</div>";
 				echo "</div>";
 				echo "<div class=\"rightinnerboxbottom\">";
@@ -152,7 +155,7 @@ echo "<html>";
 						switch($_GET['language'])
 						{
 							case 'german':
-							$output = "Willkommen bei Gosseek,<br><br>Diese Seite ist noch immer im aktiven Aufbau und wird laufend verbessert.<br>Aus diesem Grund möchten wir dich bitten, uns jeden Fehler und/oder Anmerkung zukommen zu lassen. Benötigst du eine weitere Funktion, welche Gosseek noch nicht anbietet, oder gefällt dir etwas ganz und gar nicht?<br><br>Wir freuen uns über jedes Feedback und versuchen die Seite möglichst deinen Wünschen zu gestalten.";
+							$output = "Willkommen bei Gosseek,<br><br>Diese Seite ist noch im aktiven Aufbau und wird laufend verbessert.<br>Aus diesem Grund möchten wir dich bitten, uns jeden Fehler und/oder Anmerkung zukommen zu lassen. Benötigst du eine weitere Funktion, welche Gosseek noch nicht anbietet, oder gefällt dir etwas ganz und gar nicht?<br><br>Wir freuen uns über jedes Feedback und versuchen die Seite möglichst deinen Wünschen entsprechend zu gestalten.";
 							break;
 							
 							case 'english':
@@ -647,6 +650,47 @@ echo "<html>";
 						$new_password_encrypted = md5($new_password);
 						mysqli_query($mysql_connection, "UPDATE users SET password = '$new_password_encrypted' WHERE id = ".$userdata['id']);
 						echo $output;
+						break;
+						
+						case 'feedback':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$input_submit = "Anonymes Feedback senden";
+							break;
+							
+							case 'english':
+							$input_submit = "Send anonymous feedback";
+							break;
+						}
+						echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_feedback\" method=\"post\" accept-charset=\"utf-8\">";
+							echo "<textarea name=\"feedback\" cols=\"64\" rows=\"15\"/></textarea>";
+							echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+						echo "</form>";
+						break;
+						
+						case 'submit_feedback':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_success = "Feedback gesendet.";
+							$output_empty = "Bitte fülle das Textfeld aus.";
+							break;
+							
+							case 'english':
+							$output_success = "Feedback sent.";
+							$output_empty = "Please fill in the text field.";
+							break;
+						}
+						if(!empty($_POST['feedback']))
+						{
+							$feedback = mysqli_real_escape_string($mysql_connection, $_POST['feedback']);
+							mysqli_query($mysql_connection, "INSERT INTO feedback (userid, time, text) VALUES ('".$userdata['id']."', '".time()."', '$feedback')");
+							echo $output_success;
+						}else
+						{
+							echo $output_empty;
+						}
 						break;
 						
 						case 'user':
