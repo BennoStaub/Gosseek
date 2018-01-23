@@ -646,6 +646,7 @@ echo "<html>";
 							$output_residence = "Wohnort:";
 							$output_job = "Beruf:";
 							$output_description = "Über mich:";
+							$output_goals = "Ziele";
 							$a_message = "Nachricht schreiben";
 							break;
 							
@@ -656,6 +657,7 @@ echo "<html>";
 							$output_residence = "Residence:";
 							$output_job = "Job:";
 							$output_description = "About me:";
+							$output_goals = "Goals";
 							$a_message = "Write a message";
 							break;
 						}
@@ -674,6 +676,7 @@ echo "<html>";
 							{
 								$birthdate = $birthday.".".$birthmonth.".".$birthyear;
 							}
+							$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE userid = ".$userid." AND anonymous = false");
 							echo "<div class=\"profile\">";
 								if(file_exists("uploads/profilepictures/".$user['id'].$user['profilepictureformat'].""))
 								{
@@ -687,7 +690,15 @@ echo "<html>";
 								echo "<h><p><b>".$output_residence."</b></p><p>".$user['residence']."</p></h>";
 								$user['description']=str_replace("\n","<br>",$user['description']);
 								echo "<h><p><b>".$output_description."</b></p></h><h>".$user['description']."</h>";
-								echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$userid."\">".$a_message."</a></p></h>";
+								echo "<h><p><b>".$output_goals."</b></p></h>";
+								if(mysqli_num_rows($goal_query) >= 1)
+								{
+									while($goal = mysqli_fetch_array($goal_query))
+									{	
+										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goal['id']."\">".$goal['title']."</a></p></h>";
+									}
+								}
+								echo "<br><h><center><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$userid."\">".$a_message."</a></center></h>";
 							echo "</div>";
 						}else{
 							echo $output_no_user;
