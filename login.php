@@ -43,7 +43,6 @@
 			$userdata['birthmonth'] = mb_substr($userdata['birthdate'], 8, 2);
 			$userdata['birthyear'] = mb_substr($userdata['birthdate'], 0, 4);
 		}
-		$_GET['action'] = "feed";
 	}
 	if(isset($_SESSION['id']))
 	{
@@ -149,6 +148,20 @@ echo "<html>";
 				{
 					switch ($_GET['action'])
 					{
+						case 'login':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output = "Willkommen bei Gosseek,<br><br>Diese Seite ist noch immer im aktiven Aufbau und wird laufend verbessert.<br>Aus diesem Grund möchten wir dich bitten, uns jeden Fehler und/oder Anmerkung zukommen zu lassen. Benötigst du eine weitere Funktion, welche Gosseek noch nicht anbietet, oder gefällt dir etwas ganz und gar nicht?<br><br>Wir freuen uns über jedes Feedback und versuchen die Seite möglichst deinen Wünschen zu gestalten.";
+							break;
+							
+							case 'english':
+							$output = "Welcome on Gosseek,<br><br>This page is under active development and gets improved continuously.<br>Therefore we would like to ask you to report any mistake and/or remark. Do you need an additional function that is not offered by Gosseek yet or do you dislike anything completely?<br><br>We are looking forward to every feedback we get and try to design this page according to your desires.";
+							break;
+						}
+						echo $output;
+						break;
+						
 						case 'feed':
 						switch($_GET['language'])
 						{
@@ -646,7 +659,7 @@ echo "<html>";
 							$output_residence = "Wohnort:";
 							$output_job = "Beruf:";
 							$output_description = "Über mich:";
-							$output_goals = "Ziele";
+							$output_goals = "Ziele:";
 							$a_message = "Nachricht schreiben";
 							break;
 							
@@ -657,7 +670,7 @@ echo "<html>";
 							$output_residence = "Residence:";
 							$output_job = "Job:";
 							$output_description = "About me:";
-							$output_goals = "Goals";
+							$output_goals = "Goals:";
 							$a_message = "Write a message";
 							break;
 						}
