@@ -46,7 +46,7 @@ p { padding: 10px; }
 .rightinnerboxtoplinks { margin-left: 5px; margin-top: 5px; height: 92%; }
 .rightinnerboxtop .rightinnerboxtoplinks a { width: 60%; float: left; }
 .profilepic { float: right; margin: 3px; width: 48px; height: 64px; }
-.profilepic img { border-radius: 5px; }
+.profilepic img { border-radius: 5px; width: 48px; }
 	
 .rightinnerboxbottom { width: 90%; height: 65%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; padding-top: 5%; }
 .rightinnerboxbottom a { margin-left: 5px; margin-bottom: 5px; width: 80%; float: left; }
@@ -92,7 +92,7 @@ p { padding: 10px; }
 .feedlinksright { text-align: right; width: 50%; }
 
 .profile { width: 95% height: 70%; border-radius: 5px; margin: auto; backround: <?php echo $color_frame; ?>; padding: 5px; }
-.profile img { float: right; margin-right: 50px; }
+.profile img { float: right; margin-right: 50px; width: 180px;}
 .profile h { display: block; width: 90%; margin-left: 20px; }
 .profile p { display: inline-block; width: 30%; margin: 0 0; padding: 2px; }
 

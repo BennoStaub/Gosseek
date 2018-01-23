@@ -92,9 +92,9 @@ echo "<html>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$userdata['id']."\">";
 						if(file_exists("uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat'].""))
 						{
-							echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\" width=\"48\" height=\"64\"></img>";
+							echo "<img src=\"uploads/profilepictures/".$userdata['id'].$userdata['profilepictureformat']."\"></img>";
 						}else{
-							echo "<img src=\"uploads/profilepictures/no_picture.png\" width=\"48\" height=\"64\"></img>";	
+							echo "<img src=\"uploads/profilepictures/no_picture.png\"></img>";	
 						}
 					echo "</a>";
 					echo "</div>";
@@ -737,9 +737,9 @@ echo "<html>";
 							echo "<div class=\"profile\">";
 								if(file_exists("uploads/profilepictures/".$user['id'].$user['profilepictureformat'].""))
 								{
-									echo "<img src=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\" width=\"180\" height=\"240\"></img>";
+									echo "<a href=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\"><img src=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\"></img></a>";
 								}else{
-									echo "<img src=\"uploads/profilepictures/no_picture.png\" width=\"180\" height=\"240\"></img>";	
+									echo "<a href=\"uploads/profilepictures/no_picture.png\"><img src=\"uploads/profilepictures/no_picture.png\"></img></a>";	
 								}
 								echo "<h><p><b>".$output_name."</b></p><p>".$user['name']." ".$user['surname']."</p></h>";
 								echo "<h><p><b>".$output_birthdate."</b></p><p>".$birthdate."</p></h>";
