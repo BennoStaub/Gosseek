@@ -109,25 +109,19 @@ echo "<html>";
 					switch($_GET['language'])
 					{
 						case 'german':
-						$a_owngoals = "Eigene Ziele";
 						$a_create_post = "Beitrag erstellen";
-						$a_day_review = "Tagesrückblick";
-						$a_feed = "Feed";
+						$a_day_review = "Tagesrückblick erstellen";
 						$a_definegoal = "Neues Ziel definieren";
 						break;
 						
 						case 'english':
-						$a_owngoals = "Own goals";
 						$a_create_post = "Create a post";
-						$a_day_review = "Review of the day";
-						$a_feed = "Feed";
+						$a_day_review = "Create a day review";
 						$a_definegoal = "Define new goal";
 						break;
-					}
-					echo "<a href=\"login.php?language=".$_GET['language']."&action=owngoals\">".$a_owngoals."</a>";	
+					}	
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=createpost\">".$a_create_post."</a>";	
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=createdayreview\">".$a_day_review."</a>";
-					echo "<a href=\"login.php?language=".$_GET['language']."&action=feed\">".$a_feed."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=definegoal\">".$a_definegoal."</a>";
 				echo "</div>";
 			echo "</div>";
@@ -3040,14 +3034,20 @@ echo "<html>";
 					switch($_GET['language'])
 					{
 						case 'german':
-						$output_goallist = "Liste aller Ziele";
+						$a_feed = "Feed";
+						$a_owngoals = "Eigene Ziele";
+						$a_goallist = "Liste aller Ziele";
 						break;
 						
 						case 'english':
-						$output_goallist = "List of all goals";
+						$a_feed = "Feed";
+						$a_owngoals = "Own goals";
+						$a_goallist = "List of all goals";
 						break;
 					}
-					echo "<a href=\"login.php?language=".$_GET['language']."&action=goallist\">".$output_goallist."</a>";
+					echo "<a href=\"login.php?language=".$_GET['language']."&action=feed\">".$a_feed."</a>";
+					echo "<a href=\"login.php?language=".$_GET['language']."&action=owngoals\">".$a_owngoals."</a>";
+					echo "<a href=\"login.php?language=".$_GET['language']."&action=goallist\">".$a_goallist."</a>";
 				echo "</div>";
 			echo "</div>";
 		echo "</div>";

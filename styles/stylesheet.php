@@ -65,6 +65,7 @@ p { padding: 10px; }
 
 .onlineleftinnerboxtop { width: 90%; height: 24%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left; padding-left: 5px; }
 .onlineleftinnerboxbottom { width: 90%; height: 70.5%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; margin-top: 5%; text-align: left; padding-left: 5px; }
+.onlineleftinnerboxbottom a { display: block; }
 
 	
 .boxfeed { float: right; width: 58%; height: 87.5%; border-radius: 5px; margin: 5px; padding: 5px; padding-top: 25px; background: <?php echo $color_box; ?>; color: #000000; overflow:auto; }
