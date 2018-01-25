@@ -215,10 +215,14 @@ echo "<html>";
 								{
 									$show_file = "";
 									if($post['picture'])
-									{
-										if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+									{		
+										if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
 										{
-											$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
+											foreach($picture_file as $picture)
+											{
+												$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+											}
+											$show_file = $show_file."<br>";
 										}
 									}
 									echo "<div class=\"feedpost\">";
@@ -266,10 +270,14 @@ echo "<html>";
 									$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
 									$show_file = "";
 									if($post['picture'])
-									{
-										if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+									{		
+										if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
 										{
-											$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
+											foreach($picture_file as $picture)
+											{
+												$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+											}
+											$show_file = $show_file."<br>";
 										}
 									}
 									echo "<div class=\"feedpost\">";
@@ -797,8 +805,11 @@ echo "<html>";
 							echo "<label>".$label_content."</label>";
 							echo "<textarea name=\"content\" cols=\"64\" rows=\"15\"/></textarea>";
 							echo "<br><br>";
-							echo $label_picture." ";
-							echo "<input type=\"file\" name=\"picture\"></input>";
+							for($iter = 1; $iter <= 5; $iter++)
+							{
+								echo $label_picture." ";
+								echo "<input type=\"file\" name=\"picture".$iter."\"></input><br>";
+							}
 							echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 						echo "</form>";
 						break;
@@ -839,7 +850,7 @@ echo "<html>";
 								}else
 								{
 									// check if file has been chosen
-									if(empty($_FILES['picture']['tmp_name']))
+									if(empty($_FILES['picture1']['tmp_name']) AND empty($_FILES['picture2']['tmp_name']) AND empty($_FILES['picture3']['tmp_name']) AND empty($_FILES['picture4']['tmp_name']) AND empty($_FILES['picture5']['tmp_name']))
 									{
 										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 										$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
@@ -849,25 +860,36 @@ echo "<html>";
 									}else
 									{
 										$target_dir = "uploads/posts/";
-										$target_file = $target_dir . basename($_FILES["picture"]["name"]);
-										$image_File_Type = pathinfo($target_file,PATHINFO_EXTENSION);
-										// Check if image file is an actual image or fake image
-										if(getimagesize($_FILES['picture']['tmp_name']) == false) 
+										for($iter = 1; $iter <= 5; $iter++)
 										{
-											echo $output_no_image;
-											break;
-										}
-										// Check file size
-										if ($_FILES['picture']['size'] > 5000000)
-										{
-											echo $output_too_big;
-											break;
-										}
-										// Allow certain file formats
-										if($image_File_Type != "jpg" && $image_File_Type != "png" && $image_File_Type != "jpeg" && $image_File_Type != "JPG" && $image_File_Type != "PNG" && $image_File_Type != "JPEG")
-										{
-											echo $output_wrong_format;
-											break;
+											$picture_name = "picture".$iter;
+											if(!empty($_FILES[$picture_name]['tmp_name']))
+											{
+												$target_file[$iter] = $target_dir . basename($_FILES[$picture_name]["name"]);
+												$image_File_Type[$iter] = pathinfo($target_file[$iter],PATHINFO_EXTENSION);
+												$image_check[$iter] = 1;
+												// Check if image file is an actual image or fake image
+												if(getimagesize($_FILES[$picture_name]['tmp_name']) == false) 
+												{
+													echo $output_no_image;
+													break;
+												}
+												// Check file size
+												if ($_FILES[$picture_name]['size'] > 5000000)
+												{
+													echo $output_too_big;
+													break;
+												}
+												// Allow certain file formats
+												if($image_File_Type[$iter] != "jpg" && $image_File_Type[$iter] != "png" && $image_File_Type[$iter] != "jpeg" && $image_File_Type[$iter] != "JPG" && $image_File_Type[$iter] != "PNG" && $image_File_Type[$iter] != "JPEG")
+												{
+													echo $output_wrong_format;
+													break;
+												}
+											}else
+											{
+												$image_check[$iter] = 0;
+											}
 										}
 										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 										$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
@@ -876,7 +898,14 @@ echo "<html>";
 										$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE goalid = ".$goalid." AND time = ".$time." LIMIT 1");
 										$post = mysqli_fetch_array($post_query);
 										// No error, upload file
-										move_uploaded_file($_FILES['picture']['tmp_name'], $target_dir.$post['id'].".".$image_File_Type);
+										for($iter = 1; $iter <= 5; $iter++)
+										{
+											if($image_check[$iter])
+											{
+												$picture_name = "picture".$iter;
+												move_uploaded_file($_FILES[$picture_name]['tmp_name'], $target_dir."post_".$post['id']."_".$iter.".".$image_File_Type[$iter]);
+											}
+										}
 										echo $output_success;
 									}
 								}
@@ -1364,10 +1393,14 @@ echo "<html>";
 							{
 								$show_file = "";
 								if($post['picture'])
-								{
-									if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+								{		
+									if($picture_file = glob("uploads/posts/post_".$postid."_*.*"))
 									{
-										$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
+										foreach($picture_file as $picture)
+										{
+											$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+										}
+										$show_file = $show_file."<br>";
 									}
 								}
 								echo "<div class=\"feedpost\">";
@@ -1406,10 +1439,14 @@ echo "<html>";
 								$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
 								$show_file = "";
 								if($post['picture'])
-								{
-									if($picture_file = glob("uploads/posts/".$post['id'].".*"))
+								{		
+									if($picture_file = glob("uploads/posts/post_".$postid."_*.*"))
 									{
-										$show_file = "<center><a href=\"".$picture_file[0]."\"><img src=\"".$picture_file[0]."\"></img></a></center><br>";
+										foreach($picture_file as $picture)
+										{
+											$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+										}
+										$show_file = $show_file."<br>";
 									}
 								}
 								echo "<div class=\"feedpost\">";
@@ -2050,6 +2087,7 @@ echo "<html>";
 							$output_description = "Beschreibung:";
 							$output_block = "Aktionsblock:";
 							$output_anonymous = "Anonym";
+							$output_block_used = "Block wurde bereits genutzt und kann daher nicht mehr geändert oder gelöscht werden.";
 							$a_follow_goal = "Folgen";
 							$a_unfollow_goal = "Entfolgen";
 							$a_edit_goal = "Bearbeiten";
@@ -2069,6 +2107,7 @@ echo "<html>";
 							$output_description = "Description:";
 							$output_block = "Actionblock:";
 							$output_anonymous = "Anonymous";
+							$output_block_used = "Block already used and cannot be edited or deleted anymore.";
 							$a_follow_goal = "Follow";
 							$a_unfollow_goal = "Unfollow";
 							$a_edit_goal = "Edit";
@@ -2104,7 +2143,13 @@ echo "<html>";
 									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
 									while($actionblock = mysqli_fetch_array($actionblock_query))
 									{
-										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name']." <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a></h>";
+										$links = "";
+										$schedule_query = mysqli_query($mysql_connection, "SELECT id FROM scheduleblocks WHERE actionblockid = ".$actionblock['id']." LIMIT 1");
+										if(mysqli_num_rows($schedule_query) == 0)
+										{
+											$links = " <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a>";
+										}
+										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name'].$links."</h>";
 									}
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
 									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
@@ -2408,6 +2453,7 @@ echo "<html>";
 							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 							$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
 							$output_no_block = "Dieser Aktionsblock existiert nicht.";
+							$output_block_used = "Dieser Aktionsblock wurde bereits für die Dokumentation benutzt und kann daher nicht mehr geändert werden.";
 							$input_submit = "Änderungen speichern";
 							break;
 							
@@ -2416,6 +2462,7 @@ echo "<html>";
 							$output_not_author = "You are not the author of this goal.";
 							$output_no_goal = "There is no goal with this block.";
 							$output_no_block = "There is no such actionblock.";
+							$output_block_used = "This actionblock has already been used for documentation and therefore it cannot be edited anymore.";
 							$input_submit = "Save changes";
 							break;
 						}
@@ -2430,13 +2477,19 @@ echo "<html>";
 								$check_author = mysqli_fetch_array($check_goal_query);
 								if($check_author['userid'] == $userdata['id'])
 								{
-									echo "<form action=\"login.php?language=".$_GET['language']."&action=editedblock&blockid=".$block['id']."\" method=\"post\" accept-charset=\"utf-8\">";
-										echo "<label>".$label_blockname."</label>";
-										echo "<div class=\"clear\"></div>";
-										echo "<input name=\"blockname\" size=\"50\" value=\"".$block['name']."\"></input>";
-										echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
-									echo "</form>";
-									
+									$schedule_query = mysqli_query($mysql_connection, "SELECT id FROM scheduleblocks WHERE actionblockid = ".$block['id']." LIMIT 1");
+									if(mysqli_num_rows($schedule_query) == 0)
+									{
+										echo "<form action=\"login.php?language=".$_GET['language']."&action=editedblock&blockid=".$block['id']."\" method=\"post\" accept-charset=\"utf-8\">";
+											echo "<label>".$label_blockname."</label>";
+											echo "<div class=\"clear\"></div>";
+											echo "<input name=\"blockname\" size=\"50\" value=\"".$block['name']."\"></input>";
+											echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+										echo "</form>";
+									}else
+									{
+										echo $output_block_used;
+									}
 								}else
 								{
 									echo $output_not_author;
@@ -2459,6 +2512,7 @@ echo "<html>";
 							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 							$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
 							$output_no_block = "Dieser Aktionsblock existiert nicht.";
+							$output_block_used = "Dieser Aktionsblock wurde bereits für die Dokumentation benutzt und kann daher nicht mehr geändert werden.";
 							break;
 							
 							case 'english':
@@ -2466,6 +2520,7 @@ echo "<html>";
 							$output_not_author = "You are not the author of this goal.";
 							$output_no_goal = "There is no goal with this block.";
 							$output_no_block = "There is no such actionblock.";
+							$output_block_used = "This actionblock has already been used for documentation and therefore it cannot be edited anymore.";
 							break;
 						}
 						$blockid = mysqli_real_escape_string($mysql_connection, $_GET['blockid']);
@@ -2480,8 +2535,15 @@ echo "<html>";
 								$check_author = mysqli_fetch_array($check_goal_query);
 								if($check_author['userid'] == $userdata['id'])
 								{
-									mysqli_query($mysql_connection, "UPDATE actionblocks SET name = '$blockname' WHERE id=$blockid");
-									echo $output_success;
+									$schedule_query = mysqli_query($mysql_connection, "SELECT id FROM scheduleblocks WHERE actionblockid = ".$block['id']." LIMIT 1");
+									if(mysqli_num_rows($schedule_query) == 0)
+									{
+										mysqli_query($mysql_connection, "UPDATE actionblocks SET name = '$blockname' WHERE id=$blockid");
+										echo $output_success;
+									}else
+									{
+										echo $output_block_used;
+									}
 								}else
 								{
 									echo $output_not_author;
@@ -2504,6 +2566,7 @@ echo "<html>";
 							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 							$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
 							$output_no_block = "Dieser Aktionsblock existiert nicht.";
+							$output_block_used = "Dieser Aktionsblock wurde bereits für die Dokumentation benutzt und kann daher nicht mehr gelöscht werden.";
 							break;
 							
 							case 'english':
@@ -2511,6 +2574,7 @@ echo "<html>";
 							$output_not_author = "You are not the author of this goal.";
 							$output_no_goal = "There is no goal with this block.";
 							$output_no_block = "There is no such actionblock.";
+							$output_block_used = "This actionblock has already been used for documentation and therefore it cannot be deleted anymore.";
 							break;
 						}
 						$blockid = mysqli_real_escape_string($mysql_connection, $_GET['blockid']);
@@ -2524,8 +2588,15 @@ echo "<html>";
 								$check_author = mysqli_fetch_array($check_goal_query);
 								if($check_author['userid'] == $userdata['id'])
 								{
-									mysqli_query($mysql_connection, "DELETE FROM actionblocks WHERE id=$blockid");
-									echo $output_success;
+									$schedule_query = mysqli_query($mysql_connection, "SELECT id FROM scheduleblocks WHERE actionblockid = ".$blockid." LIMIT 1");
+									if(mysqli_num_rows($schedule_query) == 0)
+									{
+										mysqli_query($mysql_connection, "DELETE FROM actionblocks WHERE id=$blockid");
+										echo $output_success;
+									}else
+									{
+										echo $output_block_used;
+									}
 								}else
 								{
 									echo $output_not_author;
