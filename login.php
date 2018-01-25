@@ -614,7 +614,7 @@ echo "<html>";
 							{
 								echo "</tr><tr>";
 							}
-							if($value == "#000046" OR $value == "#000000" OR $value == "#002d00")
+							if($value == "#000046" OR $value == "#000000" OR $value == "#002d00" OR $value == "#333333" OR $value == "#5a005a" OR $value == "#9e0000")
 							{
 								$font_color = "#FFFFFF";
 							}else
@@ -734,7 +734,7 @@ echo "<html>";
 							$birthday = mb_substr($user['birthdate'], 5, 2);
 							$birthmonth = mb_substr($user['birthdate'], 8, 2);
 							$birthyear = mb_substr($user['birthdate'], 0, 4);
-							if($birthday == "00" || $birthmonth == "00" || $birthyear == "00000")
+							if($birthday == "00" OR $birthmonth == "00" OR $birthyear == "00000")
 							{
 								$birthdate = "";
 							}else
