@@ -740,12 +740,14 @@ echo "<html>";
 							}
 							$goal_query = mysqli_query($mysql_connection, "SELECT id, title FROM goals WHERE userid = ".$userid." AND anonymous = false");
 							echo "<div class=\"profile\">";
-								if(file_exists("uploads/profilepictures/".$user['id'].$user['profilepictureformat'].""))
-								{
-									echo "<a href=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\"><img src=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\"></img></a>";
-								}else{
-									echo "<a href=\"uploads/profilepictures/no_picture.png\"><img src=\"uploads/profilepictures/no_picture.png\"></img></a>";	
-								}
+								echo "<span>";
+									if(file_exists("uploads/profilepictures/".$user['id'].$user['profilepictureformat'].""))
+									{
+										echo "<a href=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\"><img src=\"uploads/profilepictures/".$user['id'].$user['profilepictureformat']."\"></img></a>";
+									}else{
+										echo "<a href=\"uploads/profilepictures/no_picture.png\"><img src=\"uploads/profilepictures/no_picture.png\"></img></a>";	
+									}
+								echo "</span>";
 								echo "<h><p><b>".$output_name."</b></p><p>".$user['name']." ".$user['surname']."</p></h>";
 								echo "<h><p><b>".$output_birthdate."</b></p><p>".$birthdate."</p></h>";
 								echo "<h><p><b>".$output_job."</b></p><p>".$user['job']."</p></h>";
@@ -846,12 +848,12 @@ echo "<html>";
 									echo $output_no_title_or_content;
 								}else
 								{
+									$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
+									$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
+									$time = time();
 									// check if file has been chosen
 									if(empty($_FILES['picture1']['tmp_name']) AND empty($_FILES['picture2']['tmp_name']) AND empty($_FILES['picture3']['tmp_name']) AND empty($_FILES['picture4']['tmp_name']) AND empty($_FILES['picture5']['tmp_name']))
 									{
-										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
-										$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-										$time = time();
 										mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$title','$content', 0)");
 										echo $output_success;
 									}else
@@ -888,9 +890,6 @@ echo "<html>";
 												$image_check[$iter] = 0;
 											}
 										}
-										$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
-										$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-										$time = time();
 										mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$title','$content', 1)");
 										$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE goalid = ".$goalid." AND time = ".$time." LIMIT 1");
 										$post = mysqli_fetch_array($post_query);
@@ -1986,6 +1985,7 @@ echo "<html>";
 							$output_starttime = "Start:";
 							$output_finishtime = "Ende:";
 							$output_description = "Beschreibung:";
+							$output_pictures = "Bilder:";
 							$output_block = "Aktionsblock:";
 							$output_anonymous = "Anonym";
 							$output_block_used = "Block wurde bereits genutzt und kann daher nicht mehr geändert oder gelöscht werden.";
@@ -2009,6 +2009,7 @@ echo "<html>";
 							$output_starttime = "Start:";
 							$output_finishtime = "End:";
 							$output_description = "Description:";
+							$output_pictures = "Pictures:";
 							$output_block = "Actionblock:";
 							$output_anonymous = "Anonymous";
 							$output_block_used = "Block already used and cannot be edited or deleted anymore.";
@@ -2067,10 +2068,23 @@ echo "<html>";
 									}
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
 									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
+									$show_file = "";
+									echo "<div class=\"goalpictures\">";
+										if($picture_file = glob("uploads/goals/goal_".$goal['id']."_*.*"))
+										{
+											echo "<h><p><b>".$output_pictures."</b></p>";
+											foreach($picture_file as $picture)
+											{
+												$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+											}
+											echo $show_file."</h>";
+										}
+									echo "</div>";
 									if($goal['finishtime'] <= time() AND $goal['finishtime'] != 0)
 									{
 										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=results&goalid=".$goal['id']."\">".$a_results."</a></p></h>";
 									}
+									echo "<br>";
 									echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=delete_goal&goalid=".$goal['id']."\">".$a_delete_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
 									echo "<br><h>".$finish_goal."</h>";
 								}else
@@ -2090,6 +2104,18 @@ echo "<html>";
 									}
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
 									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
+									$show_file = "";
+									echo "<div class=\"goalpictures\">";
+										if($picture_file = glob("uploads/goals/goal_".$goal['id']."_*.*"))
+										{
+											echo $output_pictures;
+											foreach($picture_file as $picture)
+											{
+												$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+											}
+											echo $show_file;
+										}
+									echo "</div>";
 									echo "<h>";
 									if($goal['finishtime'] <= time() AND $goal['finishtime'] != 0)
 									{
@@ -2174,6 +2200,7 @@ echo "<html>";
 								$label_section = "Bereich";
 								$label_description = "Beschreibung";
 								$label_block = "Aktionsblock";
+								$label_picture = "Bild hinzufügen";
 								$option_yes = "Ja";
 								$option_no = "Nein";
 								$input_submit = "Los gehts!";
@@ -2186,13 +2213,14 @@ echo "<html>";
 								$label_section = "Section";
 								$label_description = "Description";
 								$label_block = "Actionblock";
+								$label_picture = "Add picture";
 								$option_yes = "Yes";
 								$option_no = "No";
 								$input_submit = "Let's go!";
 								$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
 								break;
 						}
-						echo "<form action=\"login.php?language=".$_GET['language']."&action=submitgoal\" method=\"post\" accept-charset=\"utf-8\">";
+						echo "<form action=\"login.php?language=".$_GET['language']."&action=submitgoal\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
 							echo "<label>".$label_anonymous."</label>";
 							echo "<div class=\"clear\"></div>";
 							echo "<select name=\"anonymous\" size=\"1\">";
@@ -2219,6 +2247,12 @@ echo "<html>";
 								echo "<label>".$label_block.$blocknumber."</label>";
 								echo "<input name=\"block".$blocknumber."\" size=\"50\"></input>";
 							}
+							echo "<br><br>";
+							for($iter = 1; $iter <= 5; $iter++)
+							{
+								echo $label_picture." ";
+								echo "<input type=\"file\" name=\"picture".$iter."\"></input><br>";
+							}
 							echo "<br>";
 							echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
 						echo "</form>";
@@ -2230,11 +2264,17 @@ echo "<html>";
 							case 'german':
 							$output_success = "Ziel gestartet. Viel Erfolg.";
 							$output_fail = "Bitte alle Felder ausfüllen.";
+							$output_no_image = "Die ausgewählte Datei ist kein Bild.";
+							$output_too_big = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
+							$output_wrong_format = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
 							break;
 							
 							case 'english':
 							$output_success = "Goal started. We wish you success.";
 							$output_fail = "Please fill in all fields.";
+							$output_no_image = "The chosen file is not an image.";
+							$output_too_big = "The chosen file is too big. Maximum size: 5Mb.";
+							$output_wrong_format = "Only JPG, JPEG and PNG files are allowed.";
 							break;
 						}
 						if(empty($_POST['title']) OR empty($_POST['description']))
@@ -2247,7 +2287,7 @@ echo "<html>";
 							$section = mysqli_real_escape_string($mysql_connection, $_POST['section']);
 							$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
 							mysqli_query($mysql_connection, "INSERT INTO goals (userid, anonymous, starttime, title, description, section) VALUES ('".$userdata['id']."', '".$anonymous."', '".time()."','$title','$description', '$section')");
-							$goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE userid = ".$userdata['id']." AND title = '$title'");
+							$goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE userid = ".$userdata['id']." AND title = '".$title."'");
 							$goal = mysqli_fetch_array($goal_query);
 							for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
 							{
@@ -2256,6 +2296,47 @@ echo "<html>";
 								if(!(empty($block[$blocknumber])))
 								{
 									mysqli_query($mysql_connection, "INSERT INTO actionblocks (goalid, name) VALUES (".$goal['id'].", '".$block[$blocknumber]."')");
+								}
+							}
+							$target_dir = "uploads/goals/";
+							for($iter = 1; $iter <= 5; $iter++)
+							{
+								$picture_name = "picture".$iter;
+								if(!empty($_FILES[$picture_name]['tmp_name']))
+								{
+									$target_file[$iter] = $target_dir . basename($_FILES[$picture_name]["name"]);
+									$image_File_Type[$iter] = pathinfo($target_file[$iter],PATHINFO_EXTENSION);
+									$image_check[$iter] = 1;
+									// Check if image file is an actual image or fake image
+									if(getimagesize($_FILES[$picture_name]['tmp_name']) == false) 
+									{
+										echo $output_no_image;
+										break;
+									}
+									// Check file size
+									if ($_FILES[$picture_name]['size'] > 5000000)
+									{
+										echo $output_too_big;
+										break;
+									}
+									// Allow certain file formats
+									if($image_File_Type[$iter] != "jpg" && $image_File_Type[$iter] != "png" && $image_File_Type[$iter] != "jpeg" && $image_File_Type[$iter] != "JPG" && $image_File_Type[$iter] != "PNG" && $image_File_Type[$iter] != "JPEG")
+									{
+										echo $output_wrong_format;
+										break;
+									}
+								}else
+								{
+									$image_check[$iter] = 0;
+								}
+							}
+							// No error, upload file
+							for($iter = 1; $iter <= 5; $iter++)
+							{
+								if($image_check[$iter])
+								{
+									$picture_name = "picture".$iter;
+									move_uploaded_file($_FILES[$picture_name]['tmp_name'], $target_dir."goal_".$goal['id']."_".$iter.".".$image_File_Type[$iter]);
 								}
 							}
 							echo $output_success;
@@ -2268,7 +2349,7 @@ echo "<html>";
 							case 'german':
 							$output_no_goal = "Dieses Ziel existiert nicht.";
 							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
-							$output_intro = "Gratulliere zum Abschluss deines Zieles. Bitte fasse hier nochmals deine Resultate zusammen, damit zukünftige Besucher direkt sehen können, was hier erreicht wurde.";
+							$output_intro = "Gratuliere zum Abschluss deines Zieles. Bitte fasse hier nochmals deine Resultate zusammen, damit zukünftige Besucher direkt sehen können, was hier erreicht wurde.";
 							$label_results = "Resultate:";
 							$label_picture = "Bild hinzufügen:";
 							$input_submit = "Resultate abschicken";
@@ -2664,6 +2745,11 @@ echo "<html>";
 												mysqli_query($mysql_connection, "DELETE FROM comments WHERE postid = ".$post['id']);
 											}
 										}
+									}
+									$result_query = mysqli_query($mysql_connection, "SELECT id FROM results WHERE goalid = ".$goalid." LIMIT 1");
+									if(mysqli_num_rows($result_query))
+									{
+										mysqli_query($mysql_connection, "DELETE FROM results WHERE goalid = ".$goalid);
 									}
 									echo $output_success;
 								}else

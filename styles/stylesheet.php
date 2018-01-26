@@ -93,7 +93,7 @@ p { padding: 10px; }
 .feedlinksright { text-align: right; width: 50%; }
 
 .profile { width: 95% height: 70%; border-radius: 5px; margin: auto; backround: <?php echo $color_frame; ?>; padding: 5px; }
-.profile img { float: right; margin-right: 50px; width: 180px;}
+.profile span img { float: right; margin-right: 50px; width: 180px;}
 .profile h { display: block; width: 90%; margin-left: 20px; }
 .profile p { display: inline-block; width: 30%; margin: 0 0; padding: 2px; }
 
@@ -103,4 +103,7 @@ p { padding: 10px; }
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+.goalpictures { height: 50px; width: 100%; display: flex;}
+.goalpictures img { max-height: 50px; margin-right: 5px; }
 	
