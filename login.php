@@ -2195,6 +2195,7 @@ echo "<html>";
 						switch($_GET['language'])
 						{
 								case 'german':
+								$output_help_actionblocks = "Actionblöcke definieren womit du deine Zeit verbringst. Zum Beispiel wenn du auf eine Prüfung lernst und Montags jeweils 4h Hausaufgaben löst und Dienstags jeweils 2h ein Unterrichtsbuch liest und 3h alles repetierst, nutzt du die Aktionsblöcke 'Hausaufgaben lösen', 'Unterrichtsbuch lesen' und 'Stoff repetieren'. Mit Aktionsblöcken kannst du deinen Tagesablauf in einem Stundenplan veröffentlichen. Du kannst das jetzt auch auslassen und später Aktionsblöcke zu deinem Ziel hinzufügen.";
 								$label_anonymous = "Anonym posten?";
 								$label_title = "Titel";
 								$label_section = "Bereich";
@@ -2208,6 +2209,7 @@ echo "<html>";
 								break;
 								
 								case 'english':
+								$output_help_actionblocks = "Actionblocks define how you spend your time. For example if you study for an exam: On Mondays you invest 4h in doing homework, on Tuesdays you read the textbook for 2h and check the course material for 3h. Thus, you use the actionblocks 'do homework', 'read textbook' and 'check course material'. With actionblocks you can post your daily schedule. You can ignore that for now if you want and add them later to your goal";
 								$label_anonymous = "Post anonymously?";
 								$label_title = "Title";
 								$label_section = "Section";
@@ -2242,6 +2244,11 @@ echo "<html>";
 							echo "<label>".$label_description."</label>";
 							echo "<textarea name=\"description\" cols=\"64\" rows=\"15\"/></textarea>";
 							echo "<div class=\"clear\"></div>";
+							$goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE userid = ".$userdata['id']." LIMIT 1");
+							if(!mysqli_num_rows($goal_query))
+							{
+								echo $output_help_actionblocks."<br>";
+							}
 							for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
 							{
 								echo "<label>".$label_block.$blocknumber."</label>";
