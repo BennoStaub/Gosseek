@@ -535,93 +535,34 @@ echo "<html>";
 						switch($_GET['language'])
 						{
 							case 'german':
-							$label_color_background = "Hintergrundfarbe";
-							$label_color_frame = "Randfarbe";
-							$label_color_box = "Boxfarbe";
+							$label_colors = "Farben";
+							$colors_warm = "Warme Farben";
+							$colors_cold = "Kalte Farben";
 							$label_new_password = "Neues Passwort";
 							$input_submit_change = "Einstellungen ändern";
 							$input_submit_new_password = "Passwort ändern";
-							$output_colors = "Farben:";
 							break;
 							
 							case 'english':
-							$label_color_background = "Background color";
-							$label_color_frame = "Frame color";
-							$label_color_box = "Box color";
+							$label_colors = "Colors";
+							$colors_warm = "Warm colors";
+							$colors_cold = "Cold colors";
 							$label_new_password = "New password";
 							$input_submit_change = "Change settings";
 							$input_submit_new_password = "Change password";
-							$output_colors = "Colors:";
 							break;
 						}
-						$colors = array( "#00BFFF"=>array("english"=>"Light Blue", "german"=>"Hellblau"),  "#e066FF"=>array("english"=>"Light Purple", "german"=>"Hellviolett"), "#FF4d33"=>array("english"=>"Light Red", "german"=>"Hellrot"), "#00FF00"=>array("english"=>"Light Green", "german"=>"Hellgrün"),"#0000FF"=>array("english"=>"Blue", "german"=>"Blau"), "#BF00BF"=>array("english"=>"Purple", "german"=>"Violett"), "#FF0000"=>array("english"=>"Red", "german"=>"Rot"), "#008000"=>array("english"=>"Green", "german"=>"Grün"),"#000046"=>array("english"=>"Dark Blue", "german"=>"Dunkelblau"), "#5a005a"=>array("english"=>"Dark Purple", "german"=>"Dunkelviolett"), "#9e0000"=>array("english"=>"Dark Red", "german"=>"Dunkelrot"), "#002d00"=>array("english"=>"Dark Green", "german"=>"Dunkelgrün"), "#FFFFFF"=>array("english"=>"White", "german"=>"Weiss"), "#e3e3e3"=>array("english"=>"Light Light Gray", "german"=>"Helles Hellgrau"),"#808080"=>array("english"=>"Gray", "german"=>"Grau"), "#000000"=>array("english"=>"Black", "german"=>"Schwarz"), "#f3f3f3"=>array("english"=>"Very Light Gray", "german"=>"Sehr Helles Grau"), "#C0C0C0"=>array("english"=>"Light Gray", "german"=>"Hellgrau"), "#333333"=>array("english"=>"Dark Gray", "german"=>"Dunkelgrau"));
 						echo "<form action=\"login.php?language=".$_GET['language']."&action=changesettings\" method=\"post\" accept-charset=\"utf-8\">";
-							echo "<label>".$label_color_background."</label>";
-							echo "<select name=\"color_background\" size=\"1\">";
-								foreach($colors as $value=>$name)
-								{
-									if($value == $userdata['color_background'])
-									{
-										echo "<option value=\"".$value."\" selected=\"selected\">".$name[$_GET['language']]."</option>";
-									}else
-									{
-										echo "<option value=\"".$value."\">".$name[$_GET['language']]."</option>";
-									}
-								}
-							echo "</select>";
-							echo "<div class=\"clear\"></div>";
-							echo "<label>".$label_color_frame."</label>";
-							echo "<select name=\"color_frame\" size=\"1\">";
-								foreach($colors as $value=>$name)
-								{
-									if($value == $userdata['color_frame'])
-									{
-										echo "<option value=\"".$value."\" selected=\"selected\">".$name[$_GET['language']]."</option>";
-									}else
-									{
-										echo "<option value=\"".$value."\">".$name[$_GET['language']]."</option>";
-									}
-								}
-							echo "</select>";
-							echo "<div class=\"clear\"></div>";
-							echo "<label>".$label_color_box."</label>";
-							echo "<select name=\"color_box\" size=\"1\">";
-								foreach($colors as $value=>$name)
-								{
-									if($value == $userdata['color_box'])
-									{
-										echo "<option value=\"".$value."\" selected=\"selected\">".$name[$_GET['language']]."</option>";
-									}else
-									{
-										echo "<option value=\"".$value."\">".$name[$_GET['language']]."</option>";
-									}
-								}
+							echo "<label>".$label_colors."</label>";
+							echo "<select name=\"colors\" size=\"1\">";
+								echo "<option value=\"0\">".$colors_warm."</option>";
+								echo "<option value=\"1\">".$colors_cold."</option>";
 							echo "</select>";
 							echo "<div class=\"clear\"></div>";
 							echo "<p>";
 								echo "<input type=\"submit\" value=\"".$input_submit_change."\"></input>";
 							echo "</p>";
 						echo "</form>";
-						echo "<table><tr><td>".$output_colors."</td><td></td><td></td><td></td></tr>";
-						$color_iter = 0;
-						echo "<tr>";
-						foreach($colors as $value=>$name)
-						{
-							if($color_iter%4 == 0)
-							{
-								echo "</tr><tr>";
-							}
-							if($value == "#000046" OR $value == "#000000" OR $value == "#002d00" OR $value == "#333333" OR $value == "#5a005a" OR $value == "#9e0000")
-							{
-								$font_color = "#FFFFFF";
-							}else
-							{
-								$font_color = "#000000";
-							}
-							echo "<td bgcolor=\"".$value."\" width=\"120\"><font color=\"".$font_color."\">".$name[$_GET['language']]."</font></td>";
-							$color_iter = $color_iter + 1;
-						}
-						echo "</tr></table>";
 						echo "<br><br><br>";
 						echo "<form action=\"login.php?language=".$_GET['language']."&action=changepassword\" method=\"post\" accept-charset=\"utf-8\">";
 						echo "<label>".$label_new_password."</label>";
@@ -632,11 +573,20 @@ echo "<html>";
 						break;
 						
 						case 'changesettings':
-						$color_background = mysqli_real_escape_string($mysql_connection, $_POST['color_background']);
-						$color_frame = mysqli_real_escape_string($mysql_connection, $_POST['color_frame']);
-						$color_box = mysqli_real_escape_string($mysql_connection, $_POST['color_box']);
+						$colors = mysqli_real_escape_string($mysql_connection, $_POST['colors']);
+						if($colors == 0)
+						{
+							$color_frame = "#3e2a09";
+							$color_box = "#f1ebdd";
+							$color_background = "#ded3b9";
+						}else
+						{
+							$color_frame = "#333333";
+							$color_box = "#f3f3f3";
+							$color_background = "#e3e3e3";
+						}
 						mysqli_query($mysql_connection, "UPDATE users
-						SET color_background='$color_background', color_frame='$color_frame', color_box='$color_box' WHERE id = ".$_SESSION['id']);
+						SET color_background='".$color_background."', color_frame='".$color_frame."', color_box='".$color_box."' WHERE id = ".$userdata['id']);
 						echo "<script> location.href='login.php?language=".$_GET['language']."&action=settings'; </script>";
 						break;
 						

@@ -12,21 +12,21 @@ if($color_query = mysqli_query($mysql_connection, "SELECT color_frame, color_box
 //black: 000000
 if(empty($color['color_frame']))
 {
-	$color_frame = "#000046";
+	$color_frame = "#3e2a09";
 }else
 {
 	$color_frame = $color['color_frame'];
 }
 if(empty($color['color_box']))
 {
-	$color_box = "#e3e3e3";
+	$color_box = "#f1ebdd";
 }else
 {
 	$color_box = $color['color_box'];
 }
 if(empty($color['color_background']))
 {
-	$color_background = "#FFFFFF";
+	$color_background = "#ded3b9";
 }else
 {
 	$color_background = $color['color_background'];
