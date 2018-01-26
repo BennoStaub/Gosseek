@@ -1,4 +1,7 @@
 <?php	
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 	header('Content-Type: text/html; charset=UTF-8');
 	ini_set ( "session.cookie_lifetime", "18000");
 	ini_set ( "session.gc_maxlifetime", "20000");
@@ -1972,6 +1975,196 @@ echo "<html>";
 						}
 						break;
 						
+						case 'goal':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_goal = "Dieses Ziel existiert nicht.";
+							$output_author = "Autor:";
+							$output_title = "Titel:";
+							$output_section = "Bereich:";
+							$output_starttime = "Start:";
+							$output_finishtime = "Ende:";
+							$output_description = "Beschreibung:";
+							$output_block = "Aktionsblock:";
+							$output_anonymous = "Anonym";
+							$output_block_used = "Block wurde bereits genutzt und kann daher nicht mehr geändert oder gelöscht werden.";
+							$a_follow_goal = "Folgen";
+							$a_unfollow_goal = "Entfolgen";
+							$a_edit_goal = "Bearbeiten";
+							$a_delete_goal = "Löschen";
+							$a_add_block = "Aktionsblock hinzufügen";
+							$a_edit_block = "Bearbeiten";
+							$a_delete_block = "Löschen";
+							$a_finish_goal = "Veröffentliche Resultate und beende Ziel";
+							$a_results = "Resultate";
+							$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+							break;
+							
+							case 'english':
+							$output_no_goal = "Goal not found.";
+							$output_author = "Author:";
+							$output_title = "Name:";
+							$output_section = "Section:";
+							$output_starttime = "Start:";
+							$output_finishtime = "End:";
+							$output_description = "Description:";
+							$output_block = "Actionblock:";
+							$output_anonymous = "Anonymous";
+							$output_block_used = "Block already used and cannot be edited or deleted anymore.";
+							$a_follow_goal = "Follow";
+							$a_unfollow_goal = "Unfollow";
+							$a_edit_goal = "Edit";
+							$a_delete_goal = "Delete";
+							$a_add_block = "Add actionblock";
+							$a_edit_block = "Edit";
+							$a_delete_block = "Delete";
+							$a_finish_goal = "Publish results and finish goal";
+							$a_results = "Results";
+							$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+							break;
+						}
+						$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+						$goal_query = mysqli_query($mysql_connection, "SELECT * FROM goals WHERE id=".$goalid." LIMIT 1");
+						if(mysqli_num_rows($goal_query))
+						{
+							$goal = mysqli_fetch_array($goal_query);
+							$check_following_query = mysqli_query($mysql_connection, "SELECT id FROM goalfollowers WHERE goalid=".$goal['id']." AND userid=".$userdata['id']." LIMIT 1");
+							if($goal['anonymous'] == 0)
+							{
+								$author_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$goal['userid']." LIMIT 1");
+								$author = mysqli_fetch_array($author_query);
+								$goal['author'] = "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$goal['userid']."\">".$author['name']." ".$author['surname']."</a>";
+							}else
+							{
+								$goal['author'] = $output_anonymous;
+							}
+							echo "<div class=\"profile\">";
+								if($goal['userid'] == $userdata['id'])
+								{
+									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
+									echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
+									echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
+									echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
+									if($goal['finishtime'] <= time() AND $goal['finishtime'] != 0)
+									{
+										echo "<h><p><b>".$output_finishtime."</b></p><p>".date("d.m.Y - H:i", $goal['finishtime'])."</p></h>";
+										$finish_goal = "";
+									}else
+									{
+										$finish_goal =  "<a href=\"login.php?language=".$_GET['language']."&action=finish_goal&goalid=".$goalid."\">".$a_finish_goal."</a>";
+									}
+									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
+									while($actionblock = mysqli_fetch_array($actionblock_query))
+									{
+										$links = "";
+										$schedule_query = mysqli_query($mysql_connection, "SELECT id FROM scheduleblocks WHERE actionblockid = ".$actionblock['id']." LIMIT 1");
+										if(mysqli_num_rows($schedule_query) == 0)
+										{
+											$links = " <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a>";
+										}
+										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name'].$links."</h>";
+									}
+									$goal['description']=str_replace("\n","<br>",$goal['description']);
+									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
+									if($goal['finishtime'] <= time() AND $goal['finishtime'] != 0)
+									{
+										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=results&goalid=".$goal['id']."\">".$a_results."</a></p></h>";
+									}
+									echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=delete_goal&goalid=".$goal['id']."\">".$a_delete_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
+									echo "<br><h>".$finish_goal."</h>";
+								}else
+								{
+									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
+									echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
+									echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
+									echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
+									if($goal['finishtime'] <= time() AND $goal['finishtime'] != 0)
+									{
+										echo "<h><p><b>".$output_finishtime."</b></p><p>".date("d.m.Y - H:i", $goal['finishtime'])."</p></h>";
+									}
+									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
+									while($actionblock = mysqli_fetch_array($actionblock_query))
+									{
+										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name']."</h>";
+									}
+									$goal['description']=str_replace("\n","<br>",$goal['description']);
+									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
+									echo "<h>";
+									if($goal['finishtime'] <= time() AND $goal['finishtime'] != 0)
+									{
+										echo "<p><a href=\"login.php?language=".$_GET['language']."&action=results&goalid=".$goal['id']."\">".$a_results."</a></p>";
+									}
+									if(mysqli_num_rows($check_following_query))
+									{
+										echo "<p><a href=\"login.php?language=".$_GET['language']."&action=unfollowgoal&goalid=".$goal['id']."\">".$a_unfollow_goal."</a></p>";
+									}else
+									{
+										echo "<p><a href=\"login.php?language=".$_GET['language']."&action=followgoal&goalid=".$goal['id']."\">".$a_follow_goal."</a></p>";
+									}
+									echo "</h>";
+								}
+							echo "</div>";
+						}else{
+							echo $output_no_goal;
+						}
+						break;
+						
+						case 'results':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_goal = "Dieses Ziel existiert nicht.";
+							$output_title = "Resultate";
+							break;
+							
+							case 'english':
+							$output_no_goal = "There is no such goal";
+							$output_title = "Results";
+							break;
+						}
+						$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+						$goal_query = mysqli_query($mysql_connection, "SELECT title FROM goals WHERE id = ".$goalid." LIMIT 1");
+						if(mysqli_num_rows($goal_query))
+						{
+							$goal = mysqli_fetch_array($goal_query);
+							$result_query = mysqli_query($mysql_connection, "SELECT * FROM results WHERE goalid=".$goalid." LIMIT 1");
+							$result = mysqli_fetch_array($result_query);
+							$show_file = "";
+							if($result['picture'])
+							{		
+								if($picture_file = glob("uploads/results/result_".$goalid."_*.*"))
+								{
+									foreach($picture_file as $picture)
+									{
+										$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+									}
+									$show_file = $show_file."<br>";
+								}
+							}
+							echo "<div class=\"feedpost\">";
+								echo "<div class=\"feedheader\">";
+									echo "<div class=\"feedtime\">";
+										echo date("d.m.Y - H:i", $result['time']);
+									echo "</div>";
+									echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goalid."\">".$goal['title']."</a>";
+								echo "</div>";
+								echo "<div class=\"feedtitle\">";
+									echo $output_title;
+								echo "</div>";
+								echo "<div class=\"feedcontent\">";
+									echo $show_file;
+									$result['text']=str_replace("\n","<br>",$result['text']);
+									echo $result['text'];
+								echo "</div>";
+							echo "</div>";
+							
+						}else
+						{
+							echo $output_no_goal;
+						}
+						break;
+						
 						case 'definegoal':
 						switch($_GET['language'])
 						{
@@ -2069,108 +2262,159 @@ echo "<html>";
 						}
 						break;
 						
-						case 'goal':
+						case 'finish_goal':
 						switch($_GET['language'])
 						{
 							case 'german':
 							$output_no_goal = "Dieses Ziel existiert nicht.";
-							$output_author = "Autor:";
-							$output_title = "Titel:";
-							$output_section = "Bereich:";
-							$output_starttime = "Start:";
-							$output_description = "Beschreibung:";
-							$output_block = "Aktionsblock:";
-							$output_anonymous = "Anonym";
-							$output_block_used = "Block wurde bereits genutzt und kann daher nicht mehr geändert oder gelöscht werden.";
-							$a_follow_goal = "Folgen";
-							$a_unfollow_goal = "Entfolgen";
-							$a_edit_goal = "Bearbeiten";
-							$a_delete_goal = "Löschen";
-							$a_add_block = "Aktionsblock hinzufügen";
-							$a_edit_block = "Bearbeiten";
-							$a_delete_block = "Löschen";
-							$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+							$output_intro = "Gratulliere zum Abschluss deines Zieles. Bitte fasse hier nochmals deine Resultate zusammen, damit zukünftige Besucher direkt sehen können, was hier erreicht wurde.";
+							$label_results = "Resultate:";
+							$label_picture = "Bild hinzufügen:";
+							$input_submit = "Resultate abschicken";
 							break;
 							
 							case 'english':
-							$output_no_goal = "Goal not found.";
-							$output_author = "Author:";
-							$output_title = "Name:";
-							$output_section = "Section:";
-							$output_starttime = "Start:";
-							$output_description = "Description:";
-							$output_block = "Actionblock:";
-							$output_anonymous = "Anonymous";
-							$output_block_used = "Block already used and cannot be edited or deleted anymore.";
-							$a_follow_goal = "Follow";
-							$a_unfollow_goal = "Unfollow";
-							$a_edit_goal = "Edit";
-							$a_delete_goal = "Delete";
-							$a_add_block = "Add actionblock";
-							$a_edit_block = "Edit";
-							$a_delete_block = "Delete";
-							$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+							$output_no_goal = "There is no such goal.";
+							$output_not_author = "You are not the author of this goal.";
+							$output_intro = "Congratulations to your end of this goal. Please summarize here again your results such that future visitors can see directly what has have been achieved.";
+							$label_results = "Results:";
+							$label_picture = "Add picture";
+							$input_submit = "Submit results";
 							break;
 						}
 						$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
-						$goal_query = mysqli_query($mysql_connection, "SELECT * FROM goals WHERE id=".$goalid." LIMIT 1");
+						$goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id = ".$goalid." LIMIT 1");
 						if(mysqli_num_rows($goal_query))
 						{
 							$goal = mysqli_fetch_array($goal_query);
-							$check_following_query = mysqli_query($mysql_connection, "SELECT id FROM goalfollowers WHERE goalid=".$goal['id']." AND userid=".$userdata['id']." LIMIT 1");
-							if($goal['anonymous'] == 0)
+							if($goal['userid'] == $userdata['id'])
 							{
-								$author_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id=".$goal['userid']." LIMIT 1");
-								$author = mysqli_fetch_array($author_query);
-								$goal['author'] = "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$goal['userid']."\">".$author['name']." ".$author['surname']."</a>";
+								echo $output_intro."<br><br>";
+									echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_results&goalid=".$goalid."\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
+									echo "<label>".$label_results."</label>";
+									echo "<textarea name=\"results\" cols=\"64\" rows=\"15\"/></textarea>";
+									echo "<br><br>";
+									for($iter = 1; $iter <= 5; $iter++)
+									{
+										echo $label_picture." ";
+										echo "<input type=\"file\" name=\"picture".$iter."\"></input><br>";
+									}
+									echo "<p><input type=\"submit\" value=\"".$input_submit."\"></input></p>";
+								echo "</form>";
 							}else
 							{
-								$goal['author'] = $output_anonymous;
+								echo $output_not_author;
 							}
-							echo "<div class=\"profile\">";
-								if($goal['userid'] == $userdata['id'])
+						}else
+						{
+							echo $output_no_goal;
+						}
+						break;
+						
+						case 'submit_results':
+						switch($_GET['language'])
+						{
+							case 'german':
+							$output_no_goal = "Dieses Ziel existiert nicht.";
+							$output_not_author = "Du bist nicht der Autor dieses Zieles.";
+							$output_no_results = "Bitte fülle das Textfeld mit deinen Resultaten aus.";
+							$output_no_image = "Die ausgewählte Datei ist kein Bild.";
+							$output_too_big = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
+							$output_wrong_format = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
+							$output_success = "Ziel erfolgreich abgeschlossen.";
+							break;
+							
+							case 'english':
+							$output_no_goal = "There is no such goal.";
+							$output_not_author = "You are not the author of this goal.";
+							$output_no_results = "Please fill in the text field with your results.";
+							$output_no_image = "The chosen file is not an image.";
+							$output_too_big = "The chosen file is too big. Maximum size: 5Mb.";
+							$output_wrong_format = "Only JPG, JPEG and PNG files are allowed.";
+							$output_success = "Goal successfully finished.";
+							break;
+						}
+						$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
+						$goal_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id = ".$goalid." LIMIT 1");
+						if(mysqli_num_rows($goal_query))
+						{
+							$goal = mysqli_fetch_array($goal_query);
+							if($goal['userid'] == $userdata['id'])
+							{
+								if(empty($_POST['results']))
 								{
-									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
-									echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
-									echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
-									echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
-									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
-									while($actionblock = mysqli_fetch_array($actionblock_query))
-									{
-										$links = "";
-										$schedule_query = mysqli_query($mysql_connection, "SELECT id FROM scheduleblocks WHERE actionblockid = ".$actionblock['id']." LIMIT 1");
-										if(mysqli_num_rows($schedule_query) == 0)
-										{
-											$links = " <a href=\"login.php?language=".$_GET['language']."&action=editblock&blockid=".$actionblock['id']."\">".$a_edit_block."</a> <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$actionblock['id']."\">".$a_delete_block."</a>";
-										}
-										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name'].$links."</h>";
-									}
-									$goal['description']=str_replace("\n","<br>",$goal['description']);
-									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
-									echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=editgoal&goalid=".$goal['id']."\">".$a_edit_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=delete_goal&goalid=".$goal['id']."\">".$a_delete_goal."</a></p><p><a href=\"login.php?language=".$_GET['language']."&action=addblock&goalid=".$goal['id']."\">".$a_add_block."</a></p></h>";
+									echo $output_no_results;
 								}else
 								{
-									echo "<h><p><b>".$output_author."</b></p><p>".$goal['author']."</p></h>";
-									echo "<h><p><b>".$output_title."</b></p>".$goal['title']."</h>";
-									echo "<h><p><b>".$output_section."</b></p><p>".$output_sections[$goal['section']]."</p></h>";
-									echo "<h><p><b>".$output_starttime."</b></p><p>".date("d.m.Y - H:i", $goal['starttime'])."</p></h>";
-									$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
-									while($actionblock = mysqli_fetch_array($actionblock_query))
+									mysqli_query($mysql_connection," UPDATE goals SET finishtime = ".time()." WHERE id = ".$goalid);
+									$results = mysqli_real_escape_string($mysql_connection, $_POST['results']);
+									$time = time();
+									// check if file has been chosen
+									if(empty($_FILES['picture1']['tmp_name']) AND empty($_FILES['picture2']['tmp_name']) AND empty($_FILES['picture3']['tmp_name']) AND empty($_FILES['picture4']['tmp_name']) AND empty($_FILES['picture5']['tmp_name']))
 									{
-										echo "<h><p><b>".$output_block."</b></p>".$actionblock['name']."</h>";
-									}
-									$goal['description']=str_replace("\n","<br>",$goal['description']);
-									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
-									if(mysqli_num_rows($check_following_query))
-									{
-										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=unfollowgoal&goalid=".$goal['id']."\">".$a_unfollow_goal."</a></p></h>";
+										mysqli_query($mysql_connection, "INSERT INTO results (userid, goalid, time, text, picture) VALUES ('".$userdata['id']."', '".$goalid."', '".$time."','".$results."', 0)");
+										echo $output_success;
 									}else
 									{
-										echo "<h><p><a href=\"login.php?language=".$_GET['language']."&action=followgoal&goalid=".$goal['id']."\">".$a_follow_goal."</a></p></h>";
+										$target_dir = "uploads/results/";
+										for($iter = 1; $iter <= 5; $iter++)
+										{
+											$picture_name = "picture".$iter;
+											if(!empty($_FILES[$picture_name]['tmp_name']))
+											{
+												$target_file[$iter] = $target_dir . basename($_FILES[$picture_name]["name"]);
+												$image_File_Type[$iter] = pathinfo($target_file[$iter],PATHINFO_EXTENSION);
+												$image_check[$iter] = 1;
+												// Check if image file is an actual image or fake image
+												if(getimagesize($_FILES[$picture_name]['tmp_name']) == false) 
+												{
+													echo $output_no_image;
+													break;
+												}
+												// Check file size
+												if ($_FILES[$picture_name]['size'] > 5000000)
+												{
+													echo $output_too_big;
+													break;
+												}
+												// Allow certain file formats
+												if($image_File_Type[$iter] != "jpg" && $image_File_Type[$iter] != "png" && $image_File_Type[$iter] != "jpeg" && $image_File_Type[$iter] != "JPG" && $image_File_Type[$iter] != "PNG" && $image_File_Type[$iter] != "JPEG")
+												{
+													echo $output_wrong_format;
+													break;
+												}
+											}else
+											{
+												$image_check[$iter] = 0;
+											}
+										}
+										mysqli_query($mysql_connection, "INSERT INTO results (userid, goalid, time, text, picture) VALUES ('".$userdata['id']."', '".$goalid."', '".$time."','".$results."', 1)");
+										$result_query = mysqli_query($mysql_connection, "SELECT id FROM results WHERE goalid = ".$goalid." AND time = ".$time." LIMIT 1");
+										$result = mysqli_fetch_array($result_query);
+										// No error, upload file
+										for($iter = 1; $iter <= 5; $iter++)
+										{
+											if($image_check[$iter])
+											{
+												$picture_name = "picture".$iter;
+												move_uploaded_file($_FILES[$picture_name]['tmp_name'], $target_dir."result_".$goalid."_".$iter.".".$image_File_Type[$iter]);
+											}
+										}
+										echo $output_success;
 									}
 								}
-							echo "</div>";
-						}else{
+								
+								
+								
+								
+								
+							}else
+							{
+								echo $output_not_author;
+							}
+						}else
+						{
 							echo $output_no_goal;
 						}
 						break;
@@ -2276,11 +2520,9 @@ echo "<html>";
 						$goal_query = mysqli_query($mysql_connection, "SELECT * FROM goals WHERE id=$goalid LIMIT 1");
 						if(mysqli_num_rows($goal_query))
 						{
-							$check_author_query = mysqli_query($mysql_connection, "SELECT userid FROM goals WHERE id=$goalid LIMIT 1");
-							$check_author = mysqli_fetch_array($check_author_query);
-							if($check_author['userid'] == $userdata['id'])
+							$goal = mysqli_fetch_array($goal_query);
+							if($goal['userid'] == $userdata['id'])
 							{
-								$goal = mysqli_fetch_array($goal_query);
 								echo "<form action=\"login.php?language=".$_GET['language']."&action=editedgoal&goalid=".$goalid."\" method=\"post\" accept-charset=\"utf-8\">";
 									echo "<label>".$label_anonymous."</label>";
 									echo "<div class=\"clear\"></div>";

@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 	header('Content-Type: text/html; charset=UTF-8');
 	include("version.php");
 	include("connect_db.php");
@@ -10,6 +13,35 @@
 	{
 		$_GET['language'] = "german";
 	}
+	
+	/* require_once "Mail.php";
+
+	$from = "Sandra Sender <no-reply@gosseek.com>";
+	$to = "Ramona Recipient <benno.staub@hotmail.com>";
+	$subject = "Hi!";
+	$body = "Hi,\n\nHow are you?";
+
+	$port = "465";
+	$host = "login-186.hoststar.ch";
+	$username = "no-reply@gosseek.com";
+	$password = "xB3490E-H576";
+
+	$headers = array ('From' => $from,
+	  'To' => $to,
+	  'Subject' => $subject);
+	$smtp = Mail::factory('smtp',
+	  array ('host' => $host, 'port' => $port,
+		'auth' => true,
+		'username' => $username,
+		'password' => $password));
+
+	$mail = $smtp->send($to, $headers, $body);
+
+	if (PEAR::isError($mail)) {
+	  echo("<p>" . $mail->getMessage() . "</p>");
+	 } else {
+	  echo("<p>Message successfully sent!</p>");
+	 } */
 echo "<html>";
 	echo "<head>";
 		echo "<title>";
