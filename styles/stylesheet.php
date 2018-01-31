@@ -54,7 +54,7 @@ p { padding: 10px; }
 .boxtop { float: right; width: 79%; height: 5%; border-radius: 5px; margin: 5px; background: <?php echo $color_frame; ?>; color: #000000; display: flex; align-items: center; }
 	
 .boxtopinner { width: 98%; height: 80%; border-radius: 5px; background: <?php echo $color_box; ?>; color: #000000; margin: 0 auto; }
-.boxtopinner p { display: inline-block; vertical-align: middle; line-height: 40%; height: 40%; width: 50%; float: right; text-align: right; font-size: 115%; margin: auto; }
+.boxtopinner p { display: inline-block; vertical-align: middle; line-height: 40%; height: 40%; float: right; text-align: right; font-size: 115%; margin: auto; }
 .boxtopinner a { display: inline-block; line-height: 170%; text-align: left; margin: auto 0; margin-left: 5px; }
 	
 .boxleft { float: right; width: 19%; height: 92%; border-radius: 5px; margin: 5px; background: <?php echo $color_frame; ?>; color: #000000; text-align: center; }
