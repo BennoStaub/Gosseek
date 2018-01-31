@@ -61,7 +61,7 @@ error_reporting(E_ALL);
 	switch($_GET['language'])
 	{
 		case 'german':
-		$output_slogan = "Gosseek - Achieve your goals";
+		$output_slogan = "Gosseek - Achieve your Goals and Share your Experience";
 		$a_logout = "Ausloggen";
 		$a_profilesettings = "Profil bearbeiten";
 		$a_settings = "Einstellungen";
@@ -69,7 +69,7 @@ error_reporting(E_ALL);
 		break;
 		
 		case 'english':
-		$output_slogan = "Gosseek - Achieve your goals";
+		$output_slogan = "Gosseek - Achieve your Goals and Share your Experience";
 		$a_logout = "Log out";
 		$a_profilesettings = "Change profile";
 		$a_settings = "Settings";
@@ -210,18 +210,6 @@ echo "<html>";
 								$comments_query = mysqli_query($mysql_connection, "SELECT id FROM comments WHERE postid = ".$post['id']);
 								if($post['type'] == 0)
 								{
-									$show_file = "";
-									if($post['picture'])
-									{		
-										if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
-										{
-											foreach($picture_file as $picture)
-											{
-												$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
-											}
-											$show_file = $show_file."<br>";
-										}
-									}
 									echo "<div class=\"feedpost\">";
 										echo "<div class=\"feedheader\">";
 											echo "<div class=\"feedtime\">";
@@ -233,7 +221,17 @@ echo "<html>";
 											echo $post['title'];
 										echo "</div>";
 										echo "<div class=\"feedcontent\">";
-											echo $show_file;
+											$show_file = "";
+											echo "<div class=\"pictures\">";
+												if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+												{
+													foreach($picture_file as $picture)
+													{
+														$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+													}
+													echo $show_file;
+												}
+											echo "</div>";
 											$post['content']=str_replace("\n","<br>",$post['content']);
 											echo $post['content'];
 										echo "</div>";
@@ -265,18 +263,6 @@ echo "<html>";
 								}else
 								{
 									$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
-									$show_file = "";
-									if($post['picture'])
-									{		
-										if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
-										{
-											foreach($picture_file as $picture)
-											{
-												$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
-											}
-											$show_file = $show_file."<br>";
-										}
-									}
 									echo "<div class=\"feedpost\">";
 										echo "<div class=\"feedheader\">";
 											echo "<div class=\"feedtime\">";
@@ -288,7 +274,17 @@ echo "<html>";
 											echo $post['title'];
 										echo "</div>";
 										echo "<div class=\"feedcontent\">";
-											echo $show_file;
+											$show_file = "";
+											echo "<div class=\"pictures\">";
+												if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+												{
+													foreach($picture_file as $picture)
+													{
+														$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+													}
+													echo $show_file;
+												}
+											echo "</div>";
 											echo "<table border=\"1\">";
 											$iter = 0;
 											while($schedule = mysqli_fetch_array($schedule_query))
@@ -1337,18 +1333,6 @@ echo "<html>";
 							$liked_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$post['id']." AND userid=".$userdata['id']." LIMIT 1");
 							if($post['type'] == 0)
 							{
-								$show_file = "";
-								if($post['picture'])
-								{		
-									if($picture_file = glob("uploads/posts/post_".$postid."_*.*"))
-									{
-										foreach($picture_file as $picture)
-										{
-											$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
-										}
-										$show_file = $show_file."<br>";
-									}
-								}
 								echo "<div class=\"feedpost\">";
 									echo "<div class=\"feedheader\">";
 										echo "<div class=\"feedtime\">";
@@ -1360,7 +1344,17 @@ echo "<html>";
 										echo $post['title'];
 									echo "</div>";
 									echo "<div class=\"feedcontent\">";
-										echo $show_file;
+										$show_file = "";
+										echo "<div class=\"pictures\">";
+											if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+											{
+												foreach($picture_file as $picture)
+												{
+													$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+												}
+												echo $show_file;
+											}
+										echo "</div>";
 										$post['content']=str_replace("\n","<br>",$post['content']);
 										echo $post['content'];
 									echo "</div>";
@@ -1383,18 +1377,6 @@ echo "<html>";
 							}else
 							{
 								$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
-								$show_file = "";
-								if($post['picture'])
-								{		
-									if($picture_file = glob("uploads/posts/post_".$postid."_*.*"))
-									{
-										foreach($picture_file as $picture)
-										{
-											$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
-										}
-										$show_file = $show_file."<br>";
-									}
-								}
 								echo "<div class=\"feedpost\">";
 									echo "<div class=\"feedheader\">";
 										echo "<div class=\"feedtime\">";
@@ -1406,7 +1388,17 @@ echo "<html>";
 										echo $post['title'];
 									echo "</div>";
 									echo "<div class=\"feedcontent\">";
-										echo $show_file;
+										$show_file = "";
+										echo "<div class=\"pictures\">";
+											if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+											{
+												foreach($picture_file as $picture)
+												{
+													$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+												}
+												echo $show_file;
+											}
+										echo "</div>";
 										echo "<table border=\"1\">";
 										$iter = 0;
 										while($schedule = mysqli_fetch_array($schedule_query))
@@ -2019,7 +2011,7 @@ echo "<html>";
 									$goal['description']=str_replace("\n","<br>",$goal['description']);
 									echo "<h><p><b>".$output_description."</b></p><br>".$goal['description']."</h>";
 									$show_file = "";
-									echo "<div class=\"goalpictures\">";
+									echo "<div class=\"pictures\">";
 										if($picture_file = glob("uploads/goals/goal_".$goal['id']."_*.*"))
 										{
 											echo "<h><p><b>".$output_pictures."</b></p>";

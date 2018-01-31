@@ -1,202 +1,13 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\Exception;
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL);
 
-
-
-
-/* $mail = new EMail;
-
-//Enter your SMTP server (defaults to "127.0.0.1"):
-$mail->Server = "login-186.hoststar.ch";    
-
-//Enter your FULL email address:
-$mail->Username = 'no-reply@gosseek.com';    
-
-//Enter the password for your email address:
-$mail->Password = 'xB3490E-H576';
-    
-//Enter the email address you wish to send FROM (Name is an optional friendly name):
-$mail->SetFrom("no-reply@gosseek.com","Your name");  
-
-//Enter the email address you wish to send TO (Name is an optional friendly name):
-$mail->AddTo("brenno.staub@hotmail.com","Recipient's Name");
-
-//You can add multiple recipients:
-//$mail->AddTo("someother2@address.com");
-
-//Enter the Subject of your message:
-$mail->Subject = "Some subject or other";
-
-//Enter the content of your email message:
-$mail->Message = "Some html message";
-
-//Optional extras
-$mail->ContentType = "text/html";    // Defaults to "text/plain; charset=iso-8859-1"
-//$mail->Headers['X-SomeHeader'] = 'abcde';    // Set some extra headers if required
-
-echo $success = $mail->Send(); //Send the email.
- */
-
-
-/*
-This is the EMail class.
-Anything below this should not be edited unless you really know what you're doing.
-*/
-class EMail
-{
-  const newline = "\r\n";
-
-  private
-    $Port, $Localhost, $skt;
-
-  public
-    $Server, $Username, $Password, $ConnectTimeout, $ResponseTimeout,
-    $Headers, $ContentType, $From, $To, $Cc, $Subject, $Message,
-    $Log;
-
-  function __construct()
-  {
-    $this->Server = "127.0.0.1";
-    $this->Port = 25;
-    $this->Localhost = "localhost";
-    $this->ConnectTimeout = 30;
-    $this->ResponseTimeout = 8;
-    $this->From = array();
-    $this->To = array();
-    $this->Cc = array();
-    $this->Log = array();
-    $this->Headers['MIME-Version'] = "1.0";
-    $this->Headers['Content-type'] = "text/plain; charset=iso-8859-1";
-  }
-
-  private function GetResponse()
-  {
-    stream_set_timeout($this->skt, $this->ResponseTimeout);
-    $response = '';
-    while (($line = fgets($this->skt, 515)) != false)
-    {
- $response .= trim($line) . "\n";
- if (substr($line,3,1)==' ') break;
-    }
-    return trim($response);
-  }
-
-  private function SendCMD($CMD)
-  {
-    fputs($this->skt, $CMD . self::newline);
-
-    return $this->GetResponse();
-  }
-
-  private function FmtAddr(&$addr)
-  {
-    if ($addr[1] == "") return $addr[0]; else return "\"{$addr[1]}\" <{$addr[0]}>";
-  }
-
-  private function FmtAddrList(&$addrs)
-  {
-    $list = "";
-    foreach ($addrs as $addr)
-    {
-      if ($list) $list .= ", ".self::newline."\t";
-      $list .= $this->FmtAddr($addr);
-    }
-    return $list;
-  }
-
-  function AddTo($addr,$name = "")
-  {
-    $this->To[] = array($addr,$name);
-  }
-
-  function AddCc($addr,$name = "")
-  {
-    $this->Cc[] = array($addr,$name);
-  }
-
-  function SetFrom($addr,$name = "")
-  {
-    $this->From = array($addr,$name);
-  }
-  function Send()
-  {
-    $newLine = self::newline;
-
-    //Connect to the host on the specified port
-    $this->skt = fsockopen($this->Server, $this->Port, $errno, $errstr, $this->ConnectTimeout);
-
-    if (empty($this->skt))
-      return false;
-
-    $this->Log['connection'] = $this->GetResponse();
-
-    //Say Hello to SMTP
-    $this->Log['helo']     = $this->SendCMD("EHLO {$this->Localhost}");
-
-    //Request Auth Login
-    $this->Log['auth']     = $this->SendCMD("AUTH LOGIN");
-    $this->Log['username'] = $this->SendCMD(base64_encode($this->Username));
-    $this->Log['password'] = $this->SendCMD(base64_encode($this->Password));
-
-    //Email From
-    $this->Log['mailfrom'] = $this->SendCMD("MAIL FROM:<{$this->From[0]}>");
-
-    //Email To
-    $i = 1;
-    foreach (array_merge($this->To,$this->Cc) as $addr)
-      $this->Log['rcptto'.$i++] = $this->SendCMD("RCPT TO:<{$addr[0]}>");
-
-    //The Email
-    $this->Log['data1'] = $this->SendCMD("DATA");
-
-    //Construct Headers
-    if (!empty($this->ContentType))
-      $this->Headers['Content-type'] = $this->ContentType;
-    $this->Headers['From'] = $this->FmtAddr($this->From);
-    $this->Headers['To'] = $this->FmtAddrList($this->To);
-    if (!empty($this->Cc))
-      $this->Headers['Cc'] = $this->FmtAddrList($this->Cc);
-    $this->Headers['Subject'] = $this->Subject;
-    $this->Headers['Date'] = date('r');
-
-    $headers = '';
-    foreach ($this->Headers as $key => $val)
-      $headers .= $key . ': ' . $val . self::newline;
-
-    $this->Log['data2'] = $this->SendCMD("{$headers}{$newLine}{$this->Message}{$newLine}.");
-
-    // Say Bye to SMTP
-    $this->Log['quit']  = $this->SendCMD("QUIT");
-
-    fclose($this->skt);
-
-    return substr($this->Log['data2'],0,3) == "250";
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	require 'PHPMailer/Exception.php';
+	require 'PHPMailer/PHPMailer.php';
+	require 'PHPMailer/SMTP.php';
 	header('Content-Type: text/html; charset=UTF-8');
 	include("version.php");
 	include("connect_db.php");
@@ -208,46 +19,17 @@ class EMail
 	{
 		$_GET['language'] = "german";
 	}
-	
-	/* require_once "Mail.php";
-
-	$from = "Sandra Sender <no-reply@gosseek.com>";
-	$to = "Ramona Recipient <benno.staub@hotmail.com>";
-	$subject = "Hi!";
-	$body = "Hi,\n\nHow are you?";
-
-	$port = "465";
-	$host = "login-186.hoststar.ch";
-	$username = "no-reply@gosseek.com";
-	$password = "xB3490E-H576";
-
-	$headers = array ('From' => $from,
-	  'To' => $to,
-	  'Subject' => $subject);
-	$smtp = Mail::factory('smtp',
-	  array ('host' => $host, 'port' => $port,
-		'auth' => true,
-		'username' => $username,
-		'password' => $password));
-
-	$mail = $smtp->send($to, $headers, $body);
-
-	if (PEAR::isError($mail)) {
-	  echo("<p>" . $mail->getMessage() . "</p>");
-	 } else {
-	  echo("<p>Message successfully sent!</p>");
-	 } */
 echo "<html>";
 	echo "<head>";
 		echo "<title>";
 			switch($_GET['language'])
 			{
 				case 'german':
-				$output_slogan = "Gosseek - Achieve your goals";
+				$output_slogan = "Gosseek - Achieve your Goals and Share your Experience";
 				break;
 				
 				case 'english':
-				$output_slogan = "Gosseek - Achieve your goals";
+				$output_slogan = "Gosseek - Achieve your Goals and Share your Experience";
 				break;
 			}
 			echo $output_slogan;
@@ -323,11 +105,11 @@ echo "<html>";
 					switch($_GET['language'])
 					{
 						case 'german':
-						$output = "Hallo Besucher,<br><br>Gosseek ist ein Soziales Netzwerk bei dem nicht die Person, sondern das Erreichen persönlicher Ziele im Vordergrund steht. Jeder Mensch hat dutzende persönliche Ziele in allen möglichen Bereichen. Von den meisten träumen wir, nur wenige werden aktiv verfolgt. Motivation ist selten das Problem, meistens weiss man einfach nicht wo/wie anfangen, um auf das Ziel hinzuarbeiten. Gosseek ändert das jetzt. Registrierte Nutzer haben folgende zwei Möglichkeiten:<br><br>1)  Definiere dein eigenes Ziel und fange an zu dokumentieren: Poste über deinen Tagesablauf, deine aufgebrachten Stunden, Schlüsselmomente und jede Erfahrung die du in Verbindung mit dem Erreichen deines Zieles gemacht hast. Abschluss der Dokumentation ist das Veröffentlichen deiner - mit dem dokumentierten Aufwand - erreichten Resultate. Nutzen: Durch das Dokumentieren kannst du deinen Aufwand besser reflektieren, erkennst eigene Fehler oder sehr vorteilhafte Entscheidungen. Dadurch kannst du effizienter auf dein Ziel hinarbeiten und deine Methoden laufend verbessern. Ein weiterer Punkt ist erhöhte Motivation: Durch das Dokumentieren bleibst du am Ball und dein Ziel wird konkret.<br><br>2)  Suche nach ähnlichen Zielen wie dein Eigenes, schau dir die erreichten Resultate anderer Nutzer an und folge jener Dokumentation, welche deine gewünschten Resultate erreicht hat. Damit erhälst du laufend die geposteten Beiträge des gewünschten Zieles, welche du wie eine Anleitung nutzen kannst. Ungefährer Zeit- und Stundenplan, Schlüsselmomente usw. Du hast Zugriff auf alles und kannst damit stets abschätzen, ob du auf dem richtigen Kurs bist oder gewisse Anpassungen zu deinem Alltag vornehmen musst, um die gewünschten Resultate zu erreichen. Mit dieser Anleitung kannst du konkret auf dein Ziel hinarbeiten. Doch nicht nur das. Du kannst zudem aus den Erfahrungen und Fehlern des Dokumentierers lernen, um noch effizienter zu arbeiten und bessere Resultate zu erreichen.<br><br>Zusammenfassend soll Gosseek folgendes unterstützen:<br>1.Jeder Mensch hat Ziele, welche er verfolgen will.<br>2.Jeder Mensch hat Wissen, von welchem andere profitieren können.<br>3.Jeder Mensch kann aus den Erfahrungen anderer lernen und zu seinem Vorteil nutzen.<br><br><b>Gosseek bietet die Platform dafür! Registriere dich jetzt und starte damit, deine Ziele zu Errungenschaften zu machen.</b>";
+						$output = "Hallo Besucher,<br><br>Gosseek ist ein Soziales Netzwerk bei dem nicht die Person, sondern das Erreichen persönlicher Ziele im Vordergrund steht. Jeder Mensch hat dutzende persönliche Ziele in allen möglichen Bereichen. Von den meisten träumen wir, nur wenige werden aktiv verfolgt. Motivation ist selten das Problem, meistens weiss man einfach nicht wo/wie anfangen, um auf das Ziel hinzuarbeiten. Gosseek ändert das jetzt. Registrierte Nutzer haben folgende zwei Möglichkeiten:<br><br>1)  Definiere dein eigenes Ziel und fange an zu dokumentieren: Poste über deinen Tagesablauf, deine aufgebrachten Stunden, Schlüsselmomente und jede Erfahrung die du in Verbindung mit dem Erreichen deines Zieles gemacht hast. Abschluss der Dokumentation ist das Veröffentlichen deiner - mit dem dokumentierten Aufwand - erreichten Resultate. Nutzen: Durch das Dokumentieren kannst du deinen Aufwand besser reflektieren, erkennst eigene Fehler oder sehr vorteilhafte Entscheidungen. Dadurch kannst du effizienter auf dein Ziel hinarbeiten und deine Methoden laufend verbessern. Ein weiterer Punkt ist erhöhte Motivation: Durch das Dokumentieren bleibst du am Ball und dein Ziel wird konkret. Andere Nutzer können dein Ziel mitverfolgen und laufend Tipps und Input geben um dir zu helfen.<br><br>2)  Suche nach ähnlichen Zielen wie dein Eigenes, schau dir die erreichten Resultate anderer Nutzer an und folge jener Dokumentation, welche deine gewünschten Resultate erreicht hat. Damit erhälst du laufend die geposteten Beiträge des gewünschten Zieles, welche du wie eine Anleitung nutzen kannst. Ungefährer Zeit- und Stundenplan, Schlüsselmomente usw. Du hast Zugriff auf alles und kannst damit stets abschätzen, ob du auf dem richtigen Kurs bist oder gewisse Anpassungen zu deinem Alltag vornehmen musst, um die gewünschten Resultate zu erreichen. Mit dieser Anleitung kannst du konkret auf dein Ziel hinarbeiten. Doch nicht nur das. Du kannst zudem aus den Erfahrungen und Fehlern des Dokumentierers lernen, um noch effizienter zu arbeiten und bessere Resultate zu erreichen.<br><br>Zusammenfassend soll Gosseek folgendes unterstützen:<br>1.Jeder Mensch hat Ziele, welche er verfolgen will.<br>2.Jeder Mensch hat Wissen, von welchem andere profitieren können.<br>3.Jeder Mensch kann aus den Erfahrungen anderer lernen und zu seinem Vorteil nutzen.<br><br><b>Gosseek bietet die Platform dafür! Registriere dich jetzt und starte damit, deine Ziele zu Errungenschaften zu machen.</b>";
 						break;
 						
 						case 'english':
-						$output = "Dear visitor,<br><br>Gosseek is a social network that sets achieving personal goals in focus, not people. Everyone has dozens of personal goals in all different areas. People dream about the most of them, while only a few goals are seeked actively. While motivation is rarely a problem, most people are just missing a guideline on how to work for their goals. Gosseek will change this now. Registered users have the following two options:<br><br>1) Define your own goal and start documenting: post about your daily schedule, the amount of hours worked for your goal, key moments and any experience you made connected to achieving your goal. The end of the documentation will be a publication of your - with the documented effort - achieved results. Advantage: While documenting everything, you can better reflect your effort, notice mistakes or benefitful decisions. With this, you can work more efficiently towards your goal and improve your methods continuously. Another point is increased motivation: While documenting, you stay on track and your goal becomes concrete.<br><br>2)  Search for goals similar to yours, check the achieved results by other users and follow the documentation that achieved your desired results. By that you get all the posts from that goal continuously such that you can use them as a guideline. Daily schedules, deadlines, key moments etc. you get access to everything and thus, you can estimate whether you are on track or you need to adapt your daily schedule in order to achieve the desired results. With this guideline you can work concretely towards your goal. But you get even more. You can also learn from the mistakes and experiences from the author and therefore work more efficiently and achieve better results.<br><br>Summarized, Gossek should support the following:<br>1.Every person has goals he/she wants to achieve.<br>2.Every person has knowledge of which others can benefit.<br>3.Every person can learn from the experience of others and use it for his/her advantage.<br><br><b>Gossek provides a platform for that! Register now and start transforming your goals into achievements.</b>";
+						$output = "Dear visitor,<br><br>Gosseek is a social network that sets achieving personal goals in focus, not people. Everyone has dozens of personal goals in all different areas. People dream about the most of them, while only a few goals are seeked actively. While motivation is rarely a problem, most people are just missing a guideline on how to work for their goals. Gosseek will change this now. Registered users have the following two options:<br><br>1) Define your own goal and start documenting: post about your daily schedule, the amount of hours worked for your goal, key moments and any experience you made connected to achieving your goal. The end of the documentation will be a publication of your - with the documented effort - achieved results. Advantage: While documenting everything, you can better reflect your effort, notice mistakes or benefitful decisions. With this, you can work more efficiently towards your goal and improve your methods continuously. Another point is increased motivation: While documenting, you stay on track and your goal becomes concrete. Other users can follow your goal and provide continuously input and tips to help you.<br><br>2)  Search for goals similar to yours, check the achieved results by other users and follow the documentation that achieved your desired results. By that you get all the posts from that goal continuously such that you can use them as a guideline. Daily schedules, deadlines, key moments etc. you get access to everything and thus, you can estimate whether you are on track or you need to adapt your daily schedule in order to achieve the desired results. With this guideline you can work concretely towards your goal. But you get even more. You can also learn from the mistakes and experiences from the author and therefore work more efficiently and achieve better results.<br><br>Summarized, Gossek should support the following:<br>1.Every person has goals he/she wants to achieve.<br>2.Every person has knowledge of which others can benefit.<br>3.Every person can learn from the experience of others and use it for his/her advantage.<br><br><b>Gossek provides a platform for that! Register now and start transforming your goals into achievements.</b>";
 						break;
 					}
 					echo $output;
@@ -355,6 +137,7 @@ echo "<html>";
 					{
 						$name = mysqli_real_escape_string($mysql_connection, $_POST['name']);
 						$surname = mysqli_real_escape_string($mysql_connection, $_POST['surname']);
+						$full_name = $name." ".$surname;
 						$email = mysqli_real_escape_string($mysql_connection, $_POST['email']);
 						$password = mysqli_real_escape_string($mysql_connection, $_POST['password']);
 						$check_email_query = mysqli_query($mysql_connection, "SELECT id FROM users WHERE email = '$email' LIMIT 1");
@@ -368,18 +151,41 @@ echo "<html>";
 							switch($_GET['language'])
 							{
 								case 'german':
-								$text = "Hallo ".$name." ".$surname.",\r\n\r\nVielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\n\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
+								$body = "Hallo ".$name." ".$surname.",<br><br>Vielen Dank für deine Anmeldung bei Gosseek.<br>Hier sind deine Anmeldedaten:<br>E-Mail: ".$email."<br>Passwort: ".$password."<br><br>Um deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."<br><br>Mit freundlichen Grüssen<br>Das Gosseek Team.";
+								$subject = "Registrierung bei Gosseek";
+								$altbody = "Hallo ".$name." ".$surname.",\r\n\r\nVielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\n\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
 								$subject = "Registrierung bei Gosseek";
 								break;
 								
 								case 'english':
-								$text = "Dear ".$name." ".$surname.",\r\n\r\nThank you for your registration on Gosseek.\r\nHere are your credentials:\r\nE-mail: ".$email."\r\nPassword: ".$password."\r\n\r\nTo activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nBest regards\r\nThe Gosseek Team.";
+								$body = "Dear ".$name." ".$surname.",<br><br>Thank you for your registration on Gosseek.<br>Here are your credentials:<br>E-mail: ".$email."<br>Password: ".$password."<br><br>To activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."<br><br>Best regards<br>The Gosseek Team.";
+								$subject = "Registration on Gosseek";
+								$altbody = "Dear ".$name." ".$surname.",\r\n\r\nThank you for your registration on Gosseek.\r\nHere are your credentials:\r\nE-mail: ".$email."\r\nPassword: ".$password."\r\n\r\nTo activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nBest regards\r\nThe Gosseek Team.";
 								$subject = "Registration on Gosseek";
 								break;
 							}
-							$header = "From: no-reply@gosseek.com" . "\r\n" .
-									 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
-							mail($email, $subject, $text, $header);
+							
+							$mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+							//Server settings
+							$mail->CharSet = "UTF-8";
+							$mail->SMTPDebug = 0;                                 // Enable verbose debug output
+							$mail->isSMTP();                                      // Set mailer to use SMTP
+							$mail->Host = 'smtp.live.com';  // Specify main and backup SMTP servers
+							$mail->SMTPAuth = true;                               // Enable SMTP authentication
+							$mail->Username = 'gosseek@hotmail.com';                 // SMTP username
+							$mail->Password = $gosseek_hotmail_password;                           // SMTP password
+							$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+							$mail->Port = 587;                                    // TCP port to connect to
+							//Recipients
+							$mail->setFrom('gosseek@hotmail.com', 'Gosseek');
+							$mail->addAddress($email, $full_name);     // Add a recipient
+							$mail->addReplyTo('gosseek@hotmail.com', 'Gosseek');
+							//Content
+							$mail->isHTML(true);                                  // Set email format to HTML
+							$mail->Subject = $subject;
+							$mail->Body    = $body;
+							$mail->AltBody = $altbody;
+							$mail->send();
 							mysqli_query($mysql_connection, "INSERT INTO users (activation_code, email, status, password, name, surname) VALUES ('$activation_code','$email','registered','$password_encrypted', '$name', '$surname')");
 							echo $output_done;
 						}
@@ -451,18 +257,39 @@ echo "<html>";
 							switch($_GET['language'])
 							{
 								case 'german':
-								$text = "Hallo ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nDu hast dein Passwort vergessen, daher schicken wir dir mit dieser E-Mail dein neues Passwort.\r\nDein neues Passwort lautet: ".$new_password."\r\nDu solltest dein Passwort nach dem ersten Login ändern, nicht dass du es wieder vergisst.\r\n\r\nMit freundlichen Grüssen,\r\nDas Gosseek-Team";
+								$body = "Hallo ".$userdata['name']." ".$userdata['surname'].",<br><br>Du hast dein Passwort vergessen, daher schicken wir dir mit dieser E-Mail dein neues Passwort.<br>Dein neues Passwort lautet: ".$new_password."<br>Du solltest dein Passwort nach dem ersten Login ändern, nicht dass du es wieder vergisst.<br><br>Mit freundlichen Grüssen,<br>Das Gosseek-Team";
+								$altbody = "Hallo ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nDu hast dein Passwort vergessen, daher schicken wir dir mit dieser E-Mail dein neues Passwort.\r\nDein neues Passwort lautet: ".$new_password."\r\nDu solltest dein Passwort nach dem ersten Login ändern, nicht dass du es wieder vergisst.\r\n\r\nMit freundlichen Grüssen,\r\nDas Gosseek-Team";
 								$subject = "Neues Passwort bei Gosseek";
 								break;
 								
 								case 'english':
-								$text = "Dear ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nYou forgot your password, hence we are sending you a new one with this e-mail.\r\nYour new password: ".$new_password."\r\nYou should change your password after the first login, such that you don't forget it again.\r\n\r\nBest regards\r\nThe Gosseek-Team";
+								$body = "Dear ".$userdata['name']." ".$userdata['surname'].",<br><br>You forgot your password, hence we are sending you a new one with this e-mail.<br>Your new password: ".$new_password."<br>You should change your password after the first login, such that you don't forget it again.<br><br>Best regards<br>The Gosseek-Team";
+								$altbody = "Dear ".$userdata['name']." ".$userdata['surname'].",\r\n\r\nYou forgot your password, hence we are sending you a new one with this e-mail.\r\nYour new password: ".$new_password."\r\nYou should change your password after the first login, such that you don't forget it again.\r\n\r\nBest regards\r\nThe Gosseek-Team";
 								$subject = "New password for Gosseek";
 								break;
 							}
-							$header = "From: no-reply@gosseek.com" . "\r\n" .
-									 "Content-type: text/plain; charset=\"utf-8\"" . "\r\n";
-							mail($email, $subject, $text, $header);
+							$full_name = $userdata['name']." ".$userdata['surname'];
+							$mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+							//Server settings
+							$mail->CharSet = "UTF-8";
+							$mail->SMTPDebug = 0;                                 // Enable verbose debug output
+							$mail->isSMTP();                                      // Set mailer to use SMTP
+							$mail->Host = 'smtp.live.com';  // Specify main and backup SMTP servers
+							$mail->SMTPAuth = true;                               // Enable SMTP authentication
+							$mail->Username = 'gosseek@hotmail.com';                 // SMTP username
+							$mail->Password = $gosseek_hotmail_password;                           // SMTP password
+							$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+							$mail->Port = 587;                                    // TCP port to connect to
+							//Recipients
+							$mail->setFrom('gosseek@hotmail.com', 'Gosseek');
+							$mail->addAddress($email, $full_name);     // Add a recipient
+							$mail->addReplyTo('gosseek@hotmail.com', 'Gosseek');
+							//Content
+							$mail->isHTML(true);                                  // Set email format to HTML
+							$mail->Subject = $subject;
+							$mail->Body    = $body;
+							$mail->AltBody = $altbody;
+							$mail->send();
 							mysqli_query($mysql_connection, "UPDATE users SET password = '$new_password_encrypted' WHERE id = ".$userdata['id']);
 							echo $output_done;
 					}else

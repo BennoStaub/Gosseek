@@ -6,3 +6,5 @@ connect_db.php
 TODO.txt
 #ignore .htaccess
 .htaccess
+#ignore PHPMailer package
+/PHPMailer/*
