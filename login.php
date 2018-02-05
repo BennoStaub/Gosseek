@@ -192,7 +192,11 @@ echo "<html>";
 									$output = "Welcome on Gosseek,<br><br>This page is under active development and gets improved continuously.<br>Therefore we would like to ask you to report any mistake and/or remark. Do you need an additional function that is not offered by Gosseek yet or do you dislike anything completely?<br><br>We are looking forward to every feedback we get and try to design this page according to your desires.";
 									break;
 								}
-								echo $output;
+								echo "<div class=\"block\">";
+									echo "<div class=\"innerblock\">";
+										echo $output;
+									echo "</div>";
+								echo "</div>";
 								break;
 								
 								case 'feed':
@@ -254,17 +258,17 @@ echo "<html>";
 														echo "</div>";
 													echo "</div>";
 													echo "<div class=\"content\">";
-														$show_file = "";
-														echo "<div class=\"picture\">";
-															if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
-															{
+														if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+														{
+															$show_file = "";
+															echo "<div class=\"picture\">";
 																foreach($picture_file as $picture)
 																{
 																	$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
 																}
 																echo $show_file;
-															}
-														echo "</div>";
+															echo "</div>";
+														}
 														echo "<div class=\"post\">";
 															echo "<div class=\"text\">";
 																$post['content']=str_replace("\n","<br>",$post['content']);
@@ -312,17 +316,17 @@ echo "<html>";
 														echo "</div>";
 													echo "</div>";
 													echo "<div class=\"content\">";
-														$show_file = "";
-														echo "<div class=\"picture\">";
-															if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
-															{
+														if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+														{
+															$show_file = "";
+															echo "<div class=\"picture\">";
 																foreach($picture_file as $picture)
 																{
 																	$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
 																}
 																echo $show_file;
-															}
-														echo "</div>";
+															echo "</div>";
+														}
 														echo "<div class=\"post\">";
 															echo "<div class=\"schedule\">";
 																echo "<table border=\"1\">";
@@ -766,47 +770,50 @@ echo "<html>";
 								{
 									case 'german':
 									$label_goal = "Ziel";
-									$label_title = "Titel";
 									$label_content = "Beitrag";
 									$input_submit = "Beitrag teilen";
 									$output_pictures = "Bilder hinzufügen";
+									$output_no_goal = "Du hast noch kein Ziel definiert.";
 									break;
 									
 									case 'english':
 									$label_goal = "Goal";
-									$label_title = "Title";
 									$label_content = "Content";
 									$input_submit = "Post";
 									$output_pictures = "Add pictures";
+									$output_no_goal = "You haven't defined a goal yet.";
 									break;
 								}
-								echo "<div class=\"block\">";
-									echo "<div class=\"innerblock\">";
-										echo "<form action=\"login.php?language=".$_GET['language']."&action=submitpost\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
-											echo "<label>".$label_goal."</label>";
-											echo "<select name=\"goalid\" size=\"1\">";
-											$goal_query = mysqli_query($mysql_connection, "SELECT id,title FROM goals WHERE userid = ".$userdata['id']);
-											while($goal = mysqli_fetch_array($goal_query))
-											{
-												echo "<option value=\"".$goal['id']."\">".$goal['title']."</option>";
-											}
-											echo "</select>";
-											echo "<div class=\"clear\"></div>";
-											echo "<label>".$label_title."</label>";
-											echo "<input name=\"title\" size=\"50\"></input>";
-											echo "<div class=\"clear\"></div>";
-											echo "<label>".$label_content."</label>";
-											echo "<textarea name=\"content\"></textarea>";
-											echo "<br><br>";
-											echo $output_pictures;
-											for($iter = 1; $iter <= 5; $iter++)
-											{
-												echo "<p><input type=\"file\" name=\"picture".$iter."\"></input></p>";
-											}
-											echo "<span><input type=\"submit\" value=\"".$input_submit."\"></input></span>";
-										echo "</form>";
+								$goal_query = mysqli_query($mysql_connection, "SELECT id,title FROM goals WHERE userid = ".$userdata['id']);
+								if(mysqli_num_rows($goal_query) >= 1)
+								{
+									echo "<div class=\"block\">";
+										echo "<div class=\"innerblock\">";
+											echo "<form action=\"login.php?language=".$_GET['language']."&action=submitpost\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
+												echo "<label>".$label_goal."</label>";
+												echo "<select name=\"goalid\" size=\"1\">";
+												while($goal = mysqli_fetch_array($goal_query))
+												{
+													echo "<option value=\"".$goal['id']."\">".$goal['title']."</option>";
+												}
+												echo "</select>";
+												echo "<div class=\"clear\"></div>";
+												echo "<label>".$label_content."</label>";
+												echo "<textarea name=\"content\"></textarea>";
+												echo "<br><br>";
+												echo $output_pictures;
+												for($iter = 1; $iter <= 5; $iter++)
+												{
+													echo "<p><input type=\"file\" name=\"picture".$iter."\"></input></p>";
+												}
+												echo "<span><input type=\"submit\" value=\"".$input_submit."\"></input></span>";
+											echo "</form>";
+										echo "</div>";
 									echo "</div>";
-								echo "</div>";
+								}else
+								{
+									echo $output_no_goal;
+								}
 								break;
 								
 								case 'submitpost':
@@ -814,7 +821,7 @@ echo "<html>";
 								{
 									case 'german':
 									$output_success = "Beitrag gepostet.";
-									$output_no_title_or_content = "Bitte alle Felder ausfüllen.";
+									$output_no_content = "Bitte alle Felder ausfüllen.";
 									$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 									$output_no_goal = "Dieses Ziel existiert nicht.";
 									$output_no_image = "Die ausgewählte Datei ist kein Bild.";
@@ -824,7 +831,7 @@ echo "<html>";
 									
 									case 'english':
 									$output_success = "Post submitted.";
-									$output_no_title_or_content = "Please fill in all fields.";
+									$output_no_content = "Please fill in all fields.";
 									$output_not_author = "You are not the author of this goal.";
 									$output_no_goal = "There is no such goal.";
 									$output_no_image = "The chosen file is not an image.";
@@ -839,18 +846,17 @@ echo "<html>";
 									$goal = mysqli_fetch_array($check_goal_query);
 									if($goal['userid'] == $userdata['id'])
 									{
-										if(empty($_POST['title']) OR empty($_POST['content']))
+										if(empty($_POST['content']))
 										{
-											echo $output_no_title_or_content;
+											echo $output_no_content;
 										}else
 										{
-											$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 											$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
 											$time = time();
 											// check if file has been chosen
 											if(empty($_FILES['picture1']['tmp_name']) AND empty($_FILES['picture2']['tmp_name']) AND empty($_FILES['picture3']['tmp_name']) AND empty($_FILES['picture4']['tmp_name']) AND empty($_FILES['picture5']['tmp_name']))
 											{
-												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$title','$content', 0)");
+												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$content', 0)");
 												echo $output_success;
 											}else
 											{
@@ -886,7 +892,7 @@ echo "<html>";
 														$image_check[$iter] = 0;
 													}
 												}
-												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$title','$content', 1)");
+												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$content', 1)");
 												$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE goalid = ".$goalid." AND time = ".$time." LIMIT 1");
 												$post = mysqli_fetch_array($post_query);
 												// No error, upload file
@@ -915,7 +921,6 @@ echo "<html>";
 								switch($_GET['language'])
 								{
 									case 'german':
-									$label_title = "Titel";
 									$label_content = "Beitrag";
 									$label_picture = "Bild hinzufügen";
 									$input_submit = "Beitrag bearbeiten";
@@ -924,7 +929,6 @@ echo "<html>";
 									break;
 									
 									case 'english':
-									$label_title = "Title";
 									$label_content = "Content";
 									$label_picture = "Add picture";
 									$input_submit = "Edit post";
@@ -933,7 +937,7 @@ echo "<html>";
 									break;
 								}
 								$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
-								$post_query = mysqli_query($mysql_connection, "SELECT userid,title,content FROM posts where id = ".$postid." LIMIT 1");
+								$post_query = mysqli_query($mysql_connection, "SELECT userid, content FROM posts where id = ".$postid." LIMIT 1");
 								if(mysqli_num_rows($post_query))
 								{
 									$post = mysqli_fetch_array($post_query);
@@ -942,9 +946,6 @@ echo "<html>";
 										echo "<div class=\"block\">";
 											echo "<div class=\"innerblock\">";
 												echo "<form action=\"login.php?language=".$_GET['language']."&action=submit_edit_post&postid=".$postid."\" method=\"post\" accept-charset=\"utf-8\">";
-													echo "<label>".$label_title."</label>";
-													echo "<input name=\"title\" size=\"50\" value=\"".$post['title']."\"></input>";
-													echo "<div class=\"clear\"></div>";
 													echo "<label>".$label_content."</label>";
 													echo "<textarea name=\"content\" cols=\"64\" rows=\"15\">".$post['content']."</textarea>";
 													echo "<span><input type=\"submit\" value=\"".$input_submit."\"></input></span>";
@@ -966,14 +967,14 @@ echo "<html>";
 								{
 									case 'german':
 									$output_success = "Beitrag bearbeitet.";
-									$output_no_title_or_content = "Bitte alle Felder ausfüllen.";
+									$output_no_content = "Bitte alle Felder ausfüllen.";
 									$output_not_author = "Du bist nicht der Autor dieses Beitrages.";
 									$output_no_post = "Dieser Beitrag existiert nicht.";
 									break;
 									
 									case 'english':
 									$output_success = "Post editet.";
-									$output_no_title_or_content = "Please fill in all fields.";
+									$output_no_content = "Please fill in all fields.";
 									$output_not_author = "You are not the author of this post.";
 									$output_no_post = "There is no such post.";
 									break;
@@ -990,9 +991,8 @@ echo "<html>";
 											echo $output_no_title_or_content;
 										}else
 										{
-											$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 											$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-											mysqli_query($mysql_connection, "UPDATE posts SET title = '$title', content = '$content' WHERE id = ".$postid);
+											mysqli_query($mysql_connection, "UPDATE posts SET content = '$content' WHERE id = ".$postid);
 											echo $output_success;
 										}
 									}else
@@ -1412,20 +1412,22 @@ echo "<html>";
 													echo "</div>";
 												echo "</div>";
 												echo "<div class=\"content\">";
-													$show_file = "";
-													echo "<div class=\"picture\">";
-														if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
-														{
+													if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+													{
+														$show_file = "";
+														echo "<div class=\"picture\">";
 															foreach($picture_file as $picture)
 															{
 																$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
 															}
 															echo $show_file;
-														}
 													echo "</div>";
+													}
 													echo "<div class=\"post\">";
-														$post['content']=str_replace("\n","<br>",$post['content']);
-														echo $post['content'];
+														echo "<div class=\"text\">";
+															$post['content']=str_replace("\n","<br>",$post['content']);
+															echo $post['content'];
+														echo "</div>";
 													echo "</div>";
 												echo "</div>";
 												echo "<div class=\"links\">";
@@ -1459,17 +1461,17 @@ echo "<html>";
 													echo "</div>";
 												echo "</div>";
 												echo "<div class=\"content\">";
-													$show_file = "";
-													echo "<div class=\"picture\">";
 														if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
 														{
-															foreach($picture_file as $picture)
-															{
-																$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
-															}
-															echo $show_file;
+															$show_file = "";
+															echo "<div class=\"picture\">";
+																foreach($picture_file as $picture)
+																{
+																	$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+																}
+																echo $show_file;
+															echo "</div>";
 														}
-													echo "</div>";
 													echo "<div class=\"post\">";
 														echo "<div class=\"schedule\">";
 															echo "<table border=\"1\">";
@@ -1533,8 +1535,12 @@ echo "<html>";
 														echo "</div>";
 													echo "</div>";
 													echo "<div class=\"content\">";
-														$comment['text']=str_replace("\n","<br>",$comment['text']);
-														echo $comment['text'];
+														echo "<div class=\"post\">";
+															echo "<div class=\"text\">";
+																$comment['text']=str_replace("\n","<br>",$comment['text']);
+																echo $comment['text'];
+															echo "</div>";
+														echo "</div>";
 													echo "</div>";
 													if($comment['userid'] == $userdata['id'])
 													{
@@ -1572,7 +1578,6 @@ echo "<html>";
 									$label_actionblock = "Aktionsblock";
 									$label_start = "Von";
 									$label_end = "Bis";
-									$label_title = "Titel";
 									$label_content = "Beitrag";
 									$label_goal = "Ziel";
 									$output_pictures = "Bilder hinzufügen";
@@ -1580,6 +1585,7 @@ echo "<html>";
 									$input_submit_choose_goal = "Ziel wählen";
 									$output_no_blocks = "Du hast noch keinen Aktionsblock für dieses Ziel definiert.";
 									$output_no_goal = "Dieses Ziel existiert nicht.";
+									$output_no_goal_yet = "Du hast noch kein Ziel definiert.";
 									$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 									$a_add_block = "Aktionsblock hinzufügen";
 									break;
@@ -1588,7 +1594,6 @@ echo "<html>";
 									$label_actionblock = "Actionblock";
 									$label_start = "Started";
 									$label_end = "Finished";
-									$label_title = "Title";
 									$label_content = "Content";
 									$label_goal = "Goal";
 									$output_pictures = "Add pictures";
@@ -1596,28 +1601,36 @@ echo "<html>";
 									$input_submit_choose_goal = "Choose goal";
 									$output_no_blocks = "You have not yet defined an actionblock for this goal.";
 									$output_no_goal = "There is no such goal.";
+									$output_no_goal_yet = "You haven't defined a goal yet.";
 									$output_not_author = "You are not the author of this goal.";
 									$a_add_block = "Add actionblock";
 									break;
 								}
 								if(empty($_POST['goalid']))
 								{
-									echo "<div class=\"block\">";
-										echo "<div class=\"innerblock\">";
-											echo "<form action=\"login.php?language=".$_GET['language']."&action=createdayreview\" method=\"post\" accept-charset=\"utf-8\">";
-												echo "<label>".$label_goal."</label>";
-												echo "<select name=\"goalid\" size=\"1\">";
-													$goal_query = mysqli_query($mysql_connection, "SELECT id,title FROM goals WHERE userid = ".$userdata['id']);
-													while($goal = mysqli_fetch_array($goal_query))
-													{
-														echo "<option value=\"".$goal['id']."\">".$goal['title']."</option>";
-													}
-												echo "</select>";
-												echo "<br>";
-												echo "<span><input type=\"submit\" value=\"".$input_submit_choose_goal."\"></input></span>";
-											echo "</form>";
+									
+									$goal_query = mysqli_query($mysql_connection, "SELECT id,title FROM goals WHERE userid = ".$userdata['id']);
+									if(mysqli_num_rows($goal_query) >= 1)
+									{
+										echo "<div class=\"block\">";
+											echo "<div class=\"innerblock\">";
+												echo "<form action=\"login.php?language=".$_GET['language']."&action=createdayreview\" method=\"post\" accept-charset=\"utf-8\">";
+													echo "<label>".$label_goal."</label>";
+													echo "<select name=\"goalid\" size=\"1\">";
+														while($goal = mysqli_fetch_array($goal_query))
+														{
+															echo "<option value=\"".$goal['id']."\">".$goal['title']."</option>";
+														}
+													echo "</select>";
+													echo "<br>";
+													echo "<span><input type=\"submit\" value=\"".$input_submit_choose_goal."\"></input></span>";
+												echo "</form>";
+											echo "</div>";
 										echo "</div>";
-									echo "</div>";
+									}else
+									{
+										echo $output_no_goal_yet;
+									}
 								}else
 								{
 									$goalid = mysqli_real_escape_string($mysql_connection, $_POST['goalid']);
@@ -1666,9 +1679,6 @@ echo "<html>";
 																	}
 																	echo "</select></h>";
 																}
-																echo "<h><label>".$label_title."</label>";
-																echo "<input name=\"title\" size=\"50\"></input></h>";
-																echo "<div class=\"clear\"></div>";
 																echo "<h><label>".$label_content."</label>";
 																echo "<textarea name=\"content\"></textarea></h>";
 																echo "<br><br>";
@@ -1705,7 +1715,7 @@ echo "<html>";
 									$output_no_image = "Die ausgewählte Datei ist kein Bild.";
 									$output_too_big = "Die ausgewählte Datei ist zu gross. Maximale Grösse: 5Mb.";
 									$output_wrong_format = "Nur JPG, JPEG und PNG Dateien sind erlaubt.";
-									$output_empty_title_content = "Bitte füll die Felder Titel und Beitrag aus.";
+									$output_no_content = "Bitte füll die Felder Titel und Beitrag aus.";
 									break;
 									
 									case 'english':
@@ -1715,7 +1725,7 @@ echo "<html>";
 									$output_no_image = "The chosen file is not an image.";
 									$output_too_big = "The chosen file is too big. Maximum size: 5Mb.";
 									$output_wrong_format = "Only JPG, JPEG and PNG files are allowed.";
-									$output_empty_title_content = "Please fill in the fields title and content.";
+									$output_no_content = "Please fill in the fields title and content.";
 									break;
 								}
 								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
@@ -1725,15 +1735,14 @@ echo "<html>";
 									$goal = mysqli_fetch_array($check_goal_query);
 									if($goal['userid'] == $userdata['id'])
 									{
-										if(!empty($_POST['title']) AND !empty($_POST['content']))
+										if(!empty($_POST['content']))
 										{
-											$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 											$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
 											// check if file has been chosen
 											if(empty($_FILES['picture']['tmp_name']))
 											{
 												$time = time();
-												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 0)");
+												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$content', 0)");
 												$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
 												$post = mysqli_fetch_array($post_query);
 											}else
@@ -1760,11 +1769,11 @@ echo "<html>";
 													break;
 												}
 												$time = time();
-												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, title, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$title', '$content', 1)");
+												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, content, picture) VALUES ('1', '".$userdata['id']."', '".$goalid."', '".$time."', '$content', 1)");
 												$post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE userid = ".$userdata['id']." AND time = ".$time." LIMIT 1 ");
 												$post = mysqli_fetch_array($post_query);
 												// No error, upload file
-												move_uploaded_file($_FILES['picture']['tmp_name'], $target_dir.$post['id'].".".$image_File_Type);
+												move_uploaded_file($_FILES['picture']['tmp_name'], $target_dir."post_".$post['id']."_1.".$image_File_Type);
 											}
 											for($actionblockiter = 1; $actionblockiter <= 10; $actionblockiter++)
 											{
@@ -1780,7 +1789,7 @@ echo "<html>";
 											
 										}else
 										{
-											echo $output_empty_title_content;
+											echo $output_no_content;
 										}
 									}else
 									{
@@ -1799,7 +1808,6 @@ echo "<html>";
 									$label_actionblock = "Aktionsblock";
 									$label_start = "Von";
 									$label_end = "Bis";
-									$label_title = "Titel";
 									$label_content = "Beitrag";
 									$label_goal = "Ziel";
 									$label_picture = "Bild hinzufügen";
@@ -1815,7 +1823,6 @@ echo "<html>";
 									$label_actionblock = "Actionblock";
 									$label_start = "Started";
 									$label_end = "Finished";
-									$label_title = "Title";
 									$label_content = "Content";
 									$label_goal = "Goal";
 									$label_picture = "Add picture";
@@ -1920,8 +1927,6 @@ echo "<html>";
 																}
 																echo "</select></h>";
 															}
-															echo "<h><label>".$label_title."</label>";
-															echo "<input name=\"title\" size=\"50\" value=\"".$post['title']."\"></input></h>";
 															echo "<h><label>".$label_content."</label>";
 															echo "<textarea name=\"content\">".$post['content']."</textarea></h>";
 															echo "<span><input type=\"submit\" value=\"".$input_submit."\"></input></span>";
@@ -1951,14 +1956,14 @@ echo "<html>";
 									$output_success = "Beitrag bearbeitet.";
 									$output_no_post = "Dieser Beitrag existiert nicht.";
 									$output_not_author = "Du bist nicht der Autor dieses Beitrages.";
-									$output_empty_title_content = "Bitte fülle die Felder Titel und Beitrag aus.";
+									$output_no_content = "Bitte fülle das Feld Beitrag aus.";
 									break;
 									
 									case 'english':
 									$output_success = "Post edited.";
 									$output_no_post = "There is no such post.";
 									$output_not_author = "You are not the author of this post.";
-									$output_empty_title_content = "Please fill in the fields title and content.";
+									$output_no_content = "Please fill in the content field.";
 									break;
 								}
 								$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
@@ -1968,11 +1973,10 @@ echo "<html>";
 									$post = mysqli_fetch_array($post_query);
 									if($post['userid'] == $userdata['id'])
 									{
-										if(!empty($_POST['title']) AND !empty($_POST['content']))
+										if(!empty($_POST['content']))
 										{
-											$title = mysqli_real_escape_string($mysql_connection, $_POST['title']);
 											$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
-											mysqli_query($mysql_connection, "UPDATE posts SET title = '$title', content = '$content' WHERE id = ".$postid);
+											mysqli_query($mysql_connection, "UPDATE posts SET content = '$content' WHERE id = ".$postid);
 											mysqli_query($mysql_connection, "DELETE FROM scheduleblocks WHERE postid = ".$postid);
 											for($actionblockiter = 1; $actionblockiter <= 10; $actionblockiter++)
 											{
@@ -1987,7 +1991,7 @@ echo "<html>";
 												echo $output_success;
 										}else
 										{
-											echo $output_empty_title_content;
+											echo $output_no_content;
 										}
 									}else
 									{
@@ -2223,7 +2227,7 @@ echo "<html>";
 								switch($_GET['language'])
 								{
 										case 'german':
-										$output_help_actionblocks = "Actionblöcke definieren womit du deine Zeit verbringst. Zum Beispiel wenn du auf eine Prüfung lernst und Montags jeweils 4h Hausaufgaben löst und Dienstags jeweils 2h ein Unterrichtsbuch liest und 3h alles repetierst, nutzt du die Aktionsblöcke 'Hausaufgaben lösen', 'Unterrichtsbuch lesen' und 'Stoff repetieren'. Mit Aktionsblöcken kannst du deinen Tagesablauf in einem Stundenplan veröffentlichen. Du kannst das jetzt auch auslassen und später Aktionsblöcke zu deinem Ziel hinzufügen.";
+										$output_help_actionblocks = "Actionblöcke definieren womit du deine Zeit verbringst. Zum Beispiel: Wenn du auf eine Prüfung lernst und Montags jeweils 4h Hausaufgaben löst und Dienstags jeweils 2h ein Unterrichtsbuch liest und 3h alles repetierst, nutzt du die Aktionsblöcke 'Hausaufgaben lösen', 'Unterrichtsbuch lesen' und 'Stoff repetieren'. Mit Aktionsblöcken kannst du deinen Tagesablauf in einem Stundenplan veröffentlichen. Du kannst das jetzt auch auslassen und später Aktionsblöcke zu deinem Ziel hinzufügen.";
 										$label_anonymous = "Anonym posten?";
 										$label_title = "Titel";
 										$label_section = "Bereich";
@@ -2272,7 +2276,7 @@ echo "<html>";
 											$goal_query = mysqli_query($mysql_connection, "SELECT id FROM goals WHERE userid = ".$userdata['id']." LIMIT 1");
 											if(!mysqli_num_rows($goal_query))
 											{
-												echo $output_help_actionblocks."<br>";
+												echo "<br>".$output_help_actionblocks."<br><br>";
 											}
 											for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
 											{
@@ -2280,7 +2284,7 @@ echo "<html>";
 												echo "<input name=\"block".$blocknumber."\" size=\"50\"></input>";
 												echo "<div class=\"clear\"></div>";
 											}
-											echo "<label>".$label_description."</label>";
+											echo "<br><label>".$label_description."</label>";
 											echo "<textarea name=\"description\"></textarea>";
 											echo "<div class=\"clear\"></div>";
 											echo "<br><br>";
@@ -3409,6 +3413,19 @@ echo "<html>";
 					echo "</div>";
 				echo "</div>";
 			echo "</div>";
+		echo "</div>";
+		echo "<div class=\"notebar\">";
+			switch($_GET['language'])
+			{
+				case 'german':
+				$output_note = "Diese Seite befindet sich noch im Aufbau. Probleme, Kritik und Vorschläge können entweder via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">Feedback geben</a> oder via Mail an staubbe@student.ethz.ch gesendet werden. Vielen Dank!";
+				break;
+				
+				case 'english':
+				$output_note = "This page is under active development. Problems, criticisms and suggestions can be sent either via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">give feedback</a> or via mail to staubbe@student.ethz.ch Thank you!";
+				break;
+			}
+			echo $output_note;
 		echo "</div>";
 	echo "</body>";
 echo "</html>";

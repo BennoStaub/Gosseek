@@ -1,4 +1,4 @@
-body { background-image: url('background.png'); background-size: cover; background-repeat: no-repeat; display: flex; width: 98%; height: 97%; flex-direction: column; justify-content: center; margin: 0;}
+body { background-image: url('background.png'); background-size: cover; background-repeat: no-repeat; display: flex; width: 98%; height: 97%; flex-direction: column; justify-content: center; margin: 0; text-align: justify;}
 
 
 
@@ -28,7 +28,7 @@ body { background-image: url('background.png'); background-size: cover; backgrou
 .bodypage>.page>.subpage>.rightmenu>.fixed>.online>.toolbox a { margin-left: 5px; display:block;}
 
 .bodypage>.page>.subpage>.borderline { order: 2; height: 100%; width: 0.5%; }
-.bodypage>.page>.subpage>.borderline>.fixed { position: fixed; width: 0.28%; height: 90%; background-image: url('background.png'); background-size: cover;}
+.bodypage>.page>.subpage>.borderline>.fixed { position: fixed; width: 0.28%; height: 70%; background-image: url('background.png'); background-size: cover;}
 
 .bodypage>.page>.subpage>.content { order: 3; height: 95%; width: 74%; padding: 10px; }
 .bodypage>.page>.subpage>.content>.block { background-image: url('background_post.png'); background-size: cover; padding: 5px;}
@@ -39,7 +39,7 @@ body { background-image: url('background.png'); background-size: cover; backgrou
 .bodypage>.page>.subpage>.content>.block>.feed>.content>.picture { order: 1; height: 50px; margin-bottom: 5px;}
 .bodypage>.page>.subpage>.content>.block>.feed>.content>.picture img { height: 100%; margin-left: 2px; margin-top: 2px;}
 .bodypage>.page>.subpage>.content>.block>.feed>.content>.post { order: 2; display: flex; justify-content: space-between; }
-.bodypage>.page>.subpage>.content>.block>.feed>.content>.post>.text { order: 1; }
+.bodypage>.page>.subpage>.content>.block>.feed>.content>.post>.text { order: 1; margin-right: 5px;}
 .bodypage>.page>.subpage>.content>.block>.feed>.content>.post>.schedule { order: 2;}
 .bodypage>.page>.subpage>.content>.block>.feed>.links { padding-left: 3px; padding-right: 3px; background-image: url('box.png'); background-size: cover; display: flex; justify-content: space-between; }
 .bodypage>.page>.subpage>.content>.block>.feed>.links>.owner { order: 1;}
@@ -57,7 +57,7 @@ body { background-image: url('background.png'); background-size: cover; backgrou
 .bodypage>.page>.subpage>.content>.block>.innerblock form div input { width: 80%; margin: 0 auto; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form p input { width: 90%; margin-left: 30px; display: inline-block; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form select { width: 20%; }
-.bodypage>.page>.subpage>.content>.block>.innerblock form textarea { display: block; height: 200px; width: 80%; }
+.bodypage>.page>.subpage>.content>.block>.innerblock form textarea { display: block; height: 200px; width: 100%; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form h { margin: 0 auto; display: block; width: 80%; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form h select { margin: 0 auto; display: inline-block; width: 30%; }
 
@@ -101,3 +101,6 @@ body { background-image: url('background.png'); background-size: cover; backgrou
 
 .bodypage>.page>.subpage>.content>.block>.innerblock>.inbox h { display: block; }
 .bodypage>.page>.subpage>.content>.block>.innerblock>.inbox h span { display: inline-block; width: 30%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+
+.notebar { order: 3; margin-left: 10px;}
