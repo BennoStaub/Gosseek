@@ -329,21 +329,14 @@ echo "<html>";
 														}
 														echo "<div class=\"post\">";
 															echo "<div class=\"schedule\">";
-																echo "<table border=\"1\">";
+																echo "<table style=\"border-spacing:1px;\">";
 																$iter = 0;
 																while($schedule = mysqli_fetch_array($schedule_query))
 																{
-																	if($iter%2 == 1)
-																	{
-																		$bgcolor = "#808080";
-																	}else
-																	{
-																		$bgcolor = "#BFBFBF";
-																	}
+																	$fontcolor = "#2b032d";
 																	$actionblock_query = mysqli_query($mysql_connection, "SELECT name FROM actionblocks WHERE id = ".$schedule['actionblockid']." LIMIT 1");
 																	$actionblock = mysqli_fetch_array($actionblock_query);
-																	echo "<tr bgcolor=\"".$bgcolor."\"><td>".date("H:i",$schedule['starttime'])."-".date("H:i",$schedule['finishtime'])."</td><td>".$actionblock['name']."</td></tr>";
-																	$iter++;
+																	echo "<tr><td><font color=\"".$fontcolor."\">".date("H:i",$schedule['starttime'])."-".date("H:i",$schedule['finishtime'])."</font></td><td><font color=\"".$fontcolor."\">".$actionblock['name']."</font></td></tr>";
 																}
 																echo "</table><br>";
 															echo "</div>";
@@ -1811,7 +1804,7 @@ echo "<html>";
 									$label_content = "Beitrag";
 									$label_goal = "Ziel";
 									$label_picture = "Bild hinzufügen";
-									$input_submit = "Beitrag teilen";
+									$input_submit = "Beitrag bearbeiten";
 									
 									$output_no_blocks = "Du hast noch keinen Aktionsblock für dieses Ziel definiert.";
 									$output_no_post = "Dieser Beitrag existiert nicht.";
@@ -1826,7 +1819,7 @@ echo "<html>";
 									$label_content = "Content";
 									$label_goal = "Goal";
 									$label_picture = "Add picture";
-									$input_submit = "Post";
+									$input_submit = "Edit post";
 									
 									$output_no_blocks = "You have not yet defined an actionblock for this goal.";
 									$output_no_post = "There is no such post.";
@@ -2084,7 +2077,7 @@ echo "<html>";
 														$finish_goal = "";
 													}else
 													{
-														$finish_goal =  "<h><a href=\"login.php?language=".$_GET['language']."&action=finish_goal&goalid=".$goalid."\">".$a_finish_goal."</a></h>";
+														$finish_goal =  "<a href=\"login.php?language=".$_GET['language']."&action=finish_goal&goalid=".$goalid."\">".$a_finish_goal."</a>";
 													}
 													$actionblock_query = mysqli_query($mysql_connection, "SELECT * FROM actionblocks WHERE goalid = $goalid");
 													while($actionblock = mysqli_fetch_array($actionblock_query))
@@ -2098,7 +2091,7 @@ echo "<html>";
 														echo "<h><b>".$output_block."</b>".$actionblock['name'].$links."</h>";
 													}
 													$goal['description']=str_replace("\n","<br>",$goal['description']);
-													echo "<h><b>".$output_description."</b></h><h>".$goal['description']."</h>";
+													echo "<h><b>".$output_description."</b></h><br>".$goal['description'];
 													$show_file = "";
 													if($picture_file = glob("uploads/goals/goal_".$goal['id']."_*.*"))
 													{
@@ -2131,7 +2124,7 @@ echo "<html>";
 														echo "<h><b>".$output_block."</b>".$actionblock['name']."</h>";
 													}
 													$goal['description']=str_replace("\n","<br>",$goal['description']);
-													echo "<h><b>".$output_description."</b></h><h>".$goal['description']."</h>";
+													echo "<h><b>".$output_description."</b></h><br>".$goal['description'];
 													$show_file = "";
 													if($picture_file = glob("uploads/goals/goal_".$goal['id']."_*.*"))
 													{
@@ -3418,7 +3411,7 @@ echo "<html>";
 			switch($_GET['language'])
 			{
 				case 'german':
-				$output_note = "Diese Seite befindet sich noch im Aufbau. Probleme, Kritik und Vorschläge können entweder via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">Feedback geben</a> oder via Mail an staubbe@student.ethz.ch gesendet werden. Vielen Dank!";
+				$output_note = "Diese Seite befindet sich im aktiven Aufbau. Probleme, Kritik und Vorschläge können entweder via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">Feedback geben</a> oder via Mail an staubbe@student.ethz.ch gesendet werden. Vielen Dank!";
 				break;
 				
 				case 'english':

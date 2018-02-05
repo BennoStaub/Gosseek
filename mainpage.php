@@ -434,7 +434,7 @@ echo "<html>";
 			switch($_GET['language'])
 			{
 				case 'german':
-				$output_note = "Diese Seite befindet sich noch im Aufbau. Probleme, Kritik und Vorschläge können via Mail an staubbe@student.ethz.ch gesendet werden. Vielen Dank!";
+				$output_note = "Diese Seite befindet sich im aktiven Aufbau. Probleme, Kritik und Vorschläge können via Mail an staubbe@student.ethz.ch gesendet werden. Vielen Dank!";
 				break;
 				
 				case 'english':
