@@ -1,4 +1,4 @@
-body { background-image: url('background.png'); background-size: cover; background-repeat: no-repeat; display: flex; width: 98%; height: 97%; flex-direction: column; justify-content: center; margin: 0; text-align: justify;}
+body { color: #2b032d; background-image: url('background.png'); background-size: cover; background-repeat: no-repeat; display: flex; width: 98%; height: 97%; flex-direction: column; justify-content: center; margin: 0; text-align: justify;}
 a:link{color:#2b032d; text-decoration:none; font-weight:600;}
 a:visited{color:#2b032d; text-decoration:none; font-weight:0;}
 a:hover{text-shadow: 0 0 .25px #2b032d, 0 0 .25px #2b032d; }
@@ -103,7 +103,7 @@ a:active{color:#2b032d; text-decoration:none; font-weight:650;}
 
 
 .bodypage>.page>.subpage>.content>.block>.innerblock>.goal h { width: 70%; display: block; border-bottom: 1px solid #2b032d;}
-.bodypage>.page>.subpage>.content>.block>.innerblock>.goal h b { display: inline-block; width: 60%; }
+.bodypage>.page>.subpage>.content>.block>.innerblock>.goal h b { display: inline-block; width: 30%; }
 .bodypage>.page>.subpage>.content>.block>.innerblock>.goal h img { display: inline-block; height: 50px; }
 .bodypage>.page>.subpage>.content>.block>.innerblock>.goal h a { margin-right: 10px; }
 
