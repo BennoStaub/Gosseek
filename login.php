@@ -120,9 +120,8 @@ echo "<html>";
 						$a_notifications = "Notifications";
 						break;
 					}
-					$likes_query = mysqli_query($mysql_connection, "SELECT * FROM likes WHERE authorid = ".$userdata['id']." AND new = 1");
-					$comments_query = mysqli_query($mysql_connection, "SELECT * FROM comments WHERE authorid = ".$userdata['id']." AND new = 1");
-					$number_new_notifications = mysqli_num_rows($likes_query)+mysqli_num_rows($comments_query);
+					echo "<a href=\"login.php?language=".$_GET['language']."&action=goallist\">".$a_goallist."</a>";
+					echo "<a href=\"login.php?language=".$_GET['language']."&action=owngoals\">".$a_owngoals."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=createpost\">".$a_create_post."</a>";	
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=createdayreview\">".$a_day_review."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=definegoal\">".$a_definegoal."</a>";
@@ -133,8 +132,9 @@ echo "<html>";
 					}
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=inbox\">".$a_messages."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=feed\">".$a_feed."</a>";
-					echo "<a href=\"login.php?language=".$_GET['language']."&action=owngoals\">".$a_owngoals."</a>";
-					echo "<a href=\"login.php?language=".$_GET['language']."&action=goallist\">".$a_goallist."</a>";
+					$likes_query = mysqli_query($mysql_connection, "SELECT * FROM likes WHERE authorid = ".$userdata['id']." AND new = 1");
+					$comments_query = mysqli_query($mysql_connection, "SELECT * FROM comments WHERE authorid = ".$userdata['id']." AND new = 1");
+					$number_new_notifications = mysqli_num_rows($likes_query)+mysqli_num_rows($comments_query);
 					if($number_new_notifications >= 1)
 					{
 						echo "<a href=\"login.php?language=".$_GET['language']."&action=notifications\">".$a_notifications."(".$number_new_notifications.")</a>";
@@ -265,12 +265,12 @@ echo "<html>";
 											{
 												$user_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$data['userid']." LIMIT 1");
 												$user = mysqli_fetch_array($user_query);
-												$output =  "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$data['userid']."\">".$user['name']." ".$user['surname']."</a> <a href=\"login.php?language=".$_GET['language']."&action=comments&postid=".$data['postid']."\">".$text[$data['type']]."</a>";
+												$output =  "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$data['userid']."\">".$user['name']." ".$user['surname']."</a> <a href=\"login.php?language=".$_GET['language']."&action=post&postid=".$data['postid']."\">".$text[$data['type']]."</a>";
 												if($data['new'])
 												{
-													$output = "<font size=\"5\"><b>".$new." </b></font>".$output;
+													$output = "<font color=\"#ff0000\"><b>".$new." </b></font>".$output;
 												}
-												echo "<h><p>".date("d.m.Y - H:i", $data['time'])."</p>".$output."</h>";
+												echo "<h><span>".date("d.m.Y - H:i", $data['time'])."</span>".$output."</h>";
 												if($data['type'] == "like")
 												{
 													mysqli_query($mysql_connection, "UPDATE likes SET new = 0 WHERE id = ".$data['id']);
@@ -292,7 +292,7 @@ echo "<html>";
 									case 'german':
 									$output_no_following = "Du folgst noch keinem Ziel.";
 									$a_comment = "Kommentieren";
-									$a_comments = "Kommentare";
+									$a_post = "Kommentare";
 									$a_like = "Gefällt mir";
 									$a_likes = "Gefällt";
 									$a_dislike = "Gefällt mir nicht mehr";
@@ -303,7 +303,7 @@ echo "<html>";
 									case 'english':
 									$output_no_following = "You don't follow any goal.";
 									$a_comment = "Comment";
-									$a_comments = "Comments";
+									$a_post = "Comments";
 									$a_like = "Like";
 									$a_likes = "Likes";
 									$a_dislike = "Dislike";
@@ -382,7 +382,7 @@ echo "<html>";
 															}
 														echo "</div>";
 														echo "<div class=\"right\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=comments&postid=".$post['id']."\">".$a_comments."(".mysqli_num_rows($comments_query).")</a>";
+															echo "<a href=\"login.php?language=".$_GET['language']."&action=post&postid=".$post['id']."\">".$a_post."(".mysqli_num_rows($comments_query).")</a>";
 															echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
 														echo "</div>";
 													echo "</div>";
@@ -452,7 +452,7 @@ echo "<html>";
 															}
 														echo "</div>";
 														echo "<div class=\"right\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=comments&postid=".$post['id']."\">".$a_comments."(".mysqli_num_rows($comments_query).")</a>";
+															echo "<a href=\"login.php?language=".$_GET['language']."&action=post&postid=".$post['id']."\">".$a_post."(".mysqli_num_rows($comments_query).")</a>";
 															echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
 														echo "</div>";
 													echo "</div>";
@@ -484,7 +484,7 @@ echo "<html>";
 									$label_job = "Beruf";
 									$label_description = "Über mich";
 									$label_upload_picture = "Profilbild ändern";
-									$input_submit_change = "Profil ändern";
+									$input_submit_change = "Änderungen speichern";
 									$input_submit_upload = "Neues Profilbild hochladen";
 									$months = array( "1" => "Januar", "2" => "Februar", "3" => "März", "4" => "April", "5" => "Mai", "6" => "Juni", "7" => "Juli", "8" => "August", "9" => "September", "10" => "Oktober", "11" => "November", "12" => "Dezember");
 									break;
@@ -499,7 +499,7 @@ echo "<html>";
 									$label_job = "Job";
 									$label_description = "About me";
 									$label_upload_picture = "Change profile picture";
-									$input_submit_change = "Change profile";
+									$input_submit_change = "Save changes";
 									$input_submit_upload = "Upload new profile picture";
 									$months = array( "1" => "January", "2" => "February", "3" => "March", "4" => "April", "5" => "May", "6" => "June", "7" => "July", "8" => "August", "9" => "September", "10" => "October", "11" => "November", "12" => "December");
 									break;
@@ -610,7 +610,8 @@ echo "<html>";
 								mysqli_query($mysql_connection, "UPDATE users
 								SET name='".$userdata['name']."', surname='".$userdata['surname']."', birthdate='$birthdate', residence='".$userdata['residence']."', job='".$userdata['job']."', description='".$userdata['description']."'
 								WHERE id = ".$_SESSION['id']);
-								echo $output;
+								echo "<script> location.href='login.php?language=".$_GET['language']."&action=profilesettings'; </script>";
+										exit;
 								break;
 								
 								case 'uploadprofilepicture':
@@ -939,7 +940,8 @@ echo "<html>";
 											if(empty($_FILES['picture1']['tmp_name']) AND empty($_FILES['picture2']['tmp_name']) AND empty($_FILES['picture3']['tmp_name']) AND empty($_FILES['picture4']['tmp_name']) AND empty($_FILES['picture5']['tmp_name']))
 											{
 												mysqli_query($mysql_connection, "INSERT INTO posts (type, userid, goalid, time, content, picture) VALUES ('0', '".$userdata['id']."', '".$goalid."', '".$time."','$content', 0)");
-												echo $output_success;
+												echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
+												exit;
 											}else
 											{
 												$target_dir = "uploads/posts/";
@@ -986,7 +988,8 @@ echo "<html>";
 														move_uploaded_file($_FILES[$picture_name]['tmp_name'], $target_dir."post_".$post['id']."_".$iter.".".$image_File_Type[$iter]);
 													}
 												}
-												echo $output_success;
+												echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
+												exit;
 											}
 										}
 									}else
@@ -1075,7 +1078,8 @@ echo "<html>";
 										{
 											$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
 											mysqli_query($mysql_connection, "UPDATE posts SET content = '$content' WHERE id = ".$postid);
-											echo $output_success;
+											echo "<script> location.href='login.php?language=".$_GET['language']."&action=post&postid=".$postid."'; </script>";
+											exit;
 										}
 									}else
 									{
@@ -1309,7 +1313,7 @@ echo "<html>";
 									if(!empty($comment))
 									{
 										mysqli_query($mysql_connection, "INSERT INTO comments (authorid, postid, userid, time, text, new) VALUES ('".$post['userid']."', '$postid', '".$userdata['id']."', '".time()."', '$comment', 1)");
-										echo "<script> location.href='login.php?language=".$_GET['language']."&action=comments&postid=".$postid."'; </script>";
+										echo "<script> location.href='login.php?language=".$_GET['language']."&action=post&postid=".$postid."'; </script>";
 										exit;
 									}else
 									{
@@ -1431,7 +1435,7 @@ echo "<html>";
 										if(!empty($_GET['security_check']))
 										{
 											mysqli_query($mysql_connection, "DELETE FROM comments WHERE id = ".$commentid);
-											echo "<script> location.href='login.php?language=".$_GET['language']."&action=comments&postid=".$_GET['postid']."'; </script>";
+											echo "<script> location.href='login.php?language=".$_GET['language']."&action=post&postid=".$_GET['postid']."'; </script>";
 											exit;
 										}else
 										{
@@ -1448,7 +1452,7 @@ echo "<html>";
 								}
 								break;
 								
-								case 'comments':
+								case 'post':
 								switch($_GET['language'])
 								{
 									case 'german':
@@ -1870,7 +1874,8 @@ echo "<html>";
 														mysqli_query($mysql_connection, "INSERT INTO scheduleblocks (postid, actionblockid, starttime, finishtime) VALUES ('".$post['id']."', '".$actionblockid."', '".$starttime."', '".$finishtime."')");
 													}
 											}
-												echo $output_success;
+											echo "<script> location.href='login.php?language=".$_GET['language']."&action=post&postid=".$post['id']."'; </script>";
+											exit;
 											
 										}else
 										{
@@ -2466,7 +2471,8 @@ echo "<html>";
 											move_uploaded_file($_FILES[$picture_name]['tmp_name'], $target_dir."goal_".$goal['id']."_".$iter.".".$image_File_Type[$iter]);
 										}
 									}
-									echo $output_success;
+									echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$goal['id']."'; </script>";
+									exit;
 								}
 								break;
 								
@@ -2652,7 +2658,8 @@ echo "<html>";
 									}else
 									{
 										mysqli_query($mysql_connection, "INSERT INTO goalfollowers (userid, goalid) VALUES ('".$userdata['id']."',$goalid)");
-										echo $output_success;
+										echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$goalid."'; </script>";
+										exit;
 									}
 								}else
 								{
@@ -2683,7 +2690,8 @@ echo "<html>";
 									if(mysqli_num_rows($check_following_query))
 									{
 										mysqli_query($mysql_connection, "DELETE FROM goalfollowers WHERE goalid=$goalid AND userid=".$userdata['id']."");
-										echo $output_success;
+										echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$goalid."'; </script>";
+										exit;
 									}else
 									{
 										echo $output_not_following;
@@ -2813,7 +2821,8 @@ echo "<html>";
 											$section = mysqli_real_escape_string($mysql_connection, $_POST['section']);
 											$description = mysqli_real_escape_string($mysql_connection, $_POST['description']);
 											mysqli_query($mysql_connection, "UPDATE goals SET anonymous = '".$anonymous."', title = '$title', description = '$description', section = '$section' WHERE id=$goalid");
-											echo $output_success;
+											echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$goalid."'; </script>";
+											exit;
 										}
 									}else
 									{
@@ -2992,7 +3001,8 @@ echo "<html>";
 											if(mysqli_num_rows($schedule_query) == 0)
 											{
 												mysqli_query($mysql_connection, "UPDATE actionblocks SET name = '$blockname' WHERE id=$blockid");
-												echo $output_success;
+												echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$block['goalid']."'; </script>";
+												exit;
 											}else
 											{
 												echo $output_block_used;
@@ -3045,7 +3055,8 @@ echo "<html>";
 											if(mysqli_num_rows($schedule_query) == 0)
 											{
 												mysqli_query($mysql_connection, "DELETE FROM actionblocks WHERE id=$blockid");
-												echo $output_success;
+												echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$block['goalid']."'; </script>";
+												exit;
 											}else
 											{
 												echo $output_block_used;
@@ -3131,7 +3142,8 @@ echo "<html>";
 									if($check_author['userid'] == $userdata['id'])
 									{
 										mysqli_query($mysql_connection, "INSERT INTO actionblocks (goalid, name) VALUES ($goalid, '$blockname')");
-										echo $output_success;
+										echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$goalid."'; </script>";
+										exit;
 									}else
 									{
 										echo $output_not_author;
