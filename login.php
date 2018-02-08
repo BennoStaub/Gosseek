@@ -486,6 +486,7 @@ echo "<html>";
 									$label_upload_picture = "Profilbild ändern";
 									$input_submit_change = "Profil ändern";
 									$input_submit_upload = "Neues Profilbild hochladen";
+									$months = array( "1" => "Januar", "2" => "Februar", "3" => "März", "4" => "April", "5" => "Mai", "6" => "Juni", "7" => "Juli", "8" => "August", "9" => "September", "10" => "Oktober", "11" => "November", "12" => "Dezember");
 									break;
 									
 									case 'english':
@@ -500,6 +501,7 @@ echo "<html>";
 									$label_upload_picture = "Change profile picture";
 									$input_submit_change = "Change profile";
 									$input_submit_upload = "Upload new profile picture";
+									$months = array( "1" => "January", "2" => "February", "3" => "March", "4" => "April", "5" => "May", "6" => "June", "7" => "July", "8" => "August", "9" => "September", "10" => "October", "11" => "November", "12" => "December");
 									break;
 								}
 								echo "<div class=\"block\">";
@@ -531,10 +533,10 @@ echo "<html>";
 												{
 													if($i == $userdata['birthmonth'])
 													{
-														echo "<option value=\"".$i."\" selected=\"selected\">".$i."</option>";
+														echo "<option value=\"".$i."\" selected=\"selected\">".$months[$i]."</option>";
 													}else
 													{
-														echo "<option value=\"".$i."\">".$i."</option>";
+														echo "<option value=\"".$i."\">".$months[$i]."</option>";
 													}
 												}
 											echo "</select></span>";
@@ -3501,11 +3503,11 @@ echo "<html>";
 			switch($_GET['language'])
 			{
 				case 'german':
-				$output_note = "Diese Seite befindet sich im aktiven Aufbau. Probleme, Kritik und Vorschläge können entweder via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">Feedback geben</a> oder via Mail an staubbe@student.ethz.ch gesendet werden. Vielen Dank!";
+				$output_note = "Diese Seite befindet sich im aktiven Aufbau. Probleme, Kritik und Vorschläge können entweder via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">Feedback geben</a> oder via Mail an gosseek@hotmail.com gesendet werden. Vielen Dank!";
 				break;
 				
 				case 'english':
-				$output_note = "This page is under active development. Problems, criticisms and suggestions can be sent either via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">give feedback</a> or via mail to staubbe@student.ethz.ch Thank you!";
+				$output_note = "This page is under active development. Problems, criticisms and suggestions can be sent either via <a href=\"login.php?language=".$_GET['language']."&action=feedback\">give feedback</a> or via mail to gosseek@hotmail.com Thank you!";
 				break;
 			}
 			echo $output_note;
