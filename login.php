@@ -332,89 +332,32 @@ echo "<html>";
 										$likes_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$post['id']);
 										$liked_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$post['id']." AND userid=".$userdata['id']." LIMIT 1");
 										$comments_query = mysqli_query($mysql_connection, "SELECT id FROM comments WHERE postid = ".$post['id']);
-										if($post['type'] == 0)
-										{
-											echo "<div class=\"block\">";
-												echo "<div class=\"feed\">";
-													echo "<div class=\"header\">";
-														echo "<div class=\"time\">";
-															echo date("d.m.Y - H:i", $post['time']);
-														echo "</div>";
-														echo "<div class=\"title\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
-														echo "</div>";
+										echo "<div class=\"block\">";
+											echo "<div class=\"feed\">";
+												echo "<div class=\"header\">";
+													echo "<div class=\"time\">";
+														echo date("d.m.Y - H:i", $post['time']);
 													echo "</div>";
-													echo "<div class=\"content\">";
-														if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
-														{
-															$show_file = "";
-															echo "<div class=\"picture\">";
-																foreach($picture_file as $picture)
-																{
-																	$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
-																}
-																echo $show_file;
-															echo "</div>";
-														}
-														echo "<div class=\"post\">";
-															echo "<div class=\"text\">";
-																$post['content']=str_replace("\n","<br>",$post['content']);
-																echo $post['content'];
-															echo "</div>";
-														echo "</div>";
-													echo "</div>";
-													echo "<div class=\"links\">";
-														if($post['userid'] == $userdata['id'])
-														{
-															echo "<div class=\"owner\">";
-																	echo "<a href=\"login.php?language=".$_GET['language']."&action=edit_post&postid=".$post['id']."\">".$a_edit."</a>";
-																	echo "<a href=\"login.php?language=".$_GET['language']."&action=delete_post&postid=".$post['id']."\">".$a_delete."</a>";
-															echo "</div>";
-														}
-														echo "<div class=\"left\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=write_comment&postid=".$post['id']."\">".$a_comment."</a>";
-															if(mysqli_num_rows($liked_query))
-															{
-																echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
-															}else
-															{
-																echo "<a href=\"login.php?language=".$_GET['language']."&action=like_post&postid=".$post['id']."\">".$a_like."</a>";
-															}
-														echo "</div>";
-														echo "<div class=\"right\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=post&postid=".$post['id']."\">".$a_post."(".mysqli_num_rows($comments_query).")</a>";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
-														echo "</div>";
+													echo "<div class=\"title\">";
+														echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
 													echo "</div>";
 												echo "</div>";
-											echo "</div>";
-											echo "<br>";
-										}else
-										{
-											$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
-											echo "<div class=\"block\">";
-												echo "<div class=\"feed\">";
-													echo "<div class=\"header\">";
-														echo "<div class=\"time\">";
-															echo date("d.m.Y - H:i", $post['time']);
+												echo "<div class=\"content\">";
+													if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+													{
+														$show_file = "";
+														echo "<div class=\"picture\">";
+															foreach($picture_file as $picture)
+															{
+																$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
+															}
+															echo $show_file;
 														echo "</div>";
-														echo "<div class=\"title\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=goal&goalid=".$goaldata['id']."\">".$goaldata['title']."</a>";
-														echo "</div>";
-													echo "</div>";
-													echo "<div class=\"content\">";
-														if($picture_file = glob("uploads/posts/post_".$post['id']."_*.*"))
+													}
+													echo "<div class=\"post\">";
+														if($post['type'] == 1)
 														{
-															$show_file = "";
-															echo "<div class=\"picture\">";
-																foreach($picture_file as $picture)
-																{
-																	$show_file = $show_file."<a href=\"".$picture."\"><img src=\"".$picture."\"></img></a>";
-																}
-																echo $show_file;
-															echo "</div>";
-														}
-														echo "<div class=\"post\">";
+															$schedule_query = mysqli_query($mysql_connection, "SELECT * FROM scheduleblocks WHERE postid = ".$post['id']." ORDER BY starttime ASC");
 															echo "<div class=\"schedule\">";
 																echo "<table style=\"border-spacing:1px;\">";
 																$iter = 0;
@@ -427,39 +370,39 @@ echo "<html>";
 																}
 																echo "</table><br>";
 															echo "</div>";
-															echo "<div class=\"text\">";
-																$post['content']=str_replace("\n","<br>",$post['content']);
-																echo $post['content'];
-															echo "</div>";
-														echo "</div>";
-													echo "</div>";
-													echo "<div class=\"links\">";
-														if($post['userid'] == $userdata['id'])
-														{
-															echo "<div class=\"owner\">";
-																	echo "<a href=\"login.php?language=".$_GET['language']."&action=edit_dayreview&postid=".$post['id']."\">".$a_edit."</a>";
-																	echo "<a href=\"login.php?language=".$_GET['language']."&action=delete_post&postid=".$post['id']."\">".$a_delete."</a>";
-															echo "</div>";
 														}
-														echo "<div class=\"left\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=write_comment&postid=".$post['id']."\">".$a_comment."</a>";
-															if(mysqli_num_rows($liked_query))
-															{
-																echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
-															}else
-															{
-																echo "<a href=\"login.php?language=".$_GET['language']."&action=like_post&postid=".$post['id']."\">".$a_like."</a>";
-															}
-														echo "</div>";
-														echo "<div class=\"right\">";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=post&postid=".$post['id']."\">".$a_post."(".mysqli_num_rows($comments_query).")</a>";
-															echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
+														echo "<div class=\"text\">";
+															$post['content']=str_replace("\n","<br>",$post['content']);
+															echo $post['content'];
 														echo "</div>";
 													echo "</div>";
 												echo "</div>";
+												echo "<div class=\"links\">";
+													if($post['userid'] == $userdata['id'])
+													{
+														echo "<div class=\"owner\">";
+																echo "<a href=\"login.php?language=".$_GET['language']."&action=edit_dayreview&postid=".$post['id']."\">".$a_edit."</a>";
+																echo "<a href=\"login.php?language=".$_GET['language']."&action=delete_post&postid=".$post['id']."\">".$a_delete."</a>";
+														echo "</div>";
+													}
+													echo "<div class=\"left\">";
+														echo "<a href=\"login.php?language=".$_GET['language']."&action=write_comment&postid=".$post['id']."\">".$a_comment."</a>";
+														if(mysqli_num_rows($liked_query))
+														{
+															echo "<a href=\"login.php?language=".$_GET['language']."&action=dislike_post&postid=".$post['id']."\">".$a_dislike."</a>";
+														}else
+														{
+															echo "<a href=\"login.php?language=".$_GET['language']."&action=like_post&postid=".$post['id']."\">".$a_like."</a>";
+														}
+													echo "</div>";
+													echo "<div class=\"right\">";
+														echo "<a href=\"login.php?language=".$_GET['language']."&action=post&postid=".$post['id']."\">".$a_post."(".mysqli_num_rows($comments_query).")</a>";
+														echo "<a href=\"login.php?language=".$_GET['language']."&action=likes&postid=".$post['id']."\">".$a_likes."(".mysqli_num_rows($likes_query).")</a>";
+													echo "</div>";
+												echo "</div>";
 											echo "</div>";
-											echo "<br>";
-										}
+										echo "</div>";
+										echo "<br>";
 									}
 								}else
 								{
@@ -1383,17 +1326,18 @@ echo "<html>";
 									break;
 								}
 								$commentid = mysqli_real_escape_string($mysql_connection, $_GET['commentid']);
-								$comment_query = mysqli_query($mysql_connection, "SELECT userid FROM comments WHERE id = ".$commentid." LIMIT 1");
+								$comment_query = mysqli_query($mysql_connection, "SELECT postid, userid FROM comments WHERE id = ".$commentid." LIMIT 1");
 								if(mysqli_num_rows($comment_query))
 								{
 									$comment = mysqli_fetch_array($comment_query);
 									if($comment['userid'] == $userdata['id'])
 									{
-										$comment = mysqli_real_escape_string($mysql_connection, $_POST['comment']);
-										if(!empty($comment))
+										$new_comment = mysqli_real_escape_string($mysql_connection, $_POST['comment']);
+										if(!empty($new_comment))
 										{
-											mysqli_query($mysql_connection, "UPDATE comments SET text = '$comment' WHERE id = ".$commentid);
-											echo $output_success;
+											mysqli_query($mysql_connection, "UPDATE comments SET text = '$new_comment' WHERE id = ".$commentid);
+											echo "<script> location.href='login.php?language=".$_GET['language']."&action=post&postid=".$comment['postid']."'; </script>";
+											exit;
 										}else
 										{
 											echo $output_comment_empty;
@@ -2078,7 +2022,8 @@ echo "<html>";
 														mysqli_query($mysql_connection, "INSERT INTO scheduleblocks (postid, actionblockid, starttime, finishtime) VALUES ('".$postid."', '".$actionblockid."', '".$starttime."', '".$finishtime."')");
 													}
 											}
-												echo $output_success;
+											echo "<script> location.href='login.php?language=".$_GET['language']."&action=post&postid=".$postid."'; </script>";
+											exit;
 										}else
 										{
 											echo $output_no_content;
@@ -3030,6 +2975,8 @@ echo "<html>";
 									$output_no_goal = "Es existiert kein Ziel mit diesem Block.";
 									$output_no_block = "Dieser Aktionsblock existiert nicht.";
 									$output_block_used = "Dieser Aktionsblock wurde bereits für die Dokumentation benutzt und kann daher nicht mehr gelöscht werden.";
+									$output_security_check = "Willst du diesen Aktionsblock wirklich löschen?";
+									$a_security_check = "Aktionsblock löschen";
 									break;
 									
 									case 'english':
@@ -3038,6 +2985,8 @@ echo "<html>";
 									$output_no_goal = "There is no goal with this block.";
 									$output_no_block = "There is no such actionblock.";
 									$output_block_used = "This actionblock has already been used for documentation and therefore it cannot be deleted anymore.";
+									$output_security_check = "Are you sure you want to delete this actionblock?";
+									$a_security_check = "Delete Actionblock";
 									break;
 								}
 								$blockid = mysqli_real_escape_string($mysql_connection, $_GET['blockid']);
@@ -3054,9 +3003,16 @@ echo "<html>";
 											$schedule_query = mysqli_query($mysql_connection, "SELECT id FROM scheduleblocks WHERE actionblockid = ".$blockid." LIMIT 1");
 											if(mysqli_num_rows($schedule_query) == 0)
 											{
-												mysqli_query($mysql_connection, "DELETE FROM actionblocks WHERE id=$blockid");
-												echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$block['goalid']."'; </script>";
-												exit;
+												if(!empty($_GET['security_check']))
+												{
+													mysqli_query($mysql_connection, "DELETE FROM actionblocks WHERE id=$blockid");
+													echo "<script> location.href='login.php?language=".$_GET['language']."&action=goal&goalid=".$block['goalid']."'; </script>";
+													exit;
+												}else
+												{
+													echo $output_security_check;
+													echo " <a href=\"login.php?language=".$_GET['language']."&action=deleteblock&blockid=".$blockid."&security_check=true\">".$a_security_check."</a>";
+												}
 											}else
 											{
 												echo $output_block_used;
