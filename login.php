@@ -102,22 +102,27 @@ echo "<html>";
 						$a_create_post = "Beitrag erstellen";
 						$a_day_review = "Tagesrückblick erstellen";
 						$a_definegoal = "Neues Ziel definieren";
-						$output_messages = "Nachrichten";
+						$a_messages = "Nachrichten";
 						$a_feed = "Feed";
 						$a_owngoals = "Eigene Ziele";
 						$a_goallist = "Liste aller Ziele";
+						$a_notifications = "Meldungen";
 						break;
 						
 						case 'english':
 						$a_create_post = "Create a post";
 						$a_day_review = "Create a day review";
 						$a_definegoal = "Define new goal";
-						$output_messages = "Messages";
+						$a_messages = "Messages";
 						$a_feed = "Feed";
 						$a_owngoals = "Own goals";
 						$a_goallist = "List of all goals";
+						$a_notifications = "Notifications";
 						break;
 					}
+					$likes_query = mysqli_query($mysql_connection, "SELECT * FROM likes WHERE authorid = ".$userdata['id']." AND new = 1");
+					$comments_query = mysqli_query($mysql_connection, "SELECT * FROM comments WHERE authorid = ".$userdata['id']." AND new = 1");
+					$number_new_notifications = mysqli_num_rows($likes_query)+mysqli_num_rows($comments_query);
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=createpost\">".$a_create_post."</a>";	
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=createdayreview\">".$a_day_review."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=definegoal\">".$a_definegoal."</a>";
@@ -126,10 +131,17 @@ echo "<html>";
 					{
 						$output_messages = "<b>".$output_messages." (".mysqli_num_rows($new_messages_query).")</b>";
 					}
-					echo "<a href=\"login.php?language=".$_GET['language']."&action=inbox\">".$output_messages."</a>";
+					echo "<a href=\"login.php?language=".$_GET['language']."&action=inbox\">".$a_messages."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=feed\">".$a_feed."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=owngoals\">".$a_owngoals."</a>";
 					echo "<a href=\"login.php?language=".$_GET['language']."&action=goallist\">".$a_goallist."</a>";
+					if($number_new_notifications >= 1)
+					{
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=notifications\">".$a_notifications."(".$number_new_notifications.")</a>";
+					}else
+					{
+						echo "<a href=\"login.php?language=".$_GET['language']."&action=notifications\">".$a_notifications."</a>";
+					}
 				echo "</div>";
 			echo "</div>";
 			echo "<div class=\"page\">";
@@ -195,6 +207,81 @@ echo "<html>";
 								echo "<div class=\"block\">";
 									echo "<div class=\"innerblock\">";
 										echo $output;
+									echo "</div>";
+								echo "</div>";
+								break;
+								
+								case 'notifications':
+								switch($_GET['language'])
+								{
+									case 'german':
+									$output_like = " gefällt dein Beitrag.";
+									$output_comment = " hat deinen Beitrag kommentiert.";
+									$output_follow = " folgt deinem Ziel.";
+									$text = array("like" => "gefällt dein Beitrag.", "comment" => "hat deinen Beitrag kommentiert.");
+									$new = "Neu";
+									break;
+									
+									case 'english':
+									$output_like = " liked your post.";
+									$output_comment = " commented your post.";
+									$output_follow = " follows your goal.";
+									$text = array("like" => "liked your post.", "comment" => "commented your post.");
+									$new = "New";
+									break;
+								}
+								echo "<div class=\"block\">";
+									echo "<div class=\"innerblock\">";
+										echo "<div class=\"notifications\">";
+											// Create notifications array with all likes and comments
+											$notifications = array();
+											$likes_query = mysqli_query($mysql_connection, "SELECT * FROM likes WHERE authorid = ".$userdata['id']);
+											$iter = 0;
+											if(mysqli_num_rows($likes_query) >= 1)
+											{
+												while($like = mysqli_fetch_array($likes_query))
+												{
+													$notifications[$iter] = array("id" => $like['id'], "type" => "like", "postid" => $like['postid'], "userid" => $like['userid'], "time" => $like['time'], "new" => $like['new']);
+													$iter++;
+												}	
+											}
+											$comments_query = mysqli_query($mysql_connection, "SELECT * FROM comments WHERE authorid = ".$userdata['id']);
+											if(mysqli_num_rows($comments_query) >= 1)
+											{
+												while($comment = mysqli_fetch_array($comments_query))
+												{
+													$notifications[$iter] = array("id" => $comment['id'], "type" => "comment", "postid" => $comment['postid'], "userid" => $comment['userid'], "time" => $comment['time'], "new" => $comment['new']);
+													$iter++;
+												}	
+											}
+											//Sort notifications array according to time descendant
+											$time = array();
+											foreach ($notifications as $key => $row)
+											{
+												$time[$key] = $row['time'];
+											}
+											array_multisort($time, SORT_DESC, $notifications);
+											foreach ($notifications as $notification => $data)
+											{
+												$user_query = mysqli_query($mysql_connection, "SELECT name, surname FROM users WHERE id = ".$data['userid']." LIMIT 1");
+												$user = mysqli_fetch_array($user_query);
+												$output =  "<a href=\"login.php?language=".$_GET['language']."&action=user&userid=".$data['userid']."\">".$user['name']." ".$user['surname']."</a> <a href=\"login.php?language=".$_GET['language']."&action=comments&postid=".$data['postid']."\">".$text[$data['type']]."</a>";
+												if($data['new'])
+												{
+													$output = "<font size=\"5\"><b>".$new." </b></font>".$output;
+												}
+												echo "<h><p>".date("d.m.Y - H:i", $data['time'])."</p>".$output."</h>";
+												if($data['type'] == "like")
+												{
+													mysqli_query($mysql_connection, "UPDATE likes SET new = 0 WHERE id = ".$data['id']);
+												}
+												if($data['type'] == "comment")
+												{
+													mysqli_query($mysql_connection, "UPDATE comments SET new = 0 WHERE id = ".$data['id']);
+												}
+											}
+											
+										echo "</div>";
 									echo "</div>";
 								echo "</div>";
 								break;
@@ -735,7 +822,7 @@ echo "<html>";
 														echo "<h><b>".$output_birthdate."</b>".$birthdate."</h>";
 														echo "<h><b>".$output_job."</b>".$user['job']."</h>";
 														echo "<h><b>".$output_residence."</b>".$user['residence']."</h>";
-														echo "<a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$userid."\">".$a_message."</a>";
+														echo "<br><a href=\"login.php?language=".$_GET['language']."&action=write_message&receiverid=".$userid."\">".$a_message."</a><br>";
 														echo "<h><b>".$output_goals."</b></h>";
 														if(mysqli_num_rows($goal_query) >= 1)
 														{
@@ -1067,13 +1154,15 @@ echo "<html>";
 									break;
 								}
 								$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
-								$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
-								if(mysqli_num_rows($check_post_query))
+								$post_query = mysqli_query($mysql_connection, "SELECT userid FROM posts WHERE id = ".$postid." LIMIT 1");
+								if(mysqli_num_rows($post_query))
 								{
-									$check_like_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$postid." AND userid = ".$userdata['id']." LIMIT 1");
-									if(!mysqli_num_rows($check_like_query))
+									$post = mysqli_fetch_array($post_query);
+									$like_query = mysqli_query($mysql_connection, "SELECT id FROM likes WHERE postid = ".$postid." AND userid = ".$userdata['id']." LIMIT 1");
+									if(!mysqli_num_rows($like_query))
 									{
-										mysqli_query($mysql_connection, "INSERT INTO likes (postid, userid) VALUES ('".$postid."', '".$userdata['id']."')");
+										$time = time();
+										mysqli_query($mysql_connection, "INSERT INTO likes (authorid, postid, userid, time, new) VALUES ('".$post['userid']."', '".$postid."', '".$userdata['id']."', '".$time."', 1)");
 										echo "<script> location.href='login.php?language=".$_GET['language']."&action=feed'; </script>";
 										exit;
 									}else
@@ -1210,13 +1299,14 @@ echo "<html>";
 									break;
 								}
 								$postid = mysqli_real_escape_string($mysql_connection, $_GET['postid']);
-								$check_post_query = mysqli_query($mysql_connection, "SELECT id FROM posts WHERE id = ".$postid." LIMIT 1");
-								if(mysqli_num_rows($check_post_query))
-								{
+								$post_query = mysqli_query($mysql_connection, "SELECT userid FROM posts WHERE id = ".$postid." LIMIT 1");
+								if(mysqli_num_rows($post_query))
+								{	
+									$post = mysqli_fetch_array($post_query);
 									$comment = mysqli_real_escape_string($mysql_connection, $_POST['comment']);
 									if(!empty($comment))
 									{
-										mysqli_query($mysql_connection, "INSERT INTO comments (postid, userid, time, text) VALUES ('$postid', '".$userdata['id']."', '".time()."', '$comment')");
+										mysqli_query($mysql_connection, "INSERT INTO comments (authorid, postid, userid, time, text, new) VALUES ('".$post['userid']."', '$postid', '".$userdata['id']."', '".time()."', '$comment', 1)");
 										echo "<script> location.href='login.php?language=".$_GET['language']."&action=comments&postid=".$postid."'; </script>";
 										exit;
 									}else
