@@ -17,7 +17,7 @@ a:active{color:#2b032d; text-decoration:none; font-weight:650;}
 .bodypage>.leftmenu { order: 1; width: 15%; display: flex; flex-direction: column; }
 .bodypage>.leftmenu>.logo {order: 1; margin-top: 3%; height: 10%; background-image: url('logo.png'); background-size: contain; background-repeat: no-repeat; padding-bottom: 1%; background-position: center center;}
 .bodypage>.leftmenu>.navigation {order: 2; height: 60%; width: 100%; background-image: url('box.png'); background-size: cover;}
-.bodypage>.leftmenu>.navigation a { margin-left: 5px; display: block; }
+.bodypage>.leftmenu>.navigation a { margin-left: 5px; display: block; text-align: left; }
 
 .bodypage>.page { order: 2; width: 75%; margin-left: 2%; display: flex; flex-direction: column; }
 .bodypage>.page>.subpage {order: 1; margin-top: 3%; height: 92%; width: 100%; background-image: url('box.png'); background-size: cover; display: flex; flex-direction: row-reverse; overflow: auto;}
@@ -61,14 +61,13 @@ a:active{color:#2b032d; text-decoration:none; font-weight:650;}
 
 .bodypage>.page>.subpage>.content>.block>.innerblock { background-image: url('box.png'); background-size: cover; padding: 5px; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form label { width: 40%; display: inline-block; }
-.bodypage>.page>.subpage>.content>.block>.innerblock form input { width: 20%; }
+.bodypage>.page>.subpage>.content>.block>.innerblock form input { width: 20%; min-width: 100px; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form span input { width: 30%; min-width: 150px; margin: 0 auto; display: block; margin-top: 10px;}
-.bodypage>.page>.subpage>.content>.block>.innerblock form div input { width: 80%; margin: 0 auto; }
-.bodypage>.page>.subpage>.content>.block>.innerblock form p input { width: 90%; margin-left: 30px; display: inline-block; }
-.bodypage>.page>.subpage>.content>.block>.innerblock form select { width: 20%; }
+.bodypage>.page>.subpage>.content>.block>.innerblock form div input { width: 80%; margin: 0 auto; min-width: 150px; }
+.bodypage>.page>.subpage>.content>.block>.innerblock form p input { width: 90%; min-width: 150px; margin-left: 30px; display: inline-block; }
+.bodypage>.page>.subpage>.content>.block>.innerblock form select { width: 20%; min-width: 100px; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form textarea { display: block; height: 200px; width: 100%; }
 .bodypage>.page>.subpage>.content>.block>.innerblock form h { margin: 0 auto; display: block; width: 80%; }
-.bodypage>.page>.subpage>.content>.block>.innerblock form h select { margin: 0 auto; display: inline-block; width: 30%; }
 
 .bodypage>.page>.subpage>.content>.block>.innerblock>.profile { display: flex; flex-direction: column; }
 .bodypage>.page>.subpage>.content>.block>.innerblock>.profile>.information { order: 1; display: flex; }
@@ -102,9 +101,9 @@ a:active{color:#2b032d; text-decoration:none; font-weight:650;}
 
 
 .bodypage>.page>.subpage>.content>.block>.innerblock>.schedule form h { margin: 0 auto; width: 90%;}
-.bodypage>.page>.subpage>.content>.block>.innerblock>.schedule form h select { display: inline-block; width: 20%; }
+.bodypage>.page>.subpage>.content>.block>.innerblock>.schedule form h select { display: inline-block; width: 20%; min-width: 100px; }
 .bodypage>.page>.subpage>.content>.block>.innerblock>.schedule form p input { display: inline-block; width: 90%; margin-left: 30px;}
-.bodypage>.page>.subpage>.content>.block>.innerblock>.schedule form h span { display: inline-block; width: 20%; }
+.bodypage>.page>.subpage>.content>.block>.innerblock>.schedule form h span { display: inline-block; width: 20%; min-width: 100px; }
 .bodypage>.page>.subpage>.content>.block>.innerblock>.schedule form h textarea { display: block; width: 100%; height: 200px; }
 
 

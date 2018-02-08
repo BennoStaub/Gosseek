@@ -506,10 +506,10 @@ echo "<html>";
 									echo "<div class=\"innerblock\">";
 										echo "<form action=\"login.php?action=changeprofilesettings\" method=\"post\" accept-charset=\"utf-8\">";
 											echo "<label>".$label_name."</label>";
-											echo "<input name=\"name\" size=\"30\" value=\"".$userdata['name']."\"></input>";
+											echo "<input name=\"name\" value=\"".$userdata['name']."\"></input>";
 											echo "<div class=\"clear\"></div>";
 											echo "<label>".$label_surname."</label>";
-											echo "<input name=\"surname\" size=\"30\" value=\"".$userdata['surname']."\"></input>";
+											echo "<input name=\"surname\" value=\"".$userdata['surname']."\"></input>";
 											echo "<div class=\"clear\"></div>";
 											echo "<label>".$label_birthday."</label>";
 											echo "<span><select name=\"birthday\" size=\"1\">";
@@ -555,10 +555,10 @@ echo "<html>";
 											echo "</select></span>";
 											echo "<div class=\"clear\"></div>";
 											echo "<label>".$label_residence."</label>";
-											echo "<input name=\"residence\" size=\"30\" value=\"".$userdata['residence']."\"></input>";
+											echo "<input name=\"residence\" value=\"".$userdata['residence']."\"></input>";
 											echo "<div class=\"clear\"></div>";
 											echo "<label>".$label_job."</label>";
-											echo "<input name=\"job\" size=\"30\" value=\"".$userdata['job']."\"></input>";
+											echo "<input name=\"job\" value=\"".$userdata['job']."\"></input>";
 											echo "<div class=\"clear\"></div>";
 											echo "<label>".$label_description."</label>";
 											echo "<textarea name=\"description\">".$userdata['description']."</textarea>";
@@ -691,7 +691,7 @@ echo "<html>";
 									echo "<div class=\"innerblock\">";
 										echo "<form action=\"login.php?language=".$_GET['language']."&action=changepassword\" method=\"post\" accept-charset=\"utf-8\">";
 											echo "<label>".$label_new_password."</label>";
-											echo "<input name=\"newpassword\" type=\"password\" size=\"30\"></input>";
+											echo "<input name=\"newpassword\" type=\"password\"></input>";
 											echo "<span>";
 												echo "<input type=\"submit\" value=\"".$input_submit_new_password."\"></input>";
 											echo "</span>";
@@ -1066,9 +1066,9 @@ echo "<html>";
 									$post = mysqli_fetch_array($post_query);
 									if($post['userid'] == $userdata['id'])
 									{
-										if(empty($_POST['title']) OR empty($_POST['content']))
+										if(empty($_POST['content']))
 										{
-											echo $output_no_title_or_content;
+											echo $output_no_content;
 										}else
 										{
 											$content = mysqli_real_escape_string($mysql_connection, $_POST['content']);
@@ -2110,7 +2110,7 @@ echo "<html>";
 									$a_delete_block = "Löschen";
 									$a_finish_goal = "Veröffentliche Resultate und beende Ziel";
 									$a_results = "Resultate";
-									$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+									$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" , "other" => "Sonstiges" );
 									break;
 									
 									case 'english':
@@ -2134,7 +2134,7 @@ echo "<html>";
 									$a_delete_block = "Delete";
 									$a_finish_goal = "Publish results and finish goal";
 									$a_results = "Results";
-									$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+									$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" , "other" => "Other" );
 									break;
 								}
 								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
@@ -2320,7 +2320,7 @@ echo "<html>";
 										$option_yes = "Ja";
 										$option_no = "Nein";
 										$input_submit = "Los gehts!";
-										$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+										$output_sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" , "other" => "Sonstiges" );
 										break;
 										
 										case 'english':
@@ -2334,13 +2334,13 @@ echo "<html>";
 										$option_yes = "Yes";
 										$option_no = "No";
 										$input_submit = "Let's go!";
-										$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+										$output_sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" , "other" => "Other" );
 										break;
 								}
 								echo "<div class=\"block\">";
 									echo "<div class=\"innerblock\">";
 										echo "<form action=\"login.php?language=".$_GET['language']."&action=submitgoal\" method=\"post\" accept-charset=\"utf-8\" enctype=\"multipart/form-data\">";
-											echo "<div>".$label_title." <input name=\"title\" size=\"50\"></input></div>";
+											echo "<div>".$label_title." <input name=\"title\"></input></div>";
 											echo "<div class=\"clear\"></div>";
 											echo "<label>".$label_anonymous."</label>";
 											echo "<span><select name=\"anonymous\" size=\"1\">";
@@ -2364,7 +2364,7 @@ echo "<html>";
 											for($blocknumber = 1; $blocknumber <= 10; $blocknumber++)
 											{
 												echo "<label>".$label_block." ".$blocknumber."</label>";
-												echo "<input name=\"block".$blocknumber."\" size=\"50\"></input>";
+												echo "<input name=\"block".$blocknumber."\"></input>";
 												echo "<div class=\"clear\"></div>";
 											}
 											echo "<br><label>".$label_description."</label>";
@@ -2705,7 +2705,7 @@ echo "<html>";
 									$input_submit = "Änderungen speichern";
 									$output_not_author = "Du bist nicht der Autor dieses Zieles.";
 									$output_no_goal = "Dieses Ziel existiert nicht.";
-									$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+									$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" , "other" => "Sonstiges" );
 									break;
 									
 									case 'english':
@@ -2718,7 +2718,7 @@ echo "<html>";
 									$input_submit = "Save changes";
 									$output_not_author = "You are not the author of this goal.";
 									$output_no_goal = "There is no such goal.";
-									$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+									$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" , "other" => "Other" );
 									break;
 								}
 								$goalid = mysqli_real_escape_string($mysql_connection, $_GET['goalid']);
@@ -2731,7 +2731,7 @@ echo "<html>";
 										echo "<div class=\"block\">";
 											echo "<div class=\"innerblock\">";
 												echo "<form action=\"login.php?language=".$_GET['language']."&action=editedgoal&goalid=".$goalid."\" method=\"post\" accept-charset=\"utf-8\">";
-													echo "<div>".$output_title." <input name=\"title\" size=\"50\" value=\"".$goal['title']."\"></input></div>";
+													echo "<div>".$output_title." <input name=\"title\" value=\"".$goal['title']."\"></input></div>";
 													echo "<div class=\"clear\"></div>";
 													echo "<label>".$label_anonymous."</label>";
 													echo "<span><select name=\"anonymous\" size=\"1\">";
@@ -2932,7 +2932,7 @@ echo "<html>";
 													echo "<div class=\"innerblock\">";
 														echo "<form action=\"login.php?language=".$_GET['language']."&action=editedblock&blockid=".$block['id']."\" method=\"post\" accept-charset=\"utf-8\">";
 															echo "<label>".$label_blockname."</label>";
-															echo "<input name=\"blockname\" size=\"50\" value=\"".$block['name']."\"></input>";
+															echo "<input name=\"blockname\" value=\"".$block['name']."\"></input>";
 															echo "<span><input type=\"submit\" value=\"".$input_submit."\"></input></span>";
 														echo "</form>";
 													echo "</div>";
@@ -3090,7 +3090,7 @@ echo "<html>";
 											echo "<div class=\"innerblock\">";
 												echo "<form action=\"login.php?language=".$_GET['language']."&action=addedblock&goalid=".$goalid."\" method=\"post\" accept-charset=\"utf-8\">";
 													echo "<label>".$label_blockname."</label>";
-													echo "<input name=\"blockname\" size=\"50\"></input>";
+													echo "<input name=\"blockname\"></input>";
 													echo "<span><input type=\"submit\" value=\"".$input_submit."\"></input></span>";
 												echo "</form>";
 											echo "</div>";
@@ -3145,12 +3145,12 @@ echo "<html>";
 								{
 									case 'german':
 									$output_author_anonymous = "Anonym";
-									$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+									$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" , "other" => "Sonstiges");
 									break;
 									
 									case 'english':
 									$output_author_anonymous = "Anonymous";
-									$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+									$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" , "other" => "Other");
 									break;
 								}
 								echo "<div class=\"list\">";
@@ -3188,13 +3188,13 @@ echo "<html>";
 									case 'german':
 									$output_anonymous = "Anonym";
 									$output_not_anonymous = "Öffentlich";
-									$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" );
+									$sections = array( "study" => "Studium" , "finance" => "Finanzen" , "career" => "Karriere" , "selfdevelopment" => "Selbstentwicklung" , "social" => "Soziales" , "sport" => "Sport" , "health" => "Gesundheit" , "other" => "Sonstiges" );
 									break;
 									
 									case 'english':
 									$output_anonymous = "Anonymous";
 									$output_not_anonymous = "Public";
-									$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" );
+									$sections = array( "study" => "Study" , "finance" => "Finance" , "career" => "Career" , "selfdevelopment" => "Selfdevelopment" , "social" => "Social" , "sport" => "Sport" , "health" => "Health" , "other" => "Other" );
 									break;
 								}
 								echo "<div class=\"list\">";

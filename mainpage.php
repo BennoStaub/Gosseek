@@ -209,14 +209,14 @@ echo "<html>";
 									switch($_GET['language'])
 									{
 										case 'german':
-										$body = "Hallo ".$name." ".$surname.",<br><br>Vielen Dank für deine Anmeldung bei Gosseek.<br>Hier sind deine Anmeldedaten:<br>E-Mail: ".$email."<br>Passwort: ".$password."<br><br>Um deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."<br><br>Mit freundlichen Grüssen<br>Das Gosseek Team.";
+										$body = "Hallo ".$name." ".$surname.",<br><br>Vielen Dank für deine Anmeldung bei Gosseek.<br>Hier sind deine Anmeldedaten:<br>E-Mail: ".$email."<br>Passwort: ".$password."<br><br>Um deinen Account zu aktivieren, bitte klicke auf folgenden Link: <a href=\"http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\">Registrierung bestätigen</a><br><br>Mit freundlichen Grüssen<br>Das Gosseek Team.";
 										$subject = "Registrierung bei Gosseek";
 										$altbody = "Hallo ".$name." ".$surname.",\r\n\r\nVielen Dank für deine Anmeldung bei Gosseek.\r\nHier sind deine Anmeldedaten:\r\nE-Mail: ".$email."\r\nPasswort: ".$password."\r\n\r\nUm deinen Account zu aktivieren, bitte klicke auf folgenden Link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nMit freundlichen Grüssen\r\nDas Gosseek Team.";
 										$subject = "Registrierung bei Gosseek";
 										break;
 										
 										case 'english':
-										$body = "Dear ".$name." ".$surname.",<br><br>Thank you for your registration on Gosseek.<br>Here are your credentials:<br>E-mail: ".$email."<br>Password: ".$password."<br><br>To activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."<br><br>Best regards<br>The Gosseek Team.";
+										$body = "Dear ".$name." ".$surname.",<br><br>Thank you for your registration on Gosseek.<br>Here are your credentials:<br>E-mail: ".$email."<br>Password: ".$password."<br><br>To activate your account, please click on the following link: <a href=\"http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\">Confirm registration</a><br><br>Best regards<br>The Gosseek Team.";
 										$subject = "Registration on Gosseek";
 										$altbody = "Dear ".$name." ".$surname.",\r\n\r\nThank you for your registration on Gosseek.\r\nHere are your credentials:\r\nE-mail: ".$email."\r\nPassword: ".$password."\r\n\r\nTo activate your account, please click on the following link: http://www.gosseek.com/mainpage.php?language=".$_GET['language']."&action=activate_account&code=".$activation_code."\r\n\r\nBest regards\r\nThe Gosseek Team.";
 										$subject = "Registration on Gosseek";
